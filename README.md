@@ -1,13 +1,6 @@
 # ktl
 
-My rather opinionated C project template.
-
-To start a project with this template, run:
-```
-./init-template.sh new_project_name
-```
-
-Don't forget to change the [LICENSE](https://choosealicense.com/).
+Kris's C Template Library
 
 ## Development
 

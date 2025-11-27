@@ -8,4 +8,10 @@ Diagnostics:
   MissingIncludes: Strict
   # UnusedIncludes: None
 
+---
+If:
+  PathMatch: [.*\.h]
+CompileFlags:
+  Add:
+    - -Wno-unused-function
 

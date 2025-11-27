@@ -1,11 +1,11 @@
-#include "cstart.h"
+#include "ktl.h"
 #include <assert.h>
 #include <stdio.h>
 
 static void t_sum(void)
 {
     //
-    assert(cstart_sum(1.0, 2.0) == 3.0);
+    assert(ktl_sum(1.0, 2.0) == 3.0);
 }
 
 #define RUN(test)                                                              \

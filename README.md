@@ -1,4 +1,4 @@
-# c-start
+# ktl
 
 My rather opinionated C project template.
 

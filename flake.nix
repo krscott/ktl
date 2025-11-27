@@ -34,7 +34,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         # Final derivation including any overrides made to output package
-        inherit (self.packages.${system}) c-start c-start-gcc;
+        inherit (self.packages.${system}) ktl ktl-gcc;
 
         devPkgs =
           with pkgs;
@@ -44,7 +44,7 @@
             clang-tools # NOTE: clang-tools must come before clang
             clang
           ]
-          ++ c-start.buildInputs;
+          ++ ktl.buildInputs;
 
         mkApp = text: {
           type = "app";
@@ -59,32 +59,32 @@
       in
       {
         packages = {
-          c-start = pkgs.callPackage ./. {
+          ktl = pkgs.callPackage ./. {
             inherit (kcli.packages.${system}) kcli;
             stdenv = pkgs.clangStdenv;
           };
 
-          c-start-gcc = c-start.override {
+          ktl-gcc = ktl.override {
             inherit (pkgs) stdenv;
           };
 
-          c-start-win = c-start.override {
+          ktl-win = ktl.override {
             inherit (pkgs.pkgsCross.mingwW64) stdenv;
           };
 
-          default = c-start;
+          default = ktl;
 
-          c-start-test = c-start.override {
+          ktl-test = ktl.override {
             doCheck = true;
           };
-          c-start-gcc-test = c-start-gcc.override {
+          ktl-gcc-test = ktl-gcc.override {
             doCheck = true;
           };
         };
 
         devShells = {
           default = pkgs.mkShell {
-            inputsFrom = [ c-start ];
+            inputsFrom = [ ktl ];
             nativeBuildInputs = devPkgs;
             shellHook = ''
               source dev_shell.sh

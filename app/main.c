@@ -1,4 +1,4 @@
-#include "cstart.h"
+#include "ktl.h"
 #include "kcli.h"
 #include <math.h>
 #include <stdbool.h>
@@ -45,10 +45,10 @@ int main(int const argc, char const *const *const argv)
 
     if (opts.verbose)
     {
-        fprintf(stderr, "c-start: Adding %f + %f...\n", opts.a, opts.b);
+        fprintf(stderr, "ktl: Adding %f + %f...\n", opts.a, opts.b);
     }
 
-    double const sum = cstart_sum(opts.a, opts.b);
+    double const sum = ktl_sum(opts.a, opts.b);
 
     printf("%f\n", sum);
 

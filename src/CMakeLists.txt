@@ -1,6 +1,6 @@
-add_library(cstart cstart.c)
+add_library(ktl ktl.c)
 
-target_include_directories(cstart PUBLIC ${PROJECT_SOURCE_DIR}/include)
-# target_sources(cstartlib PRIVATE file.c)
+target_include_directories(ktl PUBLIC ${PROJECT_SOURCE_DIR}/include)
+# target_sources(ktllib PRIVATE file.c)
 
-install(TARGETS cstart)
+install(TARGETS ktl)

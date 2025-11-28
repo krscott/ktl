@@ -2,6 +2,10 @@
 #include <assert.h>
 #include <stdio.h>
 
+#ifdef NDEBUG
+#error "Asserts are disabled in release"
+#endif
+
 static int intslice__cmp(int a, int b) { return a - b; }
 struct intslice
 {

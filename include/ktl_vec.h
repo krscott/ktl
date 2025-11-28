@@ -80,8 +80,8 @@ static_assert(
 #define ktl_vec_free(vec, p) free(p)
 #endif
 
-#ifdef ktl_vec_err_alloc
-#undef ktl_vec_err_alloc
+#ifdef ktl_vec_alloc_ok
+#undef ktl_vec_alloc_ok
 #endif
 #ifdef ktl_vec_infallible
 #undef ktl_vec_infallible
@@ -101,9 +101,8 @@ void ktl_vec_m(deinit)(struct ktl_vec *vec);
 
 ktl_vec_alloc_ok ktl_vec_m(reserve)(struct ktl_vec *vec, size_t n);
 
-ktl_vec_alloc_ok ktl_vec_m(append)(
-    struct ktl_vec *vec, ktl_vec_T const *arr, size_t n
-);
+ktl_vec_alloc_ok
+    ktl_vec_m(append)(struct ktl_vec *vec, ktl_vec_T const *arr, size_t n);
 
 #ifdef ktl_vec_sentinel
 ktl_vec_alloc_ok

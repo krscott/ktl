@@ -39,7 +39,12 @@ ktl_vec_alloc_ok ktl_vec_m(reserve)(struct ktl_vec *const vec, size_t const n)
 #endif
         ;
 
-    if (target_cap <= vec->cap)
+    if (target_cap < vec->len + 1)
+    {
+        // overflow
+        success = false;
+    }
+    else if (target_cap <= vec->cap)
     {
         success = true;
     }
@@ -52,6 +57,8 @@ ktl_vec_alloc_ok ktl_vec_m(reserve)(struct ktl_vec *const vec, size_t const n)
         size_t new_cap = vec->cap < KTL_VEC_MIN_CAP
                              ? KTL_VEC_MIN_CAP
                              : KTL_VEC_GROW_CAP(vec->cap);
+
+        // Guaranteed to terminate due to CAP_LIMIT check above
         while (new_cap < target_cap)
         {
             new_cap = KTL_VEC_GROW_CAP(new_cap);

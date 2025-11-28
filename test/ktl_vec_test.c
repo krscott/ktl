@@ -1,13 +1,31 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef NDEBUG
 #error "Asserts are disabled in release"
 #endif
 
+struct mock_allocator
+{
+    bool fail;
+};
+static void *
+mock_allocator_realloc(struct mock_allocator *allocator, void *ptr, size_t size)
+{
+    return allocator->fail ? NULL : realloc(ptr, size);
+}
+static void mock_allocator_free(struct mock_allocator *allocator, void *ptr)
+{
+    (void)allocator;
+    free(ptr);
+}
+
 struct strbuf
 {
+    struct mock_allocator allocator;
     char *ptr;
     size_t len;
     size_t cap;
@@ -15,8 +33,10 @@ struct strbuf
 #define strbuf__type char
 #define strbuf__terminated true, '\0'
 #define strbuf__allocator true
-#define strbuf__realloc(vec, p, size) realloc((p), (size))
-#define strbuf__free(vec, p) free(p)
+// #define strbuf__realloc(vec, p, size) realloc((p), (size))
+#define strbuf__realloc(vec, p, size)                                          \
+    mock_allocator_realloc(&(vec)->allocator, p, size)
+#define strbuf__free(vec, p) mock_allocator_free(&(vec)->allocator, p)
 #define ktl_vec strbuf
 #include "ktl_vec.c"
 #undef ktl_vec
@@ -53,6 +73,19 @@ static void t_reserve(void)
     size_t const old_cap = buf.cap;
     assert(strbuf_reserve(&buf, 100));
     assert(buf.cap == old_cap);
+
+    strbuf_deinit(&buf);
+}
+
+static void t_reserve_fail(void)
+{
+    struct strbuf buf = {0};
+
+    buf.allocator.fail = true;
+    assert(!strbuf_reserve(&buf, 100));
+
+    buf.allocator.fail = false;
+    assert(strbuf_reserve(&buf, 100));
 
     strbuf_deinit(&buf);
 }
@@ -190,6 +223,7 @@ int main(void)
 {
     RUN(t_deinit_null);
     RUN(t_reserve);
+    RUN(t_reserve_fail);
     RUN(t_reserve_infallible);
     RUN(t_append);
     RUN(t_append_infallible);

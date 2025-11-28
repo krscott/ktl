@@ -52,8 +52,11 @@ ktl_slice_m(find_index)(struct ktl_slice slice, ktl_T x, size_t *index)
 ktl_nodiscard bool
 ktl_slice_m(eq)(struct ktl_slice const a, struct ktl_slice const b)
 {
+    assert(a.len == 0 || a.ptr);
+    assert(b.len == 0 || b.ptr);
+
     return (a.len == b.len) &&
-           (0 == memcmp(a.ptr, b.ptr, a.len * sizeof(a.ptr[0])));
+           (a.len == 0 || 0 == memcmp(a.ptr, b.ptr, a.len * sizeof(a.ptr[0])));
 }
 
 ktl_nodiscard bool ktl_slice_m(split)(
@@ -140,20 +143,41 @@ static int ktl_slice_m(_void_cmp_)( //
 
 void ktl_slice_m(sort)(struct ktl_slice slice)
 {
-    qsort(slice.ptr, slice.len, sizeof(slice.ptr[0]), ktl_slice_m(_void_cmp_));
+    assert(slice.len == 0 || slice.ptr);
+
+    if (slice.len > 0)
+    {
+        qsort(
+            slice.ptr,
+            slice.len,
+            sizeof(slice.ptr[0]),
+            ktl_slice_m(_void_cmp_)
+        );
+    }
 }
 
 ktl_nodiscard bool ktl_slice_m(bsearch)(
     struct ktl_slice const slice, ktl_T const key, ktl_Tptr *const match
 )
 {
-    void *ptr = bsearch(
-        (void const *)&key,
-        (void const *)slice.ptr,
-        slice.len,
-        sizeof(slice.ptr[0]),
-        ktl_slice_m(_void_cmp_)
-    );
+    assert(slice.len == 0 || slice.ptr);
+
+    void *ptr;
+
+    if (slice.len > 0)
+    {
+        ptr = bsearch(
+            (void const *)&key,
+            (void const *)slice.ptr,
+            slice.len,
+            sizeof(slice.ptr[0]),
+            ktl_slice_m(_void_cmp_)
+        );
+    }
+    else
+    {
+        ptr = NULL;
+    }
 
     if (match)
     {

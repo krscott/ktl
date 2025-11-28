@@ -62,7 +62,7 @@ ktl_nodiscard bool ktl_slice_m(bsearch_index)(
     KTL_T *match;
     bool const ok = ktl_slice_m(bsearch)(slice, key, &match);
 
-    if (ok)
+    if (ok && index)
     {
         *index = (size_t)(match - slice.ptr);
     }

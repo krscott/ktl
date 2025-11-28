@@ -99,6 +99,9 @@ static void t_bsearch(void)
         assert(ints[4] == 100);
     }
 
+    assert(intslice_bsearch_index(a, 22, NULL));
+    assert(!intslice_bsearch_index(a, 10, NULL));
+
     {
         size_t idx = 0;
         assert(intslice_bsearch_index(a, 33, &idx));

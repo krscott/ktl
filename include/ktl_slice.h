@@ -2,7 +2,8 @@
 
 #include "ktl_macros.h"
 
-#include "stddef.h"
+#include <stdbool.h>
+#include <stddef.h>
 
 // Default types for development
 #ifndef ktl_slice
@@ -17,10 +18,18 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 #define ktl_slice dev_slice
 #endif
 
+#define KTL_T KTL_TEMPLATE(ktl_slice, _type)
 #define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
 
 #if ktl_slice_m(_ord)
+
 void ktl_slice_m(sort)(struct ktl_slice slice);
-#endif
+
+ktl_nodiscard bool ktl_slice_m(bsearch)(
+    struct ktl_slice const slice, KTL_T const key, KTL_T **const match
+);
+
+#endif // ord
 
 #undef ktl_slice_m
+#undef KTL_T

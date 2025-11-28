@@ -30,6 +30,27 @@ static void t_sort(void)
     assert(ints[4] == 10);
 }
 
+static void t_bsearch(void)
+{
+    int ints[] = {1, 11, 22, 33, 99};
+    struct intslice a = {
+        .ptr = ints,
+        .len = ktl_countof(ints),
+    };
+
+    assert(intslice_bsearch(a, 22, NULL));
+    assert(!intslice_bsearch(a, 10, NULL));
+
+    int *match = NULL;
+    assert(intslice_bsearch(a, 99, &match));
+    assert(match);
+    assert(*match == 99);
+
+    assert(ints[4] == 99);
+    *match = 100;
+    assert(ints[4] == 100);
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -41,6 +62,7 @@ static void t_sort(void)
 int main(void)
 {
     RUN(t_sort);
+    RUN(t_bsearch);
 
     return 0;
 }

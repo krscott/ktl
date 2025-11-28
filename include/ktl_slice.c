@@ -1,5 +1,6 @@
 #include "ktl_slice.h"
 #include "ktl_macros.h"
+#include <stdbool.h>
 #include <stdlib.h>
 
 #define KTL_T KTL_TEMPLATE(ktl_slice, _type)
@@ -7,7 +8,7 @@
 
 #if ktl_slice_m(_ord)
 
-static int ktl_slice_m(_qsort_cmp_)( //
+static int ktl_slice_m(_void_cmp_)( //
     void const *a,
     void const *b
 )
@@ -17,7 +18,34 @@ static int ktl_slice_m(_qsort_cmp_)( //
 
 void ktl_slice_m(sort)(struct ktl_slice slice)
 {
-    qsort(slice.ptr, slice.len, sizeof(slice.ptr[0]), ktl_slice_m(_qsort_cmp_));
+    qsort(slice.ptr, slice.len, sizeof(slice.ptr[0]), ktl_slice_m(_void_cmp_));
+}
+
+ktl_nodiscard bool ktl_slice_m(bsearch)(
+    struct ktl_slice const slice, KTL_T const key, KTL_T **const match
+)
+{
+    void *ptr = bsearch(
+        (void const *)&key,
+        (void const *)slice.ptr,
+        slice.len,
+        sizeof(slice.ptr[0]),
+        ktl_slice_m(_void_cmp_)
+    );
+
+    if (match)
+    {
+        if (ptr)
+        {
+            *match = (KTL_T *)ptr;
+        }
+        else
+        {
+            *match = NULL;
+        }
+    }
+
+    return (ptr != NULL);
 }
 
 #endif // ord

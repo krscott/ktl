@@ -74,21 +74,21 @@ static void t_reserve_infallible(void)
     strbuf_inf_deinit(&buf);
 }
 
-static void t_append_array(void)
+static void t_append(void)
 {
     char const *s = "foobar";
     size_t const s_len = strlen(s);
 
     struct strbuf buf = {0};
 
-    assert(strbuf_append_array(&buf, s, s_len));
+    assert(strbuf_append(&buf, s, s_len));
     assert(buf.ptr != NULL);
     assert(buf.ptr != s);
     assert(buf.len == s_len);
     assert(buf.cap >= s_len);
     assert(buf.ptr[buf.len] == '\0');
 
-    assert(strbuf_append_array(&buf, s, s_len));
+    assert(strbuf_append(&buf, s, s_len));
     assert(buf.ptr != NULL);
     assert(buf.ptr != s);
     assert(buf.len == s_len * 2);
@@ -100,21 +100,73 @@ static void t_append_array(void)
     strbuf_deinit(&buf);
 }
 
-static void t_append_array_infallible(void)
+static void t_append_infallible(void)
 {
     char const *s = "foobar";
     size_t const s_len = strlen(s);
 
     struct strbuf_inf buf = {0};
 
-    strbuf_inf_append_array(&buf, s, s_len);
+    strbuf_inf_append(&buf, s, s_len);
     assert(buf.ptr != NULL);
     assert(buf.ptr != s);
     assert(buf.len == s_len);
     assert(buf.cap >= s_len);
     assert(buf.ptr[buf.len] == '\0');
 
-    strbuf_inf_append_array(&buf, s, s_len);
+    strbuf_inf_append(&buf, s, s_len);
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len * 2);
+    assert(buf.cap >= s_len * 2);
+    assert(buf.ptr[buf.len] == '\0');
+
+    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+    strbuf_inf_deinit(&buf);
+}
+
+static void t_append_terminated(void)
+{
+    char const *s = "foobar";
+    size_t const s_len = strlen(s);
+
+    struct strbuf buf = {0};
+
+    assert(strbuf_append_terminated(&buf, s));
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len);
+    assert(buf.cap >= s_len);
+    assert(buf.ptr[buf.len] == '\0');
+
+    assert(strbuf_append_terminated(&buf, s));
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len * 2);
+    assert(buf.cap >= s_len * 2);
+    assert(buf.ptr[buf.len] == '\0');
+
+    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+    strbuf_deinit(&buf);
+}
+
+static void t_append_terminated_infallible(void)
+{
+    char const *s = "foobar";
+    size_t const s_len = strlen(s);
+
+    struct strbuf_inf buf = {0};
+
+    strbuf_inf_append_terminated(&buf, s);
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len);
+    assert(buf.cap >= s_len);
+    assert(buf.ptr[buf.len] == '\0');
+
+    strbuf_inf_append_terminated(&buf, s);
     assert(buf.ptr != NULL);
     assert(buf.ptr != s);
     assert(buf.len == s_len * 2);
@@ -139,8 +191,10 @@ int main(void)
     RUN(t_deinit_null);
     RUN(t_reserve);
     RUN(t_reserve_infallible);
-    RUN(t_append_array);
-    RUN(t_append_array_infallible);
+    RUN(t_append);
+    RUN(t_append_infallible);
+    RUN(t_append_terminated);
+    RUN(t_append_terminated_infallible);
 
     return 0;
 }

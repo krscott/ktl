@@ -83,7 +83,7 @@ ktl_vec_alloc_ok ktl_vec_m(reserve)(struct ktl_vec *const vec, size_t const n)
 #endif
 }
 
-ktl_vec_alloc_ok ktl_vec_m(append_array)(
+ktl_vec_alloc_ok ktl_vec_m(append)(
     struct ktl_vec *const vec, ktl_vec_T const *const arr, size_t const n
 )
 {
@@ -115,3 +115,21 @@ ktl_vec_alloc_ok ktl_vec_m(append_array)(
 
 #endif
 }
+
+#ifdef ktl_vec_sentinel
+ktl_vec_alloc_ok
+ktl_vec_m(append_terminated)(struct ktl_vec *vec, ktl_vec_T const *arr)
+{
+    size_t arr_len = 0;
+    while (arr[arr_len] != ktl_vec_sentinel)
+    {
+        ++arr_len;
+    }
+
+#ifdef ktl_vec_infallible
+    ktl_vec_m(append)(vec, arr, arr_len);
+#else
+    return ktl_vec_m(append)(vec, arr, arr_len);
+#endif
+}
+#endif

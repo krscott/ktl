@@ -77,6 +77,12 @@ static void t_sort(void)
     assert(ints[4] == 10);
 }
 
+static void t_sort_null(void)
+{
+    struct intslice a = {0};
+    intslice_sort(a);
+}
+
 static void t_bsearch(void)
 {
     int ints[] = {1, 11, 22, 33, 99};
@@ -109,6 +115,13 @@ static void t_bsearch(void)
     }
 }
 
+static void t_bsearch_null(void)
+{
+    struct intslice a = {0};
+    assert(!intslice_bsearch(a, 0, NULL));
+    assert(!intslice_bsearch_index(a, 0, NULL));
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -122,7 +135,9 @@ int main(void)
     RUN(t_eq);
     RUN(t_eq_null);
     RUN(t_sort);
+    RUN(t_sort_null);
     RUN(t_bsearch);
+    RUN(t_bsearch_null);
 
     return 0;
 }

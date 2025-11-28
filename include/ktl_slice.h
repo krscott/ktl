@@ -25,6 +25,18 @@ ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, KTL_T x);
 ktl_nodiscard bool
     ktl_slice_m(find_index)(struct ktl_slice slice, KTL_T x, size_t *index);
 ktl_nodiscard bool ktl_slice_m(eq)(struct ktl_slice a, struct ktl_slice b);
+ktl_nodiscard bool ktl_slice_m(split)(
+    struct ktl_slice slice,
+    KTL_T x,
+    struct ktl_slice *head,
+    struct ktl_slice *tail
+);
+ktl_nodiscard bool ktl_slice_m(split_at)(
+    struct ktl_slice slice,
+    size_t index,
+    struct ktl_slice *head,
+    struct ktl_slice *tail
+);
 
 #if ktl_slice_m(_ord)
 

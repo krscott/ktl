@@ -1,5 +1,6 @@
 #include "ktl_slice.h"
 #include "ktl_macros.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,6 +40,67 @@ ktl_slice_m(eq)(struct ktl_slice const a, struct ktl_slice const b)
 {
     return (a.len == b.len) &&
            (0 == memcmp(a.ptr, b.ptr, a.len * sizeof(a.ptr[0])));
+}
+
+ktl_nodiscard bool ktl_slice_m(split)(
+    struct ktl_slice const slice,
+    KTL_T const x,
+    struct ktl_slice *const head,
+    struct ktl_slice *const tail
+)
+{
+    size_t index;
+    bool const ok = ktl_slice_m(find_index)(slice, x, &index);
+
+    if (ok)
+    {
+        if (head)
+        {
+            *head = (struct ktl_slice){
+                .ptr = slice.ptr,
+                .len = index,
+            };
+        }
+        if (tail)
+        {
+            *tail = (struct ktl_slice){
+                .ptr = &slice.ptr[index + 1],
+                .len = slice.len - index - 1,
+            };
+        }
+    }
+
+    return ok;
+}
+
+ktl_nodiscard bool ktl_slice_m(split_at)(
+    struct ktl_slice const slice,
+    size_t const index,
+    struct ktl_slice *const head,
+    struct ktl_slice *const tail
+)
+{
+    bool const ok = index < slice.len;
+
+    if (ok)
+    {
+        if (head)
+        {
+            *head = (struct ktl_slice){
+                .ptr = slice.ptr,
+                .len = index,
+            };
+        }
+        if (tail)
+        {
+            *tail = (struct ktl_slice){
+                .ptr = &slice.ptr[index],
+                .len = slice.len - index,
+            };
+        }
+    }
+
+    return ok;
 }
 
 #if ktl_slice_m(_ord)

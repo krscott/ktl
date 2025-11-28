@@ -1,6 +1,7 @@
 #include "ktl_macros.h"
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifdef NDEBUG
 #error "Asserts are disabled in release"
@@ -16,6 +17,18 @@ struct intslice
 #define intslice__ord 1
 #define ktl_slice intslice
 #include "ktl_slice.c"
+#undef ktl_slice
+
+struct str
+{
+    char *ptr;
+    size_t len;
+};
+#define str__type char
+#define ktl_slice str
+#define str__ord 0
+#include "ktl_slice.c"
+#undef ktl_slice
 
 static void t_contains(void)
 {
@@ -53,6 +66,62 @@ static void t_find_index_null(void)
 {
     struct intslice a = {0};
     assert(!intslice_find_index(a, 0, NULL));
+}
+
+static void t_split(void)
+{
+    char arr_a[] = "Hello World!";
+    struct str a = {
+        .ptr = arr_a,
+        .len = strlen(arr_a),
+    };
+
+    assert(!str_split(a, 'Z', NULL, NULL));
+
+    struct str head;
+    struct str tail;
+    assert(str_split(a, ' ', &head, &tail));
+    assert(head.len == 5);
+    assert(0 == strncmp(head.ptr, "Hello", head.len));
+    assert(tail.len == 6);
+    assert(0 == strncmp(tail.ptr, "World!", tail.len));
+}
+
+static void t_split_null(void)
+{
+    struct str a = {0};
+    assert(!str_split(a, 'a', NULL, NULL));
+}
+
+static void t_split_at(void)
+{
+    char arr_a[] = "Hello World!";
+    struct str a = {
+        .ptr = arr_a,
+        .len = strlen(arr_a),
+    };
+
+    assert(!str_split_at(a, 100, NULL, NULL));
+
+    struct str head;
+    struct str tail;
+
+    assert(str_split_at(a, 0, &head, &tail));
+    assert(head.len == 0);
+    assert(tail.len == a.len);
+    assert(0 == strncmp(tail.ptr, "Hello World!", tail.len));
+
+    assert(str_split_at(a, a.len - 1, &head, &tail));
+    assert(head.len == a.len - 1);
+    assert(0 == strncmp(head.ptr, "Hello World", head.len));
+    assert(tail.len == 1);
+    assert(0 == strncmp(tail.ptr, "!", tail.len));
+}
+
+static void t_split_at_null(void)
+{
+    struct str a = {0};
+    assert(!str_split_at(a, 0, NULL, NULL));
 }
 
 static void t_eq(void)
@@ -176,6 +245,10 @@ int main(void)
     RUN(t_find_index_null);
     RUN(t_eq);
     RUN(t_eq_null);
+    RUN(t_split);
+    RUN(t_split_null);
+    RUN(t_split_at);
+    RUN(t_split_at_null);
     RUN(t_sort);
     RUN(t_sort_null);
     RUN(t_bsearch);

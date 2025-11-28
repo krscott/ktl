@@ -16,9 +16,9 @@ struct dev_slice
 };
 static int dev_slice__cmp(int a, int b) { return a - b; }
 #define dev_slice__type int
-#define dev_slice__mut 1
-#define dev_slice__ord 1
-#define dev_slice__terminated 1, 0
+#define dev_slice__mut true
+#define dev_slice__ord true
+#define dev_slice__terminated true, 0
 #define ktl_slice dev_slice
 #endif
 
@@ -36,7 +36,10 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 
 static_assert(
     _Generic(
-        (struct ktl_slice){0}.ptr, ktl_slice_T *: 1, ktl_slice_T const *: 1, default: 0
+        (struct ktl_slice){0}.ptr,
+        ktl_slice_T *: 1,
+        ktl_slice_T const *: 1,
+        default: 0
     ),
     "Wrong type: `#define " KTL_STRINGIFY(ktl_slice) "__type " KTL_STRINGIFY(
         ktl_slice_T
@@ -97,8 +100,9 @@ ktl_nodiscard struct ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr ptr);
 
 ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, ktl_slice_T x);
 
-ktl_nodiscard bool
-    ktl_slice_m(find_index)(struct ktl_slice slice, ktl_slice_T x, size_t *index);
+ktl_nodiscard bool ktl_slice_m(find_index)(
+    struct ktl_slice slice, ktl_slice_T x, size_t *index
+);
 
 ktl_nodiscard bool ktl_slice_m(eq)(struct ktl_slice a, struct ktl_slice b);
 
@@ -122,8 +126,9 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
 void ktl_slice_m(sort)(struct ktl_slice slice);
 #endif
 
-ktl_nodiscard bool
-    ktl_slice_m(bsearch)(struct ktl_slice slice, ktl_slice_T key, ktl_slice_Tptr *match);
+ktl_nodiscard bool ktl_slice_m(bsearch)(
+    struct ktl_slice slice, ktl_slice_T key, ktl_slice_Tptr *match
+);
 
 ktl_nodiscard bool ktl_slice_m(bsearch_index)(
     struct ktl_slice slice, ktl_slice_T key, size_t *index

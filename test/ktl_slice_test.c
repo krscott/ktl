@@ -14,8 +14,8 @@ struct intslice
     size_t len;
 };
 #define intslice__type int
-#define intslice__mut 1
-#define intslice__ord 1
+#define intslice__mut true
+#define intslice__ord true
 #define ktl_slice intslice
 #include "ktl_slice.c"
 #undef ktl_slice
@@ -26,7 +26,7 @@ struct str
     size_t len;
 };
 #define str__type char
-#define str__terminated 1, '\0'
+#define str__terminated true, '\0'
 #define ktl_slice str
 #include "ktl_slice.c"
 #undef ktl_slice

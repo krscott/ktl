@@ -7,7 +7,25 @@
 #define KTL_T KTL_TEMPLATE(ktl_slice, _type)
 #define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
 
-bool ktl_slice_m(eq)(struct ktl_slice a, struct ktl_slice b)
+ktl_nodiscard bool
+ktl_slice_m(contains)(struct ktl_slice const slice, KTL_T const x)
+{
+    bool ok = false;
+
+    for (size_t i = 0; i < slice.len; ++i)
+    {
+        if (slice.ptr[i] == x)
+        {
+            ok = true;
+            break;
+        }
+    }
+
+    return ok;
+}
+
+ktl_nodiscard bool
+ktl_slice_m(eq)(struct ktl_slice const a, struct ktl_slice const b)
 {
     return (a.len == b.len) &&
            (0 == memcmp(a.ptr, b.ptr, a.len * sizeof(a.ptr[0])));

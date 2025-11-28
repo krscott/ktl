@@ -20,7 +20,7 @@ bld() {
             cmake --build build
         )
 
-        if [ "$CMAKE_BUILD_TYPE" = "Debug" ]; then
+        if [ "${CMAKE_BUILD_TYPE:-}" = "Debug" ]; then
             mkdir -p .compile-db
             cp build/compile_commands.json .compile-db
         fi

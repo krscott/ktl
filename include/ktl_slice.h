@@ -29,9 +29,9 @@ KTL_DIAG_PUSH
 KTL_DIAG_IGNORE(-Wundef)
 
 #if ktl_slice_m(_mut)
-#define ktl_const
+#define ktl_Tptr ktl_T *
 #else
-#define ktl_const const
+#define ktl_Tptr ktl_T const *
 #endif
 
 #if ktl_slice_m(_ord)
@@ -69,9 +69,9 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
 
 void ktl_slice_m(sort)(struct ktl_slice slice);
 
-ktl_nodiscard bool ktl_slice_m(bsearch)(
-    struct ktl_slice slice, ktl_T key, ktl_T ktl_const **match
-);
+ktl_nodiscard bool
+    ktl_slice_m(bsearch)(struct ktl_slice slice, ktl_T key, ktl_Tptr *match);
+
 ktl_nodiscard bool ktl_slice_m(bsearch_index)(
     struct ktl_slice slice, ktl_T key, size_t *index
 );
@@ -79,6 +79,6 @@ ktl_nodiscard bool ktl_slice_m(bsearch_index)(
 #endif // ktl_ord
 
 #undef ktl_ord
-#undef ktl_const
+#undef ktl_Tptr
 #undef ktl_T
 #undef ktl_slice_m

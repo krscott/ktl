@@ -12,9 +12,9 @@ KTL_DIAG_PUSH
 KTL_DIAG_IGNORE(-Wundef)
 
 #if ktl_slice_m(_mut)
-#define ktl_const
+#define ktl_Tptr ktl_T *
 #else
-#define ktl_const const
+#define ktl_Tptr ktl_T const *
 #endif
 
 #if ktl_slice_m(_ord)
@@ -136,7 +136,7 @@ void ktl_slice_m(sort)(struct ktl_slice slice)
 }
 
 ktl_nodiscard bool ktl_slice_m(bsearch)(
-    struct ktl_slice const slice, ktl_T const key, ktl_T **const match
+    struct ktl_slice const slice, ktl_T const key, ktl_Tptr *const match
 )
 {
     void *ptr = bsearch(
@@ -166,7 +166,7 @@ ktl_nodiscard bool ktl_slice_m(bsearch_index)(
     struct ktl_slice const slice, ktl_T const key, size_t *const index
 )
 {
-    ktl_T *match;
+    ktl_Tptr match;
     bool const ok = ktl_slice_m(bsearch)(slice, key, &match);
 
     if (ok && index)
@@ -180,6 +180,6 @@ ktl_nodiscard bool ktl_slice_m(bsearch_index)(
 #endif // ktl_ord
 
 #undef ktl_ord
-#undef ktl_const
+#undef ktl_Tptr
 #undef ktl_T
 #undef ktl_slice_m

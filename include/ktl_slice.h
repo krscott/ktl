@@ -34,9 +34,6 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 #endif
 #define ktl_T ktl_slice_m(_type)
 
-KTL_DIAG_PUSH
-KTL_DIAG_IGNORE(-Wundef)
-
 static_assert(
     _Generic(
         (struct ktl_slice){0}.ptr, ktl_T *: 1, ktl_T const *: 1, default: 0
@@ -45,6 +42,9 @@ static_assert(
         ktl_T
     ) "`"
 );
+
+KTL_DIAG_PUSH
+KTL_DIAG_IGNORE(-Wundef)
 
 #ifdef ktl_Tptr
 #undef ktl_Tptr

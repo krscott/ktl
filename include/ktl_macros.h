@@ -7,6 +7,9 @@
 #define ktl_nodiscard
 #endif
 
+#define KTL_STRINGIFY_(x) #x
+#define KTL_STRINGIFY(x) KTL_STRINGIFY_(x)
+
 #define KTL_CAT2(a, b) a##b
 #define KTL_CAT3(a, b, c) a##b##c
 #define KTL_CAT4(a, b, c, d) a##b##c##d

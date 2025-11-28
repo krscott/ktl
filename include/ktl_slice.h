@@ -2,6 +2,7 @@
 
 #include "ktl_macros.h"
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -15,8 +16,8 @@ struct dev_slice
 };
 static int dev_slice__cmp(int a, int b) { return a - b; }
 #define dev_slice__type int
-#define dev_slice__ord 1
 #define dev_slice__mut 1
+#define dev_slice__ord 1
 #define ktl_slice dev_slice
 #endif
 
@@ -28,10 +29,27 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 KTL_DIAG_PUSH
 KTL_DIAG_IGNORE(-Wundef)
 
+static_assert(
+    _Generic(
+        (struct ktl_slice){0}.ptr, ktl_T *: 1, ktl_T const *: 1, default: 0
+    ),
+    "Wrong type: `#define " KTL_STRINGIFY(ktl_slice) "__type " KTL_STRINGIFY(
+        ktl_T
+    ) "`"
+);
+
 #if ktl_slice_m(_mut)
 #define ktl_Tptr ktl_T *
+static_assert(
+    _Generic((struct ktl_slice){0}.ptr, ktl_T const *: 0, default: 1),
+    "Remove `#define " KTL_STRINGIFY(ktl_slice) "__mut 1`"
+);
 #else
 #define ktl_Tptr ktl_T const *
+static_assert(
+    _Generic((struct ktl_slice){0}.ptr, ktl_T *: 0, default: 1),
+    "Add `#define " KTL_STRINGIFY(ktl_slice) "__mut 1`"
+);
 #endif
 
 #if ktl_slice_m(_ord)

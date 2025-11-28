@@ -46,10 +46,14 @@ static_assert(
 KTL_DIAG_PUSH
 KTL_DIAG_IGNORE(-Wundef)
 
+#ifdef ktl_mut
+#undef ktl_mut
+#endif
 #ifdef ktl_Tptr
 #undef ktl_Tptr
 #endif
 #if ktl_slice_m(_mut)
+#define ktl_mut
 #define ktl_Tptr ktl_T *
 static_assert(
     _Generic((struct ktl_slice){0}.ptr, ktl_T const *: 0, default: 1),
@@ -114,7 +118,9 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
 
 #ifdef ktl_ord
 
+#ifdef ktl_mut
 void ktl_slice_m(sort)(struct ktl_slice slice);
+#endif
 
 ktl_nodiscard bool
     ktl_slice_m(bsearch)(struct ktl_slice slice, ktl_T key, ktl_Tptr *match);

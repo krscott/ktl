@@ -141,6 +141,7 @@ static int ktl_slice_m(_void_cmp_)( //
     return ktl_slice_m(_cmp)(*(ktl_T const *)a, *(ktl_T const *)b);
 }
 
+#ifdef ktl_mut
 void ktl_slice_m(sort)(struct ktl_slice slice)
 {
     assert(slice.len == 0 || slice.ptr);
@@ -155,6 +156,7 @@ void ktl_slice_m(sort)(struct ktl_slice slice)
         );
     }
 }
+#endif
 
 ktl_nodiscard bool ktl_slice_m(bsearch)(
     struct ktl_slice const slice, ktl_T const key, ktl_Tptr *const match

@@ -15,6 +15,12 @@
 #define KTL_CAT4(a, b, c, d) a##b##c##d
 #define KTL_CAT5(a, b, c, d, e) a##b##c##d##e
 
+#define KTL_GET0_(x, ...) x
+#define KTL_GET1_(x, y, ...) y
+
+#define KTL_GET0(...) KTL_GET0_(__VA_ARGS__, )
+#define KTL_GET1(...) KTL_GET1_(__VA_ARGS__, , )
+
 #define KTL_TEMPLATE(T, name) KTL_CAT3(T, _, name)
 
 #define ktl_countof(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -30,5 +36,10 @@
 #define KTL_DIAG_POP
 #define KTL_DIAG_IGNORE(warningName)
 #endif
+
+typedef struct
+{
+    char dummy_;
+} ktl_marker;
 
 #endif

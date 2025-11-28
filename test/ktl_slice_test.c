@@ -26,6 +26,7 @@ struct str
     size_t len;
 };
 #define str__type char
+#define str__terminated 1, '\0'
 #define ktl_slice str
 #include "ktl_slice.c"
 #undef ktl_slice
@@ -240,6 +241,14 @@ static void t_bsearch_null(void)
     assert(!intslice_bsearch_index(a, 0, NULL));
 }
 
+static void t_from_terminated(void)
+{
+    char const *s = "Hello, World!";
+    struct str a = str_from_terminated(s);
+    assert(a.ptr == s);
+    assert(a.len == strlen(s));
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -264,6 +273,7 @@ int main(void)
     RUN(t_sort_null);
     RUN(t_bsearch);
     RUN(t_bsearch_null);
+    RUN(t_from_terminated);
 
     return 0;
 }

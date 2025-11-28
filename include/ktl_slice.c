@@ -5,25 +5,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
-#define ktl_T ktl_slice_m(_type)
+#ifdef ktl_sentinel
+ktl_nodiscard struct ktl_slice ktl_slice_m(from_terminated)(ktl_Tptr const ptr)
+{
+    assert(ptr);
 
-KTL_DIAG_PUSH
-KTL_DIAG_IGNORE(-Wundef)
+    size_t len = 0;
+    for (; ptr[len] != ktl_sentinel; ++len)
+    {
+    }
 
-#if ktl_slice_m(_mut)
-#define ktl_Tptr ktl_T *
-#else
-#define ktl_Tptr ktl_T const *
+    return (struct ktl_slice){
+        .ptr = ptr,
+        .len = len,
+    };
+}
 #endif
-
-#if ktl_slice_m(_ord)
-#define ktl_ord 1
-#else
-#define ktl_ord 0
-#endif
-
-KTL_DIAG_POP
 
 ktl_nodiscard bool
 ktl_slice_m(contains)(struct ktl_slice const slice, ktl_T const x)
@@ -131,7 +128,7 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     return ok;
 }
 
-#if ktl_ord
+#ifdef ktl_ord
 
 static int ktl_slice_m(_void_cmp_)( //
     void const *a,
@@ -189,8 +186,3 @@ ktl_nodiscard bool ktl_slice_m(bsearch_index)(
 }
 
 #endif // ktl_ord
-
-#undef ktl_ord
-#undef ktl_Tptr
-#undef ktl_T
-#undef ktl_slice_m

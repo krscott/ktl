@@ -97,9 +97,9 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice *const tail
 )
 {
-    bool const ok = index < slice.len;
+    bool const ok = index <= slice.len;
 
-    if (ok)
+    if (index < slice.len)
     {
         if (head)
         {
@@ -114,6 +114,17 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
                 .ptr = &slice.ptr[index],
                 .len = slice.len - index,
             };
+        }
+    }
+    else
+    {
+        if (head)
+        {
+            *head = slice;
+        }
+        if (tail)
+        {
+            *tail = (struct ktl_slice){0};
         }
     }
 

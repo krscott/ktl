@@ -116,12 +116,23 @@ static void t_split_at(void)
     assert(0 == strncmp(head.ptr, "Hello World", head.len));
     assert(tail.len == 1);
     assert(0 == strncmp(tail.ptr, "!", tail.len));
+
+    assert(str_split_at(a, a.len, &head, &tail));
+    assert(head.len == a.len);
+    assert(0 == strncmp(head.ptr, "Hello World!", head.len));
+    assert(tail.len == 0);
 }
 
 static void t_split_at_null(void)
 {
     struct str a = {0};
-    assert(!str_split_at(a, 0, NULL, NULL));
+    struct str head;
+    struct str tail;
+    assert(str_split_at(a, 0, &head, &tail));
+    assert(head.len == 0);
+    assert(tail.len == 0);
+
+    assert(!str_split_at(a, 1, &head, &tail));
 }
 
 static void t_eq(void)

@@ -1,3 +1,4 @@
+#include "mock_allocator.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -7,21 +8,6 @@
 #ifdef NDEBUG
 #error "Asserts are disabled in release"
 #endif
-
-struct mock_allocator
-{
-    bool fail;
-};
-static void *
-mock_allocator_realloc(struct mock_allocator *allocator, void *ptr, size_t size)
-{
-    return allocator->fail ? NULL : realloc(ptr, size);
-}
-static void mock_allocator_free(struct mock_allocator *allocator, void *ptr)
-{
-    (void)allocator;
-    free(ptr);
-}
 
 struct strbuf
 {

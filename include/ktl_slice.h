@@ -29,60 +29,60 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 #endif
 #define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
 
-#ifdef ktl_T
-#undef ktl_T
+#ifdef ktl_slice_T
+#undef ktl_slice_T
 #endif
-#define ktl_T ktl_slice_m(_type)
+#define ktl_slice_T ktl_slice_m(_type)
 
 static_assert(
     _Generic(
-        (struct ktl_slice){0}.ptr, ktl_T *: 1, ktl_T const *: 1, default: 0
+        (struct ktl_slice){0}.ptr, ktl_slice_T *: 1, ktl_slice_T const *: 1, default: 0
     ),
     "Wrong type: `#define " KTL_STRINGIFY(ktl_slice) "__type " KTL_STRINGIFY(
-        ktl_T
+        ktl_slice_T
     ) "`"
 );
 
 KTL_DIAG_PUSH
 KTL_DIAG_IGNORE(-Wundef)
 
-#ifdef ktl_mut
-#undef ktl_mut
+#ifdef ktl_slice_mut
+#undef ktl_slice_mut
 #endif
-#ifdef ktl_Tptr
-#undef ktl_Tptr
+#ifdef ktl_slice_Tptr
+#undef ktl_slice_Tptr
 #endif
 #if ktl_slice_m(_mut)
-#define ktl_mut
-#define ktl_Tptr ktl_T *
+#define ktl_slice_mut
+#define ktl_slice_Tptr ktl_slice_T *
 static_assert(
-    _Generic((struct ktl_slice){0}.ptr, ktl_T const *: 0, default: 1),
+    _Generic((struct ktl_slice){0}.ptr, ktl_slice_T const *: 0, default: 1),
     "Remove `#define " KTL_STRINGIFY(ktl_slice) "__mut " KTL_STRINGIFY(
         ktl_slice_m(_mut)
     ) "`"
 );
 #else
-#define ktl_Tptr ktl_T const *
+#define ktl_slice_Tptr ktl_slice_T const *
 static_assert(
-    _Generic((struct ktl_slice){0}.ptr, ktl_T *: 0, default: 1),
+    _Generic((struct ktl_slice){0}.ptr, ktl_slice_T *: 0, default: 1),
     "Add `#define " KTL_STRINGIFY(ktl_slice) "__mut 1`"
 );
 #endif
 
-#ifdef ktl_ord
-#undef ktl_ord
+#ifdef ktl_slice_ord
+#undef ktl_slice_ord
 #endif
 #if ktl_slice_m(_ord)
-#define ktl_ord
+#define ktl_slice_ord
 #endif
 
-#ifdef ktl_sentinel
-#undef ktl_sentinel
+#ifdef ktl_slice_sentinel
+#undef ktl_slice_sentinel
 #endif
 #if KTL_GET0(ktl_slice_m(_terminated))
-#define ktl_sentinel KTL_GET1(ktl_slice_m(_terminated), (ktl_marker){0})
+#define ktl_slice_sentinel KTL_GET1(ktl_slice_m(_terminated), (ktl_marker){0})
 static_assert(
-    _Generic(ktl_sentinel, ktl_marker: 0, default: 1),
+    _Generic(ktl_slice_sentinel, ktl_marker: 0, default: 1),
     "Add `#define " KTL_STRINGIFY(ktl_slice) "__terminated 1, <sentinel-value>`"
 );
 #endif
@@ -91,20 +91,20 @@ KTL_DIAG_POP
 
 // Prototypes
 
-#ifdef ktl_sentinel
-ktl_nodiscard struct ktl_slice ktl_slice_m(from_terminated)(ktl_Tptr ptr);
+#ifdef ktl_slice_sentinel
+ktl_nodiscard struct ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr ptr);
 #endif
 
-ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, ktl_T x);
+ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, ktl_slice_T x);
 
 ktl_nodiscard bool
-    ktl_slice_m(find_index)(struct ktl_slice slice, ktl_T x, size_t *index);
+    ktl_slice_m(find_index)(struct ktl_slice slice, ktl_slice_T x, size_t *index);
 
 ktl_nodiscard bool ktl_slice_m(eq)(struct ktl_slice a, struct ktl_slice b);
 
 ktl_nodiscard bool ktl_slice_m(split)(
     struct ktl_slice slice,
-    ktl_T x,
+    ktl_slice_T x,
     struct ktl_slice *head,
     struct ktl_slice *tail
 );
@@ -116,17 +116,17 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice *tail
 );
 
-#ifdef ktl_ord
+#ifdef ktl_slice_ord
 
-#ifdef ktl_mut
+#ifdef ktl_slice_mut
 void ktl_slice_m(sort)(struct ktl_slice slice);
 #endif
 
 ktl_nodiscard bool
-    ktl_slice_m(bsearch)(struct ktl_slice slice, ktl_T key, ktl_Tptr *match);
+    ktl_slice_m(bsearch)(struct ktl_slice slice, ktl_slice_T key, ktl_slice_Tptr *match);
 
 ktl_nodiscard bool ktl_slice_m(bsearch_index)(
-    struct ktl_slice slice, ktl_T key, size_t *index
+    struct ktl_slice slice, ktl_slice_T key, size_t *index
 );
 
-#endif // ktl_ord
+#endif // ktl_slice_ord

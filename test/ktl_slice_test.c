@@ -45,6 +45,21 @@ static void t_eq(void)
     assert(!intslice_eq(a, d));
 }
 
+static void t_eq_null(void)
+{
+
+    int arr_a[] = {1, 2, 3, 4, 5};
+    struct intslice a = {
+        .ptr = arr_a,
+        .len = ktl_countof(arr_a),
+    };
+    struct intslice b = {0};
+    struct intslice c = {0};
+
+    assert(!intslice_eq(a, b));
+    assert(intslice_eq(b, c));
+}
+
 static void t_sort(void)
 {
     int ints[] = {5, 10, 7, 1, -12};
@@ -102,6 +117,7 @@ static void t_bsearch(void)
 int main(void)
 {
     RUN(t_eq);
+    RUN(t_eq_null);
     RUN(t_sort);
     RUN(t_bsearch);
 

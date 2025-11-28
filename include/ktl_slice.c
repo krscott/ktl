@@ -6,7 +6,8 @@
 #include <string.h>
 
 #ifdef ktl_slice_sentinel
-ktl_nodiscard struct ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
+ktl_nodiscard struct ktl_slice
+ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
 {
     assert(ptr);
 
@@ -159,7 +160,9 @@ void ktl_slice_m(sort)(struct ktl_slice slice)
 #endif
 
 ktl_nodiscard bool ktl_slice_m(bsearch)(
-    struct ktl_slice const slice, ktl_slice_T const key, ktl_slice_Tptr *const match
+    struct ktl_slice const slice,
+    ktl_slice_T const key,
+    ktl_slice_Tptr *const match
 )
 {
     assert(slice.len == 0 || slice.ptr);

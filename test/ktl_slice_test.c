@@ -35,6 +35,26 @@ static void t_contains_null(void)
     assert(!intslice_contains(a, 0));
 }
 
+static void t_find_index(void)
+{
+    int arr_a[] = {100, 55, 33};
+    struct intslice a = {
+        .ptr = arr_a,
+        .len = ktl_countof(arr_a),
+    };
+
+    size_t index = 0;
+    assert(intslice_find_index(a, 33, &index));
+    assert(index == 2);
+    assert(!intslice_find_index(a, 0, &index));
+}
+
+static void t_find_index_null(void)
+{
+    struct intslice a = {0};
+    assert(!intslice_find_index(a, 0, NULL));
+}
+
 static void t_eq(void)
 {
     int arr_a[] = {1, 2, 3, 4, 5};
@@ -152,6 +172,8 @@ int main(void)
 {
     RUN(t_contains);
     RUN(t_contains_null);
+    RUN(t_find_index);
+    RUN(t_find_index_null);
     RUN(t_eq);
     RUN(t_eq_null);
     RUN(t_sort);

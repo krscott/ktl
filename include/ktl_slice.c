@@ -10,12 +10,22 @@
 ktl_nodiscard bool
 ktl_slice_m(contains)(struct ktl_slice const slice, KTL_T const x)
 {
+    return ktl_slice_m(find_index)(slice, x, NULL);
+}
+
+ktl_nodiscard bool
+ktl_slice_m(find_index)(struct ktl_slice slice, KTL_T x, size_t *index)
+{
     bool ok = false;
 
     for (size_t i = 0; i < slice.len; ++i)
     {
         if (slice.ptr[i] == x)
         {
+            if (index)
+            {
+                *index = i;
+            }
             ok = true;
             break;
         }

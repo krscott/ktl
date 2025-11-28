@@ -22,6 +22,8 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 #define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
 
 ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, KTL_T x);
+ktl_nodiscard bool
+    ktl_slice_m(find_index)(struct ktl_slice slice, KTL_T x, size_t *index);
 ktl_nodiscard bool ktl_slice_m(eq)(struct ktl_slice a, struct ktl_slice b);
 
 #if ktl_slice_m(_ord)

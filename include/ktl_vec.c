@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef KTL_VEC_GROW_NUMERATOR
 #define KTL_VEC_GROW_NUMERATOR 3
@@ -79,5 +80,38 @@ ktl_vec_alloc_ok ktl_vec_m(reserve)(struct ktl_vec *const vec, size_t const n)
     }
 #else
     return success;
+#endif
+}
+
+ktl_vec_alloc_ok ktl_vec_m(append_array)(
+    struct ktl_vec *const vec, ktl_vec_T const *const arr, size_t const n
+)
+{
+#ifdef ktl_vec_infallible
+
+    ktl_vec_m(reserve)(vec, n);
+    memmove(&vec->ptr[vec->len], arr, sizeof(vec->ptr[0]) * n);
+    vec->len += n;
+
+#ifdef ktl_vec_sentinel
+    vec->ptr[vec->len] = ktl_vec_sentinel;
+#endif
+
+#else
+
+    bool const success = ktl_vec_m(reserve)(vec, n);
+
+    if (success)
+    {
+        memmove(&vec->ptr[vec->len], arr, sizeof(vec->ptr[0]) * n);
+        vec->len += n;
+
+#ifdef ktl_vec_sentinel
+        vec->ptr[vec->len] = ktl_vec_sentinel;
+#endif
+    }
+
+    return success;
+
 #endif
 }

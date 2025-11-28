@@ -21,6 +21,19 @@ struct strbuf
 #include "ktl_vec.c"
 #undef ktl_vec
 
+struct strbuf_inf
+{
+    char *ptr;
+    size_t len;
+    size_t cap;
+};
+#define strbuf_inf__type char
+#define strbuf_inf__terminated true, '\0'
+#define strbuf_inf__infallible_alloc true
+#define ktl_vec strbuf_inf
+#include "ktl_vec.c"
+#undef ktl_vec
+
 static void t_deinit_null(void)
 {
     struct strbuf buf = {0};
@@ -44,6 +57,75 @@ static void t_reserve(void)
     strbuf_deinit(&buf);
 }
 
+static void t_reserve_infallible(void)
+{
+    struct strbuf_inf buf = {0};
+
+    strbuf_inf_reserve(&buf, 100);
+    assert(buf.ptr != NULL);
+    assert(buf.len == 0);
+    assert(buf.cap >= 100);
+
+    // Don't allocate if cap does not need to increase
+    size_t const old_cap = buf.cap;
+    strbuf_inf_reserve(&buf, 100);
+    assert(buf.cap == old_cap);
+
+    strbuf_inf_deinit(&buf);
+}
+
+static void t_append_array(void)
+{
+    char const *s = "foobar";
+    size_t const s_len = strlen(s);
+
+    struct strbuf buf = {0};
+
+    assert(strbuf_append_array(&buf, s, s_len));
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len);
+    assert(buf.cap >= s_len);
+    assert(buf.ptr[buf.len] == '\0');
+
+    assert(strbuf_append_array(&buf, s, s_len));
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len * 2);
+    assert(buf.cap >= s_len * 2);
+    assert(buf.ptr[buf.len] == '\0');
+
+    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+    strbuf_deinit(&buf);
+}
+
+static void t_append_array_infallible(void)
+{
+    char const *s = "foobar";
+    size_t const s_len = strlen(s);
+
+    struct strbuf_inf buf = {0};
+
+    strbuf_inf_append_array(&buf, s, s_len);
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len);
+    assert(buf.cap >= s_len);
+    assert(buf.ptr[buf.len] == '\0');
+
+    strbuf_inf_append_array(&buf, s, s_len);
+    assert(buf.ptr != NULL);
+    assert(buf.ptr != s);
+    assert(buf.len == s_len * 2);
+    assert(buf.cap >= s_len * 2);
+    assert(buf.ptr[buf.len] == '\0');
+
+    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+    strbuf_inf_deinit(&buf);
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -56,6 +138,9 @@ int main(void)
 {
     RUN(t_deinit_null);
     RUN(t_reserve);
+    RUN(t_reserve_infallible);
+    RUN(t_append_array);
+    RUN(t_append_array_infallible);
 
     return 0;
 }

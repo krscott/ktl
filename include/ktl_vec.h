@@ -100,3 +100,7 @@ KTL_DIAG_POP
 void ktl_vec_m(deinit)(struct ktl_vec *vec);
 
 ktl_vec_alloc_ok ktl_vec_m(reserve)(struct ktl_vec *vec, size_t n);
+
+ktl_vec_alloc_ok ktl_vec_m(append_array)(
+    struct ktl_vec *vec, ktl_vec_T const *arr, size_t n
+);

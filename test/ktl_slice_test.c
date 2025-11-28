@@ -45,14 +45,22 @@ static void t_bsearch(void)
     assert(intslice_bsearch(a, 22, NULL));
     assert(!intslice_bsearch(a, 10, NULL));
 
-    int *match = NULL;
-    assert(intslice_bsearch(a, 99, &match));
-    assert(match);
-    assert(*match == 99);
+    {
+        int *match = NULL;
+        assert(intslice_bsearch(a, 99, &match));
+        assert(match);
+        assert(*match == 99);
 
-    assert(ints[4] == 99);
-    *match = 100;
-    assert(ints[4] == 100);
+        assert(ints[4] == 99);
+        *match = 100;
+        assert(ints[4] == 100);
+    }
+
+    {
+        size_t idx = 0;
+        assert(intslice_bsearch_index(a, 33, &idx));
+        assert(a.ptr[idx] == 33);
+    }
 }
 
 #define RUN(test)                                                              \

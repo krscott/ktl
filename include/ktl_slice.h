@@ -25,8 +25,10 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 
 void ktl_slice_m(sort)(struct ktl_slice slice);
 
-ktl_nodiscard bool ktl_slice_m(bsearch)(
-    struct ktl_slice const slice, KTL_T const key, KTL_T **const match
+ktl_nodiscard bool
+    ktl_slice_m(bsearch)(struct ktl_slice slice, KTL_T key, KTL_T **match);
+ktl_nodiscard bool ktl_slice_m(bsearch_index)(
+    struct ktl_slice slice, KTL_T key, size_t *index
 );
 
 #endif // ord

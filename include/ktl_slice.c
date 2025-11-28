@@ -48,6 +48,21 @@ ktl_nodiscard bool ktl_slice_m(bsearch)(
     return (ptr != NULL);
 }
 
+ktl_nodiscard bool ktl_slice_m(bsearch_index)(
+    struct ktl_slice const slice, KTL_T const key, size_t *const index
+)
+{
+    KTL_T *match;
+    bool const ok = ktl_slice_m(bsearch)(slice, key, &match);
+
+    if (ok)
+    {
+        *index = (size_t)(match - slice.ptr);
+    }
+
+    return ok;
+}
+
 #endif // ord
 
 #undef ktl_slice_m

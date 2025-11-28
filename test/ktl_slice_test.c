@@ -17,6 +17,34 @@ struct intslice
 #define ktl_slice intslice
 #include "ktl_slice.c"
 
+static void t_eq(void)
+{
+    int arr_a[] = {1, 2, 3, 4, 5};
+    int arr_b[] = {1, 2, 3, 4, 5};
+    int arr_c[] = {1, 2, 3, 4, 55};
+    int arr_d[] = {1, 2, 3, 4, 5, 6};
+    struct intslice a = {
+        .ptr = arr_a,
+        .len = ktl_countof(arr_a),
+    };
+    struct intslice b = {
+        .ptr = arr_b,
+        .len = ktl_countof(arr_b),
+    };
+    struct intslice c = {
+        .ptr = arr_c,
+        .len = ktl_countof(arr_c),
+    };
+    struct intslice d = {
+        .ptr = arr_d,
+        .len = ktl_countof(arr_d),
+    };
+
+    assert(intslice_eq(a, b));
+    assert(!intslice_eq(a, c));
+    assert(!intslice_eq(a, d));
+}
+
 static void t_sort(void)
 {
     int ints[] = {5, 10, 7, 1, -12};
@@ -73,6 +101,7 @@ static void t_bsearch(void)
 
 int main(void)
 {
+    RUN(t_eq);
     RUN(t_sort);
     RUN(t_bsearch);
 

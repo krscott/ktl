@@ -16,4 +16,16 @@
 
 #define ktl_countof(arr) (sizeof(arr) / sizeof(arr[0]))
 
+#if defined(__GNUC__) || defined(__clang__)
+#define KTL_PRAGMA(X) _Pragma(#X)
+#define KTL_DIAG_PUSH KTL_PRAGMA(GCC diagnostic push)
+#define KTL_DIAG_POP KTL_PRAGMA(GCC diagnostic pop)
+#define KTL_DIAG_IGNORE(warningName)                                           \
+    KTL_PRAGMA(GCC diagnostic ignored #warningName)
+#else
+#define KTL_DIAG_PUSH
+#define KTL_DIAG_POP
+#define KTL_DIAG_IGNORE(warningName)
+#endif
+
 #endif

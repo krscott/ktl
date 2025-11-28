@@ -15,18 +15,18 @@ struct intslice
 };
 #define intslice__type int
 #define intslice__ord 1
+#define intslice__mut 1
 #define ktl_slice intslice
 #include "ktl_slice.c"
 #undef ktl_slice
 
 struct str
 {
-    char *ptr;
+    char const *ptr;
     size_t len;
 };
 #define str__type char
 #define ktl_slice str
-#define str__ord 0
 #include "ktl_slice.c"
 #undef ktl_slice
 

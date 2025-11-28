@@ -5,17 +5,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define KTL_T KTL_TEMPLATE(ktl_slice, _type)
 #define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
+#define ktl_T ktl_slice_m(_type)
+
+KTL_DIAG_PUSH
+KTL_DIAG_IGNORE(-Wundef)
+
+#if ktl_slice_m(_mut)
+#define ktl_const
+#else
+#define ktl_const const
+#endif
+
+#if ktl_slice_m(_ord)
+#define ktl_ord 1
+#else
+#define ktl_ord 0
+#endif
+
+KTL_DIAG_POP
 
 ktl_nodiscard bool
-ktl_slice_m(contains)(struct ktl_slice const slice, KTL_T const x)
+ktl_slice_m(contains)(struct ktl_slice const slice, ktl_T const x)
 {
     return ktl_slice_m(find_index)(slice, x, NULL);
 }
 
 ktl_nodiscard bool
-ktl_slice_m(find_index)(struct ktl_slice slice, KTL_T x, size_t *index)
+ktl_slice_m(find_index)(struct ktl_slice slice, ktl_T x, size_t *index)
 {
     bool ok = false;
 
@@ -44,7 +61,7 @@ ktl_slice_m(eq)(struct ktl_slice const a, struct ktl_slice const b)
 
 ktl_nodiscard bool ktl_slice_m(split)(
     struct ktl_slice const slice,
-    KTL_T const x,
+    ktl_T const x,
     struct ktl_slice *const head,
     struct ktl_slice *const tail
 )
@@ -103,14 +120,14 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     return ok;
 }
 
-#if ktl_slice_m(_ord)
+#if ktl_ord
 
 static int ktl_slice_m(_void_cmp_)( //
     void const *a,
     void const *b
 )
 {
-    return ktl_slice_m(_cmp)(*(KTL_T const *)a, *(KTL_T const *)b);
+    return ktl_slice_m(_cmp)(*(ktl_T const *)a, *(ktl_T const *)b);
 }
 
 void ktl_slice_m(sort)(struct ktl_slice slice)
@@ -119,7 +136,7 @@ void ktl_slice_m(sort)(struct ktl_slice slice)
 }
 
 ktl_nodiscard bool ktl_slice_m(bsearch)(
-    struct ktl_slice const slice, KTL_T const key, KTL_T **const match
+    struct ktl_slice const slice, ktl_T const key, ktl_T **const match
 )
 {
     void *ptr = bsearch(
@@ -134,7 +151,7 @@ ktl_nodiscard bool ktl_slice_m(bsearch)(
     {
         if (ptr)
         {
-            *match = (KTL_T *)ptr;
+            *match = (ktl_T *)ptr;
         }
         else
         {
@@ -146,10 +163,10 @@ ktl_nodiscard bool ktl_slice_m(bsearch)(
 }
 
 ktl_nodiscard bool ktl_slice_m(bsearch_index)(
-    struct ktl_slice const slice, KTL_T const key, size_t *const index
+    struct ktl_slice const slice, ktl_T const key, size_t *const index
 )
 {
-    KTL_T *match;
+    ktl_T *match;
     bool const ok = ktl_slice_m(bsearch)(slice, key, &match);
 
     if (ok && index)
@@ -160,7 +177,9 @@ ktl_nodiscard bool ktl_slice_m(bsearch_index)(
     return ok;
 }
 
-#endif // ord
+#endif // ktl_ord
 
+#undef ktl_ord
+#undef ktl_const
+#undef ktl_T
 #undef ktl_slice_m
-#undef KTL_T

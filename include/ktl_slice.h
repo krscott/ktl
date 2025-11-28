@@ -5,7 +5,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-// Default types for development
+// Defaults (dev-only)
+
 #ifndef ktl_slice
 struct dev_slice
 {
@@ -15,22 +16,48 @@ struct dev_slice
 static int dev_slice__cmp(int a, int b) { return a - b; }
 #define dev_slice__type int
 #define dev_slice__ord 1
+#define dev_slice__mut 1
 #define ktl_slice dev_slice
 #endif
 
-#define KTL_T KTL_TEMPLATE(ktl_slice, _type)
-#define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
+// Macros
 
-ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, KTL_T x);
+#define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
+#define ktl_T ktl_slice_m(_type)
+
+KTL_DIAG_PUSH
+KTL_DIAG_IGNORE(-Wundef)
+
+#if ktl_slice_m(_mut)
+#define ktl_const
+#else
+#define ktl_const const
+#endif
+
+#if ktl_slice_m(_ord)
+#define ktl_ord 1
+#else
+#define ktl_ord 0
+#endif
+
+KTL_DIAG_POP
+
+// Prototypes
+
+ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, ktl_T x);
+
 ktl_nodiscard bool
-    ktl_slice_m(find_index)(struct ktl_slice slice, KTL_T x, size_t *index);
+    ktl_slice_m(find_index)(struct ktl_slice slice, ktl_T x, size_t *index);
+
 ktl_nodiscard bool ktl_slice_m(eq)(struct ktl_slice a, struct ktl_slice b);
+
 ktl_nodiscard bool ktl_slice_m(split)(
     struct ktl_slice slice,
-    KTL_T x,
+    ktl_T x,
     struct ktl_slice *head,
     struct ktl_slice *tail
 );
+
 ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice slice,
     size_t index,
@@ -38,17 +65,20 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice *tail
 );
 
-#if ktl_slice_m(_ord)
+#if ktl_ord
 
 void ktl_slice_m(sort)(struct ktl_slice slice);
 
-ktl_nodiscard bool
-    ktl_slice_m(bsearch)(struct ktl_slice slice, KTL_T key, KTL_T **match);
+ktl_nodiscard bool ktl_slice_m(bsearch)(
+    struct ktl_slice slice, ktl_T key, ktl_T ktl_const **match
+);
 ktl_nodiscard bool ktl_slice_m(bsearch_index)(
-    struct ktl_slice slice, KTL_T key, size_t *index
+    struct ktl_slice slice, ktl_T key, size_t *index
 );
 
-#endif // ord
+#endif // ktl_ord
 
+#undef ktl_ord
+#undef ktl_const
+#undef ktl_T
 #undef ktl_slice_m
-#undef KTL_T

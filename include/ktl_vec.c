@@ -1,4 +1,5 @@
 #include "ktl_vec.h"
+#include "ktl_macros.h"
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -141,7 +142,8 @@ ktl_vec_m(append_terminated)(struct ktl_vec *vec, ktl_vec_T const *arr)
 }
 #endif
 
-ktl_vec_alloc_ok ktl_vec_m(push)(struct ktl_vec *vec, ktl_vec_T elem)
+ktl_vec_alloc_ok
+ktl_vec_m(push)(struct ktl_vec *const vec, ktl_vec_T const elem)
 {
 #ifdef ktl_vec_infallible
 
@@ -164,4 +166,18 @@ ktl_vec_alloc_ok ktl_vec_m(push)(struct ktl_vec *vec, ktl_vec_T elem)
     return ok;
 
 #endif
+}
+
+ktl_nodiscard bool
+ktl_vec_m(pop)(struct ktl_vec *const vec, ktl_vec_T *const out)
+{
+    bool const ok = vec->len > 0;
+    if (ok)
+    {
+        *out = vec->ptr[--(vec->len)];
+#ifdef ktl_vec_sentinel
+        vec->ptr[vec->len] = ktl_vec_sentinel;
+#endif
+    }
+    return ok;
 }

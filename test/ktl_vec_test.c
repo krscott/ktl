@@ -227,6 +227,35 @@ static void t_push_infallible(void)
     strbuf_inf_deinit(&buf);
 }
 
+static void t_pop(void)
+{
+    struct strbuf buf = {0};
+    char c = '\0';
+
+    assert(!strbuf_pop(&buf, &c));
+
+    assert(strbuf_append_terminated(&buf, "Hello!"));
+    assert(buf.len == 6);
+
+    assert(strbuf_pop(&buf, &c));
+    assert(buf.len == 5);
+    assert(c == '!');
+    assert(0 == strcmp(buf.ptr, "Hello"));
+
+    assert(strbuf_pop(&buf, &c));
+    assert(strbuf_pop(&buf, &c));
+    assert(strbuf_pop(&buf, &c));
+    assert(strbuf_pop(&buf, &c));
+    assert(strbuf_pop(&buf, &c));
+
+    assert(buf.len == 0);
+    assert(c == 'H');
+
+    assert(!strbuf_pop(&buf, &c));
+
+    strbuf_deinit(&buf);
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -247,6 +276,7 @@ int main(void)
     RUN(t_append_terminated_infallible);
     RUN(t_push);
     RUN(t_push_infallible);
+    RUN(t_pop);
 
     return 0;
 }

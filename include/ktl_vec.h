@@ -21,7 +21,7 @@ struct dev_vec
 #define dev_vec__allocator true
 #define dev_vec__realloc(vec, p, size) realloc((p), (size))
 #define dev_vec__free(vec, p) free(p)
-#define dev_vec__infallible_alloc true
+// #define dev_vec__infallible_alloc true
 #define ktl_vec dev_vec
 #endif
 
@@ -110,3 +110,4 @@ ktl_vec_alloc_ok
 #endif
 
 ktl_vec_alloc_ok ktl_vec_m(push)(struct ktl_vec *vec, ktl_vec_T elem);
+ktl_nodiscard bool ktl_vec_m(pop)(struct ktl_vec *vec, ktl_vec_T *out);

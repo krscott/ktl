@@ -36,7 +36,7 @@ struct strview
 #include "ktl_slice.c"
 #undef ktl_slice
 
-// Fallible version
+// Fallible vec
 
 struct strbuf
 {
@@ -64,7 +64,7 @@ struct strbuf
 #undef ktl_slice
 #undef ktl_vec
 
-// Infallible version
+// Infallible vec
 
 struct strbuf_inf
 {

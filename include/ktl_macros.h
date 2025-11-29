@@ -22,6 +22,7 @@
 #define KTL_GET1(...) KTL_GET1_(__VA_ARGS__, , )
 
 #define KTL_TEMPLATE(T, name) KTL_CAT3(T, _, name)
+#define KTL_TEMPLATE2(T, name, U) KTL_CAT5(T, _, name, _, U)
 
 #define ktl_countof(arr) (sizeof(arr) / sizeof(arr[0]))
 

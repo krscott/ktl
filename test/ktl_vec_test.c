@@ -9,6 +9,8 @@
 #error "Asserts are disabled in release"
 #endif
 
+// Fallible version
+
 struct strbuf
 {
     struct mock_allocator allocator;
@@ -23,9 +25,24 @@ struct strbuf
 #define strbuf__realloc(vec, p, size)                                          \
     mock_allocator_realloc(&(vec)->allocator, p, size)
 #define strbuf__free(vec, p) mock_allocator_free(&(vec)->allocator, p)
+
+struct str
+{
+    char const *ptr;
+    size_t len;
+};
+#define str__type char
+#define str__terminated true, '\0'
+
 #define ktl_vec strbuf
+#define ktl_slice str
+#include "ktl_slice.c"
 #include "ktl_vec.c"
+#include "ktl_vec_slice.c"
 #undef ktl_vec
+#undef ktl_slice
+
+// Infallible version
 
 struct strbuf_inf
 {
@@ -36,8 +53,13 @@ struct strbuf_inf
 #define strbuf_inf__type char
 #define strbuf_inf__terminated true, '\0'
 #define strbuf_inf__infallible_alloc true
+
 #define ktl_vec strbuf_inf
+#define ktl_slice str
+// ktl_slice already defined above
 #include "ktl_vec.c"
+#include "ktl_vec_slice.c"
+#undef ktl_slice
 #undef ktl_vec
 
 static void t_deinit_null(void)
@@ -256,6 +278,49 @@ static void t_pop(void)
     strbuf_deinit(&buf);
 }
 
+static void t_vec_as_slice(void)
+{
+    struct strbuf buf = {0};
+    assert(strbuf_append_terminated(&buf, "foo"));
+    assert(strbuf_append_terminated(&buf, "bar"));
+
+    struct str str = strbuf_as_str(&buf);
+    assert(str.len == 6);
+    assert(0 == strcmp(str.ptr, "foobar"));
+
+    strbuf_deinit(&buf);
+}
+
+static void t_vec_append_slice(void)
+{
+    struct str a = str_from_terminated("dead");
+    struct str b = str_from_terminated("beef");
+
+    struct strbuf buf = {0};
+    assert(strbuf_append_str(&buf, a));
+    assert(strbuf_append_str(&buf, b));
+
+    assert(buf.len == 8);
+    assert(0 == strcmp(buf.ptr, "deadbeef"));
+
+    strbuf_deinit(&buf);
+}
+
+static void t_vec_append_slice_infallible(void)
+{
+    struct str a = str_from_terminated("dead");
+    struct str b = str_from_terminated("beef");
+
+    struct strbuf_inf buf = {0};
+    strbuf_inf_append_str(&buf, a);
+    strbuf_inf_append_str(&buf, b);
+
+    assert(buf.len == 8);
+    assert(0 == strcmp(buf.ptr, "deadbeef"));
+
+    strbuf_inf_deinit(&buf);
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -277,6 +342,9 @@ int main(void)
     RUN(t_push);
     RUN(t_push_infallible);
     RUN(t_pop);
+    RUN(t_vec_as_slice);
+    RUN(t_vec_append_slice);
+    RUN(t_vec_append_slice_infallible);
 
     return 0;
 }

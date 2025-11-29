@@ -108,3 +108,5 @@ ktl_vec_alloc_ok
 ktl_vec_alloc_ok
     ktl_vec_m(append_terminated)(struct ktl_vec *vec, ktl_vec_T const *arr);
 #endif
+
+ktl_vec_alloc_ok ktl_vec_m(push)(struct ktl_vec *vec, ktl_vec_T elem);

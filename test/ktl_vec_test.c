@@ -197,6 +197,36 @@ static void t_append_terminated_infallible(void)
     strbuf_inf_deinit(&buf);
 }
 
+static void t_push(void)
+{
+    struct strbuf buf = {0};
+
+    assert(strbuf_append_terminated(&buf, "Hello"));
+    assert(buf.len == 5);
+
+    assert(strbuf_push(&buf, '!'));
+    assert(buf.len == 6);
+    assert(buf.ptr[buf.len - 1] == '!');
+    assert(0 == strcmp(buf.ptr, "Hello!"));
+
+    strbuf_deinit(&buf);
+}
+
+static void t_push_infallible(void)
+{
+    struct strbuf_inf buf = {0};
+
+    strbuf_inf_append_terminated(&buf, "Hello");
+    assert(buf.len == 5);
+
+    strbuf_inf_push(&buf, '!');
+    assert(buf.len == 6);
+    assert(buf.ptr[buf.len - 1] == '!');
+    assert(0 == strcmp(buf.ptr, "Hello!"));
+
+    strbuf_inf_deinit(&buf);
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -215,6 +245,8 @@ int main(void)
     RUN(t_append_infallible);
     RUN(t_append_terminated);
     RUN(t_append_terminated_infallible);
+    RUN(t_push);
+    RUN(t_push_infallible);
 
     return 0;
 }

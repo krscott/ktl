@@ -140,3 +140,28 @@ ktl_vec_m(append_terminated)(struct ktl_vec *vec, ktl_vec_T const *arr)
 #endif
 }
 #endif
+
+ktl_vec_alloc_ok ktl_vec_m(push)(struct ktl_vec *vec, ktl_vec_T elem)
+{
+#ifdef ktl_vec_infallible
+
+    ktl_vec_m(reserve)(vec, 1);
+    vec->ptr[vec->len++] = elem;
+#ifdef ktl_vec_sentinel
+    vec->ptr[vec->len] = ktl_vec_sentinel;
+#endif
+
+#else
+
+    bool const ok = ktl_vec_m(reserve)(vec, 1);
+    if (ok)
+    {
+        vec->ptr[vec->len++] = elem;
+#ifdef ktl_vec_sentinel
+        vec->ptr[vec->len] = ktl_vec_sentinel;
+#endif
+    }
+    return ok;
+
+#endif
+}

@@ -9,6 +9,33 @@
 #error "Asserts are disabled in release"
 #endif
 
+// str slice types
+
+struct str
+{
+    char *ptr;
+    size_t len;
+};
+#define str__type char
+#define str__mut 1
+#define str__terminated true, '\0'
+
+#define ktl_slice str
+#include "ktl_slice.c"
+#undef ktl_slice
+
+struct strview
+{
+    char const *ptr;
+    size_t len;
+};
+#define strview__type char
+#define strview__terminated true, '\0'
+
+#define ktl_slice strview
+#include "ktl_slice.c"
+#undef ktl_slice
+
 // Fallible version
 
 struct strbuf
@@ -26,21 +53,16 @@ struct strbuf
     mock_allocator_realloc(&(vec)->allocator, p, size)
 #define strbuf__free(vec, p) mock_allocator_free(&(vec)->allocator, p)
 
-struct str
-{
-    char const *ptr;
-    size_t len;
-};
-#define str__type char
-#define str__terminated true, '\0'
-
 #define ktl_vec strbuf
-#define ktl_slice str
-#include "ktl_slice.c"
 #include "ktl_vec.c"
+// Supports converting to both str and strview
+#define ktl_slice str
 #include "ktl_vec_slice.c"
-#undef ktl_vec
 #undef ktl_slice
+#define ktl_slice strview
+#include "ktl_vec_slice.c"
+#undef ktl_slice
+#undef ktl_vec
 
 // Infallible version
 
@@ -56,7 +78,6 @@ struct strbuf_inf
 
 #define ktl_vec strbuf_inf
 #define ktl_slice str
-// ktl_slice already defined above
 #include "ktl_vec.c"
 #include "ktl_vec_slice.c"
 #undef ktl_slice
@@ -284,9 +305,17 @@ static void t_vec_as_slice(void)
     assert(strbuf_append_terminated(&buf, "foo"));
     assert(strbuf_append_terminated(&buf, "bar"));
 
-    struct str str = strbuf_as_str(&buf);
-    assert(str.len == 6);
-    assert(0 == strcmp(str.ptr, "foobar"));
+    {
+        struct str str = strbuf_as_str(&buf);
+        assert(str.len == 6);
+        assert(0 == strcmp(str.ptr, "foobar"));
+    }
+
+    {
+        struct strview sv = strbuf_as_strview(&buf);
+        assert(sv.len == 6);
+        assert(0 == strcmp(sv.ptr, "foobar"));
+    }
 
     strbuf_deinit(&buf);
 }
@@ -294,11 +323,11 @@ static void t_vec_as_slice(void)
 static void t_vec_append_slice(void)
 {
     struct str a = str_from_terminated("dead");
-    struct str b = str_from_terminated("beef");
+    struct strview b = strview_from_terminated("beef");
 
     struct strbuf buf = {0};
     assert(strbuf_append_str(&buf, a));
-    assert(strbuf_append_str(&buf, b));
+    assert(strbuf_append_strview(&buf, b));
 
     assert(buf.len == 8);
     assert(0 == strcmp(buf.ptr, "deadbeef"));

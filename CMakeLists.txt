@@ -52,8 +52,5 @@ else()
   add_compile_options(-Os)
 endif()
 
-# add_subdirectory(src)
-add_subdirectory(app)
-
 enable_testing()
 add_subdirectory(test)

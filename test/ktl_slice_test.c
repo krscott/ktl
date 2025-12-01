@@ -16,8 +16,9 @@ struct intslice
 #define intslice__type int
 #define intslice__mut true
 #define intslice__ord true
+#define intslice__impl true
 #define ktl_slice intslice
-#include "ktl/array/slice.c"
+#include "ktl/array/slice.h"
 #undef ktl_slice
 
 struct str
@@ -27,8 +28,9 @@ struct str
 };
 #define str__type char
 #define str__terminated true, '\0'
+#define str__impl true
 #define ktl_slice str
-#include "ktl/array/slice.c"
+#include "ktl/array/slice.h"
 #undef ktl_slice
 
 static void t_contains(void)

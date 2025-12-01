@@ -17,11 +17,12 @@ struct str
     size_t len;
 };
 #define str__type char
-#define str__mut 1
+#define str__mut true
 #define str__terminated true, '\0'
+#define str__impl true
 
 #define ktl_slice str
-#include "ktl/array/slice.c"
+#include "ktl/array/slice.h"
 #undef ktl_slice
 
 struct strview
@@ -31,9 +32,10 @@ struct strview
 };
 #define strview__type char
 #define strview__terminated true, '\0'
+#define strview__impl true
 
 #define ktl_slice strview
-#include "ktl/array/slice.c"
+#include "ktl/array/slice.h"
 #undef ktl_slice
 
 // Fallible vec
@@ -52,15 +54,16 @@ struct strbuf
 #define strbuf__realloc(vec, p, size)                                          \
     mock_allocator_realloc(&(vec)->allocator, p, size)
 #define strbuf__free(vec, p) mock_allocator_free(&(vec)->allocator, p)
+#define strbuf__impl true
 
 #define ktl_vec strbuf
-#include "ktl/array/vec.c"
+#include "ktl/array/vec.h"
 // Supports converting to both str and strview
 #define ktl_slice str
-#include "ktl/array/vec_slice.c"
+#include "ktl/array/vec_slice.h"
 #undef ktl_slice
 #define ktl_slice strview
-#include "ktl/array/vec_slice.c"
+#include "ktl/array/vec_slice.h"
 #undef ktl_slice
 #undef ktl_vec
 
@@ -75,11 +78,12 @@ struct strbuf_inf
 #define strbuf_inf__type char
 #define strbuf_inf__terminated true, '\0'
 #define strbuf_inf__infallible_alloc true
+#define strbuf_inf__impl true
 
 #define ktl_vec strbuf_inf
 #define ktl_slice str
-#include "ktl/array/vec.c"
-#include "ktl/array/vec_slice.c"
+#include "ktl/array/vec.h"
+#include "ktl/array/vec_slice.h"
 #undef ktl_slice
 #undef ktl_vec
 

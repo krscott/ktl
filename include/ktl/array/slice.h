@@ -11,7 +11,6 @@
 // Defaults (dev-only)
 
 #ifndef ktl_slice
-static int dev_slice__cmp(int a, int b) { return a - b; }
 #define dev_slice__impl true
 #define dev_slice__type int
 #define dev_slice__mut true

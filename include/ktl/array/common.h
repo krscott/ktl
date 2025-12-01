@@ -12,7 +12,8 @@ struct dev_array
     int *ptr;
     size_t len;
 };
-static int dev_array__cmp(int a, int b) { return a - b; }
+static int int_cmp(int const *a, int const *b) { return *a - *b; }
+#define int__ord true
 #define dev_array__type int
 #define dev_array__mut true
 #define dev_array__ord true
@@ -40,14 +41,9 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_array_Tptr ktl_array_T const *
 #endif
 
-#undef ktl_array_ord
-#if ktl_array_m(_ord)
-#define ktl_array_ord
-#endif
-
-#undef ktl_array_sentinel
-#if KTL_GET0(ktl_array_m(_terminated))
-#define ktl_array_sentinel KTL_GET1(ktl_array_m(_terminated), (ktl_marker){0})
+#undef ktl_array_T_cmp
+#if KTL_TEMPLATE(ktl_array_T, _ord)
+#define ktl_array_T_cmp KTL_TEMPLATE(ktl_array_T, cmp)
 #endif
 
 #undef ktl_array_impl
@@ -59,7 +55,7 @@ KTL_DIAG_POP
 
 // Prototypes
 
-#ifdef ktl_array_ord
+#ifdef ktl_array_T_cmp
 
 #ifdef ktl_array_mut
 void ktl_array_m(sort)(struct ktl_array slice);
@@ -73,7 +69,7 @@ ktl_nodiscard bool ktl_array_m(bsearch_index)(
     struct ktl_array slice, ktl_array_T key, size_t *index
 );
 
-#endif // ktl_array_ord
+#endif // ktl_array_T_cmp
 
 //
 // IMPLEMENTATION
@@ -81,14 +77,14 @@ ktl_nodiscard bool ktl_array_m(bsearch_index)(
 
 #ifdef ktl_array_impl
 
-#ifdef ktl_array_ord
+#ifdef ktl_array_T_cmp
 
 static int ktl_array_m(_void_cmp_)( //
     void const *a,
     void const *b
 )
 {
-    return ktl_array_m(_cmp)(*(ktl_array_T const *)a, *(ktl_array_T const *)b);
+    return ktl_array_T_cmp((ktl_array_T const *)a, (ktl_array_T const *)b);
 }
 
 #ifdef ktl_array_mut
@@ -163,6 +159,6 @@ ktl_nodiscard bool ktl_array_m(bsearch_index)(
     return ok;
 }
 
-#endif // ktl_array_ord
+#endif // ktl_array_T_cmp
 
 #endif // ktl_array_impl

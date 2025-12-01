@@ -7,10 +7,11 @@
 #error "Asserts are disabled in release"
 #endif
 
-static int intslice__cmp(int a, int b) { return a - b; }
+static int int_cmp(int const *a, int const *b) { return *a - *b; }
+#define int__ord true
+
 #define intslice__type int
 #define intslice__mut true
-#define intslice__ord true
 #define intslice__impl true
 
 #define ktl_slice intslice

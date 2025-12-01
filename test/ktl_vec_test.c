@@ -9,6 +9,11 @@
 #error "Asserts are disabled in release"
 #endif
 
+// char cmp
+
+static int char_cmp(char const *a, char const *b) { return *a - *b; }
+#define char__ord true
+
 // str slice types
 
 #define str__type char
@@ -52,9 +57,7 @@
 
 // Infallible vec
 
-static int strbuf_inf__cmp(char a, char b) { return a - b; }
 #define strbuf_inf__type char
-#define strbuf_inf__ord true
 #define strbuf_inf__mut true // required for ord sort
 #define strbuf_inf__terminated true, '\0'
 #define strbuf_inf__infallible_allocator true

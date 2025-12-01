@@ -18,7 +18,6 @@ static int int_cmp(int const *a, int const *b) { return *a - *b; }
 // #define int__eq true
 #define dev_array__type int
 #define dev_array__mut true
-#define dev_array__ord true
 #define dev_array__impl true
 #define ktl_array dev_array
 #endif

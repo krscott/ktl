@@ -11,11 +11,6 @@
 // Defaults (dev-only)
 
 #ifndef ktl_slice
-struct dev_slice
-{
-    int *ptr;
-    size_t len;
-};
 static int dev_slice__cmp(int a, int b) { return a - b; }
 #define dev_slice__impl true
 #define dev_slice__type int
@@ -27,80 +22,55 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 
 // Macros
 
-#ifdef ktl_slice_m
-#undef ktl_slice_m
-#endif
-#define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
-
-#ifdef ktl_slice_T
-#undef ktl_slice_T
-#endif
-#define ktl_slice_T ktl_slice_m(_type)
-
-static_assert(
-    _Generic(
-        (struct ktl_slice){0}.ptr,
-        ktl_slice_T *: 1,
-        ktl_slice_T const *: 1,
-        default: 0
-    ),
-    "Wrong type: `#define " KTL_STRINGIFY(ktl_slice) "__type " KTL_STRINGIFY(
-        ktl_slice_T
-    ) "`"
-);
-
 KTL_DIAG_PUSH
 KTL_DIAG_IGNORE(-Wundef)
 
-#ifdef ktl_slice_mut
+#undef ktl_slice_m
+#define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)
+
+#undef ktl_slice_T
+#define ktl_slice_T ktl_slice_m(_type)
+
 #undef ktl_slice_mut
-#endif
-#ifdef ktl_slice_Tptr
 #undef ktl_slice_Tptr
-#endif
 #if ktl_slice_m(_mut)
 #define ktl_slice_mut
 #define ktl_slice_Tptr ktl_slice_T *
-static_assert(
-    _Generic((struct ktl_slice){0}.ptr, ktl_slice_T const *: 0, default: 1),
-    "Remove `#define " KTL_STRINGIFY(ktl_slice) "__mut " KTL_STRINGIFY(
-        ktl_slice_m(_mut)
-    ) "`"
-);
 #else
 #define ktl_slice_Tptr ktl_slice_T const *
-static_assert(
-    _Generic((struct ktl_slice){0}.ptr, ktl_slice_T *: 0, default: 1),
-    "Add `#define " KTL_STRINGIFY(ktl_slice) "__mut 1`"
-);
 #endif
 
-#ifdef ktl_slice_ord
 #undef ktl_slice_ord
-#endif
 #if ktl_slice_m(_ord)
 #define ktl_slice_ord
 #endif
 
-#ifdef ktl_slice_sentinel
 #undef ktl_slice_sentinel
-#endif
 #if KTL_GET0(ktl_slice_m(_terminated))
 #define ktl_slice_sentinel KTL_GET1(ktl_slice_m(_terminated), (ktl_marker){0})
-static_assert(
-    _Generic(ktl_slice_sentinel, ktl_marker: 0, default: 1),
-    "Add `#define " KTL_STRINGIFY(ktl_slice) "__terminated 1, <sentinel-value>`"
-);
 #endif
 
-#ifdef ktl_slice_impl
 #undef ktl_slice_impl
-#endif
 #if ktl_slice_m(_impl)
 #define ktl_slice_impl
 #endif
 
 KTL_DIAG_POP
+
+// Type
+
+struct ktl_slice
+{
+    ktl_slice_Tptr ptr;
+    size_t len;
+};
+
+#ifdef ktl_slice_sentinel
+static_assert(
+    _Generic(ktl_slice_sentinel, ktl_marker: 0, default: 1),
+    "Add `#define " KTL_STRINGIFY(ktl_slice) "__terminated 1, <sentinel-value>`"
+);
+#endif
 
 // Prototypes
 

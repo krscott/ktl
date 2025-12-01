@@ -11,11 +11,6 @@
 
 // str slice types
 
-struct str
-{
-    char *ptr;
-    size_t len;
-};
 #define str__type char
 #define str__mut true
 #define str__terminated true, '\0'
@@ -25,11 +20,6 @@ struct str
 #include "ktl/array/slice.h"
 #undef ktl_slice
 
-struct strview
-{
-    char const *ptr;
-    size_t len;
-};
 #define strview__type char
 #define strview__terminated true, '\0'
 #define strview__impl true

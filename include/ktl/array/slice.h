@@ -107,21 +107,11 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice *tail
 );
 
-#ifdef ktl_slice_ord
+// Common
 
-#ifdef ktl_slice_mut
-void ktl_slice_m(sort)(struct ktl_slice slice);
-#endif
-
-ktl_nodiscard bool ktl_slice_m(bsearch)(
-    struct ktl_slice slice, ktl_slice_T key, ktl_slice_Tptr *match
-);
-
-ktl_nodiscard bool ktl_slice_m(bsearch_index)(
-    struct ktl_slice slice, ktl_slice_T key, size_t *index
-);
-
-#endif // ktl_slice_ord
+#define ktl_array ktl_slice
+#include "ktl/array/common.h"
+#undef ktl_array
 
 //
 // IMPLEMENTATION
@@ -255,89 +245,5 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
 
     return ok;
 }
-
-#ifdef ktl_slice_ord
-
-static int ktl_slice_m(_void_cmp_)( //
-    void const *a,
-    void const *b
-)
-{
-    return ktl_slice_m(_cmp)(*(ktl_slice_T const *)a, *(ktl_slice_T const *)b);
-}
-
-#ifdef ktl_slice_mut
-void ktl_slice_m(sort)(struct ktl_slice slice)
-{
-    assert(slice.len == 0 || slice.ptr);
-
-    if (slice.len > 0)
-    {
-        qsort(
-            slice.ptr,
-            slice.len,
-            sizeof(slice.ptr[0]),
-            ktl_slice_m(_void_cmp_)
-        );
-    }
-}
-#endif
-
-ktl_nodiscard bool ktl_slice_m(bsearch)(
-    struct ktl_slice const slice,
-    ktl_slice_T const key,
-    ktl_slice_Tptr *const match
-)
-{
-    assert(slice.len == 0 || slice.ptr);
-
-    void *ptr;
-
-    if (slice.len > 0)
-    {
-        ptr = bsearch(
-            (void const *)&key,
-            (void const *)slice.ptr,
-            slice.len,
-            sizeof(slice.ptr[0]),
-            ktl_slice_m(_void_cmp_)
-        );
-    }
-    else
-    {
-        ptr = NULL;
-    }
-
-    if (match)
-    {
-        if (ptr)
-        {
-            *match = (ktl_slice_T *)ptr;
-        }
-        else
-        {
-            *match = NULL;
-        }
-    }
-
-    return (ptr != NULL);
-}
-
-ktl_nodiscard bool ktl_slice_m(bsearch_index)(
-    struct ktl_slice const slice, ktl_slice_T const key, size_t *const index
-)
-{
-    ktl_slice_Tptr match;
-    bool const ok = ktl_slice_m(bsearch)(slice, key, &match);
-
-    if (ok && index)
-    {
-        *index = (size_t)(match - slice.ptr);
-    }
-
-    return ok;
-}
-
-#endif // ktl_slice_ord
 
 #endif // ktl_slice_impl

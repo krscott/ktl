@@ -54,7 +54,7 @@
 
 #define strbuf_inf__type char
 #define strbuf_inf__terminated true, '\0'
-#define strbuf_inf__infallible_alloc true
+#define strbuf_inf__infallible_allocator true
 #define strbuf_inf__impl true
 
 #define ktl_vec strbuf_inf

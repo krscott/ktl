@@ -22,7 +22,7 @@ struct dev_allocator
 #define dev_vec__local_allocator true, struct dev_allocator
 #define dev_vec__realloc(vec, p, size) realloc((p), (size))
 #define dev_vec__free(vec, p) free(p)
-// #define dev_vec__infallible_alloc true
+// #define dev_vec__infallible_allocator true
 #define dev_vec__impl true
 #define ktl_vec dev_vec
 #endif
@@ -65,7 +65,7 @@ KTL_DIAG_IGNORE(-Wundef)
 
 #undef ktl_vec_alloc_ok
 #undef ktl_vec_infallible
-#if ktl_vec_m(_infallible_alloc)
+#if ktl_vec_m(_infallible_allocator)
 #define ktl_vec_infallible
 #define ktl_vec_alloc_ok void
 #else

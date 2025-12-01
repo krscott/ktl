@@ -21,7 +21,7 @@ struct str
 #define str__terminated true, '\0'
 
 #define ktl_slice str
-#include "ktl_slice.c"
+#include "ktl/array/slice.c"
 #undef ktl_slice
 
 struct strview
@@ -33,7 +33,7 @@ struct strview
 #define strview__terminated true, '\0'
 
 #define ktl_slice strview
-#include "ktl_slice.c"
+#include "ktl/array/slice.c"
 #undef ktl_slice
 
 // Fallible vec
@@ -54,13 +54,13 @@ struct strbuf
 #define strbuf__free(vec, p) mock_allocator_free(&(vec)->allocator, p)
 
 #define ktl_vec strbuf
-#include "ktl_vec.c"
+#include "ktl/array/vec.c"
 // Supports converting to both str and strview
 #define ktl_slice str
-#include "ktl_vec_slice.c"
+#include "ktl/array/vec_slice.c"
 #undef ktl_slice
 #define ktl_slice strview
-#include "ktl_vec_slice.c"
+#include "ktl/array/vec_slice.c"
 #undef ktl_slice
 #undef ktl_vec
 
@@ -78,8 +78,8 @@ struct strbuf_inf
 
 #define ktl_vec strbuf_inf
 #define ktl_slice str
-#include "ktl_vec.c"
-#include "ktl_vec_slice.c"
+#include "ktl/array/vec.c"
+#include "ktl/array/vec_slice.c"
 #undef ktl_slice
 #undef ktl_vec
 

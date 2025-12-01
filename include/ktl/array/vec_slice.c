@@ -1,5 +1,5 @@
-#include "ktl_vec_slice.h"
-#include "ktl_macros.h"
+#include "ktl/array/vec_slice.h"
+#include "ktl/macros.h"
 #include <assert.h>
 #include <stddef.h>
 

@@ -1,6 +1,6 @@
 // No header guard - repeatable include
 
-#include "ktl_macros.h"
+#include "ktl/macros.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -9,8 +9,8 @@
 // Defaults (dev-only)
 
 #if !defined(ktl_vec) && !defined(ktl_slice)
-#include "ktl_slice.h"
-#include "ktl_vec.h"
+#include "ktl/array/slice.h"
+#include "ktl/array/vec.h"
 #endif
 
 #ifdef ktl_vec_slice_m

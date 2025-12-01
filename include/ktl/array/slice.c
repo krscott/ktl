@@ -1,5 +1,5 @@
-#include "ktl_slice.h"
-#include "ktl_macros.h"
+#include "ktl/array/slice.h"
+#include "ktl/macros.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>

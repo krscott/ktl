@@ -1,4 +1,4 @@
-#include "ktl_macros.h"
+#include "ktl/macros.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,7 +17,7 @@ struct intslice
 #define intslice__mut true
 #define intslice__ord true
 #define ktl_slice intslice
-#include "ktl_slice.c"
+#include "ktl/array/slice.c"
 #undef ktl_slice
 
 struct str
@@ -28,7 +28,7 @@ struct str
 #define str__type char
 #define str__terminated true, '\0'
 #define ktl_slice str
-#include "ktl_slice.c"
+#include "ktl/array/slice.c"
 #undef ktl_slice
 
 static void t_contains(void)

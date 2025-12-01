@@ -290,13 +290,13 @@ static void t_vec_as_slice(void)
     assert(strbuf_append_terminated(&buf, "bar"));
 
     {
-        struct str str = strbuf_as_str(&buf);
+        struct str str = strbuf_as_str(buf);
         assert(str.len == 6);
         assert(0 == strcmp(str.ptr, "foobar"));
     }
 
     {
-        struct strview sv = strbuf_as_strview(&buf);
+        struct strview sv = strbuf_as_strview(buf);
         assert(sv.len == 6);
         assert(0 == strcmp(sv.ptr, "foobar"));
     }

@@ -18,7 +18,8 @@ struct dev_allocator
 };
 #define dev_vec__type int
 #define dev_vec__terminated true, 0
-#define dev_vec__allocator true, struct dev_allocator
+#define dev_vec__custom_allocator true
+#define dev_vec__local_allocator true, struct dev_allocator
 #define dev_vec__realloc(vec, p, size) realloc((p), (size))
 #define dev_vec__free(vec, p) free(p)
 // #define dev_vec__infallible_alloc true
@@ -45,16 +46,21 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_vec_sentinel KTL_GET1(ktl_vec_m(_terminated), (ktl_marker){0})
 #endif
 
-#undef ktl_vec_allocator
 #undef ktl_vec_realloc
 #undef ktl_vec_free
-#if KTL_GET0(ktl_vec_m(_allocator))
-#define ktl_vec_allocator KTL_GET1(ktl_vec_m(_allocator), ktl_marker)
+#if KTL_GET0(ktl_vec_m(_custom_allocator)) ||                                  \
+    KTL_GET0(ktl_vec_m(_local_allocator))
 #define ktl_vec_realloc(vec, p, size) ktl_vec_m(_realloc)((vec), (p), (size))
 #define ktl_vec_free(vec, p) ktl_vec_m(_free)((vec), (p))
 #else
 #define ktl_vec_realloc(vec, p, size) realloc((p), (size))
 #define ktl_vec_free(vec, p) free(p)
+#endif
+
+#undef ktl_vec_local_allocator
+#if KTL_GET0(ktl_vec_m(_local_allocator))
+#define ktl_vec_local_allocator                                                \
+    KTL_GET1(ktl_vec_m(_local_allocator), ktl_marker)
 #endif
 
 #undef ktl_vec_alloc_ok
@@ -77,8 +83,8 @@ KTL_DIAG_POP
 
 struct ktl_vec
 {
-#ifdef ktl_vec_allocator
-    ktl_vec_allocator allocator;
+#ifdef ktl_vec_local_allocator
+    ktl_vec_local_allocator allocator;
 #endif
     ktl_vec_Tptr ptr;
     size_t len;
@@ -93,10 +99,12 @@ static_assert(
     ) "__terminated true, <sentinel-value>`"
 );
 #endif
-#ifdef ktl_vec_allocator
+#ifdef ktl_vec_local_allocator
 static_assert(
     _Generic(((struct ktl_vec *)0)->allocator, ktl_marker: 0, default: 1),
-    "Add `#define " KTL_STRINGIFY(ktl_vec) "__allocator true, <allocator-type>`"
+    "Add `#define " KTL_STRINGIFY(
+        ktl_vec
+    ) "__local_allocator true, <allocator-type>`"
 );
 #endif
 

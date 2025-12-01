@@ -32,7 +32,7 @@
 
 #define strbuf__type char
 #define strbuf__terminated true, '\0'
-#define strbuf__allocator true, struct mock_allocator
+#define strbuf__local_allocator true, struct mock_allocator
 // #define strbuf__realloc(vec, p, size) realloc((p), (size))
 #define strbuf__realloc(vec, p, size)                                          \
     mock_allocator_realloc(&(vec)->allocator, p, size)

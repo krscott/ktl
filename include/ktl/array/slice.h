@@ -59,6 +59,13 @@ KTL_DIAG_POP
 
 // Type
 
+/**
+ * Generic slice type
+ *
+ * Fields:
+ * - ptr: Pointer to array
+ * - len: Length of array
+ */
 struct ktl_slice
 {
     ktl_slice_Tptr ptr;

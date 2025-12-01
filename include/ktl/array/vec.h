@@ -81,14 +81,23 @@ KTL_DIAG_POP
 
 // Type
 
+/**
+ * Generic vec type
+ *
+ * Fields:
+ * - ptr: Pointer to array
+ * - len: Length of array
+ * - cap: Allocated capacity
+ * - allocator (optional): Allocator handle
+ */
 struct ktl_vec
 {
-#ifdef ktl_vec_local_allocator
-    ktl_vec_local_allocator allocator;
-#endif
     ktl_vec_Tptr ptr;
     size_t len;
     size_t cap;
+#ifdef ktl_vec_local_allocator
+    ktl_vec_local_allocator allocator;
+#endif
 };
 
 #ifdef ktl_vec_sentinel

@@ -9,8 +9,8 @@
 // Defaults (dev-only)
 
 #if !defined(ktl_vec) && !defined(ktl_slice)
-#include "ktl/array/slice.h"
-#include "ktl/array/vec.h"
+#include "ktl/struct/slice.h"
+#include "ktl/struct/vec.h"
 #endif
 
 #ifdef ktl_vec_slice_m

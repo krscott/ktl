@@ -22,7 +22,7 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define str__impl true
 
 #define ktl_slice str
-#include "ktl/array/slice.h"
+#include "ktl/struct/slice.h"
 #undef ktl_slice
 
 #define strview__type char
@@ -30,7 +30,7 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define strview__impl true
 
 #define ktl_slice strview
-#include "ktl/array/slice.h"
+#include "ktl/struct/slice.h"
 #undef ktl_slice
 
 // Fallible vec
@@ -45,13 +45,13 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define strbuf__impl true
 
 #define ktl_vec strbuf
-#include "ktl/array/vec.h"
+#include "ktl/struct/vec.h"
 // Supports converting to both str and strview
 #define ktl_slice str
-#include "ktl/array/vec_slice.h"
+#include "ktl/trait/vec_slice.h"
 #undef ktl_slice
 #define ktl_slice strview
-#include "ktl/array/vec_slice.h"
+#include "ktl/trait/vec_slice.h"
 #undef ktl_slice
 #undef ktl_vec
 
@@ -65,8 +65,8 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 
 #define ktl_vec strbuf_inf
 #define ktl_slice str
-#include "ktl/array/vec.h"
-#include "ktl/array/vec_slice.h"
+#include "ktl/struct/vec.h"
+#include "ktl/trait/vec_slice.h"
 #undef ktl_slice
 #undef ktl_vec
 

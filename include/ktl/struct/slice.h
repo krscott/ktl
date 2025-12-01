@@ -77,7 +77,7 @@ static_assert(
 // Common
 
 #define ktl_array ktl_slice
-#include "ktl/array/common.h"
+#include "ktl/trait/array.h"
 #undef ktl_array
 
 // Prototypes

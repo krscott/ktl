@@ -17,7 +17,7 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define intslice__impl true
 
 #define ktl_slice intslice
-#include "ktl/array/slice.h"
+#include "ktl/struct/slice.h"
 #undef ktl_slice
 
 #define str__type char
@@ -25,7 +25,7 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define str__impl true
 
 #define ktl_slice str
-#include "ktl/array/slice.h"
+#include "ktl/struct/slice.h"
 #undef ktl_slice
 
 static void t_contains(void)

@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+// Defaults (dev-only)
+
 #ifndef ktl_array
 struct dev_array
 {
@@ -17,7 +19,6 @@ static int int_cmp(int const *a, int const *b) { return *a - *b; }
 // static int int_eq(int const *a, int const *b) { return *a == *b; }
 // #define int__eq true
 #define dev_array__type int
-#define dev_array__mut true
 #define dev_array__impl true
 #define ktl_array dev_array
 #endif
@@ -70,11 +71,11 @@ void ktl_array_m(sort)(struct ktl_array slice);
 #endif
 
 ktl_nodiscard bool ktl_array_m(bsearch)(
-    struct ktl_array slice, ktl_array_T key, ktl_array_Tptr *match
+    struct ktl_array array, ktl_array_T key, ktl_array_Tptr *match
 );
 
 ktl_nodiscard bool ktl_array_m(bsearch_index)(
-    struct ktl_array slice, ktl_array_T key, size_t *index
+    struct ktl_array array, ktl_array_T key, size_t *index
 );
 
 #endif // ktl_array_T_cmp
@@ -97,7 +98,7 @@ ktl_nodiscard bool ktl_array_m(contains)(struct ktl_array array, ktl_array_T x);
 
 #ifdef ktl_array_T_cmp
 
-static int ktl_array_m(_void_cmp_)( //
+static int ktl_array_m(_array_void_cmp_)( //
     void const *a,
     void const *b
 )
@@ -116,7 +117,7 @@ void ktl_array_m(sort)(struct ktl_array array)
             array.ptr,
             array.len,
             sizeof(array.ptr[0]),
-            ktl_array_m(_void_cmp_)
+            ktl_array_m(_array_void_cmp_)
         );
     }
 }
@@ -139,7 +140,7 @@ ktl_nodiscard bool ktl_array_m(bsearch)(
             (void const *)array.ptr,
             array.len,
             sizeof(array.ptr[0]),
-            ktl_array_m(_void_cmp_)
+            ktl_array_m(_array_void_cmp_)
         );
     }
     else

@@ -6,21 +6,19 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Defaults (dev-only)
 
 #ifndef ktl_vec
-#include <stdlib.h>
-struct dev_vec
+struct dev_allocator
 {
-    int *ptr;
-    size_t len;
-    size_t cap;
+    char dummy;
 };
 #define dev_vec__type int
 #define dev_vec__terminated true, 0
-#define dev_vec__allocator true
+#define dev_vec__allocator true, struct dev_allocator
 #define dev_vec__realloc(vec, p, size) realloc((p), (size))
 #define dev_vec__free(vec, p) free(p)
 // #define dev_vec__infallible_alloc true
@@ -39,33 +37,19 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_vec_T
 #define ktl_vec_T ktl_vec_m(_type)
 
-static_assert(
-    _Generic(
-        (struct ktl_vec){0}.ptr,
-        ktl_vec_T *: 1,
-        ktl_vec_T const *: 1,
-        default: 0
-    ),
-    "Wrong type: `#define " KTL_STRINGIFY(ktl_vec) "__type " KTL_STRINGIFY(
-        ktl_vec_T
-    ) "`"
-);
-
 #undef ktl_vec_Tptr
 #define ktl_vec_Tptr ktl_vec_T *
 
 #undef ktl_vec_sentinel
 #if KTL_GET0(ktl_vec_m(_terminated))
 #define ktl_vec_sentinel KTL_GET1(ktl_vec_m(_terminated), (ktl_marker){0})
-static_assert(
-    _Generic(ktl_vec_sentinel, ktl_marker: 0, default: 1),
-    "Add `#define " KTL_STRINGIFY(ktl_vec) "__terminated 1, <sentinel-value>`"
-);
 #endif
 
+#undef ktl_vec_allocator
 #undef ktl_vec_realloc
 #undef ktl_vec_free
-#if ktl_vec_m(_allocator)
+#if KTL_GET0(ktl_vec_m(_allocator))
+#define ktl_vec_allocator KTL_GET1(ktl_vec_m(_allocator), ktl_marker)
 #define ktl_vec_realloc(vec, p, size) ktl_vec_m(_realloc)((vec), (p), (size))
 #define ktl_vec_free(vec, p) ktl_vec_m(_free)((vec), (p))
 #else
@@ -88,6 +72,33 @@ static_assert(
 #endif
 
 KTL_DIAG_POP
+
+// Type
+
+struct ktl_vec
+{
+#ifdef ktl_vec_allocator
+    ktl_vec_allocator allocator;
+#endif
+    ktl_vec_Tptr ptr;
+    size_t len;
+    size_t cap;
+};
+
+#ifdef ktl_vec_sentinel
+static_assert(
+    _Generic(ktl_vec_sentinel, ktl_marker: 0, default: 1),
+    "Add `#define " KTL_STRINGIFY(
+        ktl_vec
+    ) "__terminated true, <sentinel-value>`"
+);
+#endif
+#ifdef ktl_vec_allocator
+static_assert(
+    _Generic(((struct ktl_vec *)0)->allocator, ktl_marker: 0, default: 1),
+    "Add `#define " KTL_STRINGIFY(ktl_vec) "__allocator true, <allocator-type>`"
+);
+#endif
 
 // Prototypes
 

@@ -30,16 +30,9 @@
 
 // Fallible vec
 
-struct strbuf
-{
-    struct mock_allocator allocator;
-    char *ptr;
-    size_t len;
-    size_t cap;
-};
 #define strbuf__type char
 #define strbuf__terminated true, '\0'
-#define strbuf__allocator true
+#define strbuf__allocator true, struct mock_allocator
 // #define strbuf__realloc(vec, p, size) realloc((p), (size))
 #define strbuf__realloc(vec, p, size)                                          \
     mock_allocator_realloc(&(vec)->allocator, p, size)
@@ -59,12 +52,6 @@ struct strbuf
 
 // Infallible vec
 
-struct strbuf_inf
-{
-    char *ptr;
-    size_t len;
-    size_t cap;
-};
 #define strbuf_inf__type char
 #define strbuf_inf__terminated true, '\0'
 #define strbuf_inf__infallible_alloc true

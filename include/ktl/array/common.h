@@ -14,6 +14,8 @@ struct dev_array
 };
 static int int_cmp(int const *a, int const *b) { return *a - *b; }
 #define int__ord true
+// static int int_eq(int const *a, int const *b) { return *a == *b; }
+// #define int__eq true
 #define dev_array__type int
 #define dev_array__mut true
 #define dev_array__ord true
@@ -46,6 +48,13 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_array_T_cmp KTL_TEMPLATE(ktl_array_T, cmp)
 #endif
 
+#undef ktl_array_T_eq
+#if KTL_TEMPLATE(ktl_array_T, _eq)
+#define ktl_array_T_eq KTL_TEMPLATE(ktl_array_T, eq)
+#elif defined(ktl_array_T_cmp)
+#define ktl_array_T_eq(a, b) (0 == ktl_array_T_cmp((a), (b)))
+#endif
+
 #undef ktl_array_impl
 #if ktl_array_m(_impl)
 #define ktl_array_impl
@@ -70,6 +79,16 @@ ktl_nodiscard bool ktl_array_m(bsearch_index)(
 );
 
 #endif // ktl_array_T_cmp
+
+#ifdef ktl_array_T_eq
+ktl_nodiscard bool ktl_array_m(eq)(struct ktl_array a, struct ktl_array b);
+
+ktl_nodiscard bool ktl_array_m(find_index)(
+    struct ktl_array array, ktl_array_T x, size_t *index
+);
+
+ktl_nodiscard bool ktl_array_m(contains)(struct ktl_array array, ktl_array_T x);
+#endif
 
 //
 // IMPLEMENTATION
@@ -160,5 +179,50 @@ ktl_nodiscard bool ktl_array_m(bsearch_index)(
 }
 
 #endif // ktl_array_T_cmp
+
+#ifdef ktl_array_T_eq
+
+ktl_nodiscard bool
+ktl_array_m(eq)(struct ktl_array const a, struct ktl_array const b)
+{
+    assert(a.len == 0 || a.ptr);
+    assert(b.len == 0 || b.ptr);
+
+    bool eq = (a.len == b.len);
+
+    for (size_t i = 0; eq && i < a.len; ++i)
+    {
+        eq = ktl_array_T_eq(&a.ptr[i], &b.ptr[i]);
+    }
+
+    return eq;
+}
+
+ktl_nodiscard bool
+ktl_array_m(find_index)(struct ktl_array array, ktl_array_T x, size_t *index)
+{
+    bool ok = false;
+
+    for (size_t i = 0; i < array.len; ++i)
+    {
+        if (ktl_array_T_eq(&array.ptr[i], &x))
+        {
+            if (index)
+            {
+                *index = i;
+            }
+            ok = true;
+            break;
+        }
+    }
+
+    return ok;
+}
+
+ktl_nodiscard bool ktl_array_m(contains)(struct ktl_array array, ktl_array_T x)
+{
+    return ktl_array_m(find_index)(array, x, NULL);
+}
+#endif // ktl_array_T_eq
 
 #endif // ktl_array_impl

@@ -7,8 +7,10 @@
 #error "Asserts are disabled in release"
 #endif
 
-static int int_cmp(int const *a, int const *b) { return *a - *b; }
+static inline int int_cmp(int const *a, int const *b) { return *a - *b; }
 #define int__ord true
+static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
+#define char__ord true
 
 #define intslice__type int
 #define intslice__mut true

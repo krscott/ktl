@@ -11,6 +11,8 @@
 // Defaults (dev-only)
 
 #ifndef ktl_slice
+static inline int int_cmp(int const *a, int const *b) { return *a - *b; }
+#define int__ord true
 #define dev_slice__impl true
 #define dev_slice__type int
 #define dev_slice__mut true
@@ -72,26 +74,26 @@ static_assert(
 );
 #endif
 
+// Common
+
+#define ktl_array ktl_slice
+#include "ktl/array/common.h"
+#undef ktl_array
+
 // Prototypes
 
 #ifdef ktl_slice_sentinel
 ktl_nodiscard struct ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr ptr);
 #endif
 
-ktl_nodiscard bool ktl_slice_m(contains)(struct ktl_slice slice, ktl_slice_T x);
-
-ktl_nodiscard bool ktl_slice_m(find_index)(
-    struct ktl_slice slice, ktl_slice_T x, size_t *index
-);
-
-ktl_nodiscard bool ktl_slice_m(eq)(struct ktl_slice a, struct ktl_slice b);
-
+#ifdef ktl_array_T_eq
 ktl_nodiscard bool ktl_slice_m(split)(
     struct ktl_slice slice,
     ktl_slice_T x,
     struct ktl_slice *head,
     struct ktl_slice *tail
 );
+#endif
 
 ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice slice,
@@ -99,12 +101,6 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice *head,
     struct ktl_slice *tail
 );
-
-// Common
-
-#define ktl_array ktl_slice
-#include "ktl/array/common.h"
-#undef ktl_array
 
 //
 // IMPLEMENTATION
@@ -130,43 +126,7 @@ ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
 }
 #endif
 
-ktl_nodiscard bool
-ktl_slice_m(contains)(struct ktl_slice const slice, ktl_slice_T const x)
-{
-    return ktl_slice_m(find_index)(slice, x, NULL);
-}
-
-ktl_nodiscard bool
-ktl_slice_m(find_index)(struct ktl_slice slice, ktl_slice_T x, size_t *index)
-{
-    bool ok = false;
-
-    for (size_t i = 0; i < slice.len; ++i)
-    {
-        if (slice.ptr[i] == x)
-        {
-            if (index)
-            {
-                *index = i;
-            }
-            ok = true;
-            break;
-        }
-    }
-
-    return ok;
-}
-
-ktl_nodiscard bool
-ktl_slice_m(eq)(struct ktl_slice const a, struct ktl_slice const b)
-{
-    assert(a.len == 0 || a.ptr);
-    assert(b.len == 0 || b.ptr);
-
-    return (a.len == b.len) &&
-           (a.len == 0 || 0 == memcmp(a.ptr, b.ptr, a.len * sizeof(a.ptr[0])));
-}
-
+#ifdef ktl_array_T_eq
 ktl_nodiscard bool ktl_slice_m(split)(
     struct ktl_slice const slice,
     ktl_slice_T const x,
@@ -197,6 +157,7 @@ ktl_nodiscard bool ktl_slice_m(split)(
 
     return ok;
 }
+#endif
 
 ktl_nodiscard bool ktl_slice_m(split_at)(
     struct ktl_slice const slice,

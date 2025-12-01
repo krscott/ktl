@@ -15,7 +15,6 @@ static int dev_slice__cmp(int a, int b) { return a - b; }
 #define dev_slice__impl true
 #define dev_slice__type int
 #define dev_slice__mut true
-#define dev_slice__ord true
 #define dev_slice__terminated true, 0
 #define ktl_slice dev_slice
 #endif
@@ -38,11 +37,6 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_slice_Tptr ktl_slice_T *
 #else
 #define ktl_slice_Tptr ktl_slice_T const *
-#endif
-
-#undef ktl_slice_ord
-#if ktl_slice_m(_ord)
-#define ktl_slice_ord
 #endif
 
 #undef ktl_slice_sentinel

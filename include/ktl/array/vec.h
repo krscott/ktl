@@ -134,6 +134,12 @@ ktl_vec_alloc_ok
 ktl_vec_alloc_ok ktl_vec_m(push)(struct ktl_vec *vec, ktl_vec_T elem);
 ktl_nodiscard bool ktl_vec_m(pop)(struct ktl_vec *vec, ktl_vec_T *out);
 
+// Common
+
+#define ktl_array ktl_vec
+#include "ktl/array/common.h"
+#undef ktl_array
+
 //
 // IMPLEMENTATION
 //

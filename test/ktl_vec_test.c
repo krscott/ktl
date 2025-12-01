@@ -52,7 +52,10 @@
 
 // Infallible vec
 
+static int strbuf_inf__cmp(char a, char b) { return a - b; }
 #define strbuf_inf__type char
+#define strbuf_inf__ord true
+#define strbuf_inf__mut true // required for ord sort
 #define strbuf_inf__terminated true, '\0'
 #define strbuf_inf__infallible_allocator true
 #define strbuf_inf__impl true
@@ -331,6 +334,45 @@ static void t_vec_append_slice_infallible(void)
     strbuf_inf_deinit(&buf);
 }
 
+static void t_sort(void)
+{
+    struct strbuf_inf buf = {0};
+    strbuf_inf_append_terminated(&buf, "edcba");
+
+    strbuf_inf_sort(buf);
+
+    assert(0 == strcmp(buf.ptr, "abcde"));
+
+    strbuf_inf_deinit(&buf);
+}
+
+static void t_bsearch(void)
+{
+    struct strbuf_inf buf = {0};
+    strbuf_inf_append_terminated(&buf, "abcde");
+
+    assert(strbuf_inf_bsearch(buf, 'c', NULL));
+    assert(!strbuf_inf_bsearch(buf, 'z', NULL));
+
+    {
+        char *match = NULL;
+        assert(strbuf_inf_bsearch(buf, 'd', &match));
+        assert(match);
+        assert(*match == 'd');
+    }
+
+    assert(strbuf_inf_bsearch_index(buf, 'b', NULL));
+    assert(!strbuf_inf_bsearch_index(buf, 'w', NULL));
+
+    {
+        size_t idx = 0;
+        assert(strbuf_inf_bsearch_index(buf, 'b', &idx));
+        assert(buf.ptr[idx] == 'b');
+    }
+
+    strbuf_inf_deinit(&buf);
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -355,6 +397,8 @@ int main(void)
     RUN(t_vec_as_slice);
     RUN(t_vec_append_slice);
     RUN(t_vec_append_slice_infallible);
+    RUN(t_sort);
+    RUN(t_bsearch);
 
     return 0;
 }

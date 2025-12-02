@@ -48,10 +48,10 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #include "ktl/struct/vec.h"
 // Supports converting to both str and strview
 #define ktl_slice str
-#include "ktl/trait/vec_slice.h"
+#include "ktl/trait/convert_vec_slice.h"
 #undef ktl_slice
 #define ktl_slice strview
-#include "ktl/trait/vec_slice.h"
+#include "ktl/trait/convert_vec_slice.h"
 #undef ktl_slice
 #undef ktl_vec
 
@@ -66,7 +66,7 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define ktl_vec strbuf_inf
 #define ktl_slice str
 #include "ktl/struct/vec.h"
-#include "ktl/trait/vec_slice.h"
+#include "ktl/trait/convert_vec_slice.h"
 #undef ktl_slice
 #undef ktl_vec
 

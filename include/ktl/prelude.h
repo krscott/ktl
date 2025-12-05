@@ -1,9 +1,3 @@
-#ifdef KTL_PRELUDE_IMPL
-#undef KTL_PRELUDE_IMPL
-#define str__impl true
-#define strview__impl true
-#endif
-
 #ifndef KTL_PRELUDE_H_
 #define KTL_PRELUDE_H_
 
@@ -12,6 +6,7 @@
 #include "sys/types.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef uint8_t u8;
 typedef int8_t i8;
@@ -55,6 +50,12 @@ ktl_define_integral(isize);
 #define isize__ord true
 
 // Strings
+
+#ifdef KTL_PRELUDE_IMPL
+#undef KTL_PRELUDE_IMPL
+#define str__impl true
+#define strview__impl true
+#endif
 
 #define str__type char
 #define str__mut true

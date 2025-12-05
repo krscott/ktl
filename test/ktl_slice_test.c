@@ -15,7 +15,6 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define intslice__type int
 #define intslice__mut true
 #define intslice__impl true
-
 #define ktl_slice intslice
 #include "ktl/struct/slice.h"
 #undef ktl_slice
@@ -23,8 +22,23 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define str__type char
 #define str__terminated true, '\0'
 #define str__impl true
-
 #define ktl_slice str
+#include "ktl/struct/slice.h"
+#undef ktl_slice
+static inline int str_cmp(str const *a, str const *b)
+{
+    int x = strncmp(a->ptr, b->ptr, a->len < b->len ? a->len : b->len);
+    if (x == 0)
+    {
+        x = (int)a->len - (int)b->len;
+    }
+    return x;
+}
+#define str__ord true
+
+#define strslice__type str
+#define strslice__impl true
+#define ktl_slice strslice
 #include "ktl/struct/slice.h"
 #undef ktl_slice
 
@@ -246,6 +260,31 @@ static void t_from_terminated(void)
     assert(a.len == strlen(s));
 }
 
+static void t_slice_of_slices(void)
+{
+    str strs[] = {
+        str_from_terminated("Foo"),
+        str_from_terminated("Bar"),
+        str_from_terminated("Qux"),
+    };
+
+    // Make separate string to ensure compiler doesn't use same pointer
+    str splitter = str_from_terminated("Bar2");
+    splitter.len -= 1;
+
+    strslice strings = {
+        .ptr = strs,
+        .len = ktl_countof(strs),
+    };
+
+    strslice head;
+    strslice tail;
+    assert(strslice_split(strings, splitter, &head, &tail));
+
+    assert(str_eq(head.ptr[0], str_from_terminated("Foo")));
+    assert(str_eq(tail.ptr[0], str_from_terminated("Qux")));
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -271,6 +310,7 @@ int main(void)
     RUN(t_bsearch);
     RUN(t_bsearch_null);
     RUN(t_from_terminated);
+    RUN(t_slice_of_slices);
 
     return 0;
 }

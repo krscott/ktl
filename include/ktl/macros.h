@@ -7,6 +7,8 @@
 #define ktl_nodiscard
 #endif
 
+#define KTL_EAT_SEMICOLON _Static_assert(1, "")
+
 #define KTL_STRINGIFY_(x) #x
 #define KTL_STRINGIFY(x) KTL_STRINGIFY_(x)
 
@@ -42,5 +44,12 @@ typedef struct
 {
     char dummy_;
 } ktl_marker;
+
+#define ktl_define_integral(T)                                                 \
+    static inline int T##_cmp(T const *a, T const *b)                          \
+    {                                                                          \
+        return *a < *b ? -1 : (*a > *b ? 1 : 0);                               \
+    }                                                                          \
+    KTL_EAT_SEMICOLON
 
 #endif

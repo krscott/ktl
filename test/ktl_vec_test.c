@@ -20,7 +20,6 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define str__mut true
 #define str__terminated true, '\0'
 #define str__impl true
-
 #define ktl_slice str
 #include "ktl/struct/slice.h"
 #undef ktl_slice
@@ -28,7 +27,6 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 #define strview__type char
 #define strview__terminated true, '\0'
 #define strview__impl true
-
 #define ktl_slice strview
 #include "ktl/struct/slice.h"
 #undef ktl_slice

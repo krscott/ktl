@@ -11,14 +11,14 @@
 // Defaults (dev-only)
 
 #ifndef ktl_vec
-struct dev_allocator
+typedef struct
 {
     char dummy;
-};
+} dev_allocator;
 #define dev_vec__type int
 #define dev_vec__terminated true, 0
 #define dev_vec__custom_allocator true
-#define dev_vec__local_allocator true, struct dev_allocator
+#define dev_vec__local_allocator true, dev_allocator
 #define dev_vec__realloc(vec, p, size) realloc((p), (size))
 #define dev_vec__free(vec, p) free(p)
 // #define dev_vec__infallible_allocator true
@@ -89,7 +89,7 @@ KTL_DIAG_POP
  * - cap: Allocated capacity
  * - allocator (optional): Allocator handle
  */
-struct ktl_vec
+typedef struct ktl_vec
 {
     ktl_vec_Tptr ptr;
     size_t len;
@@ -97,11 +97,11 @@ struct ktl_vec
 #ifdef ktl_vec_local_allocator
     ktl_vec_local_allocator allocator;
 #endif
-};
+} ktl_vec;
 
 // Prototypes
 
-void ktl_vec_m(deinit)(struct ktl_vec *vec);
+void ktl_vec_m(deinit)(ktl_vec *vec);
 
 // Traits
 
@@ -119,9 +119,6 @@ void ktl_vec_m(deinit)(struct ktl_vec *vec);
 
 #ifdef ktl_vec_impl
 
-void ktl_vec_m(deinit)(struct ktl_vec *const vec)
-{
-    ktl_vec_free(vec, vec->ptr);
-}
+void ktl_vec_m(deinit)(ktl_vec *const vec) { ktl_vec_free(vec, vec->ptr); }
 
 #endif // ktl_vec_impl

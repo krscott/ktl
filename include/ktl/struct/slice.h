@@ -61,11 +61,11 @@ KTL_DIAG_POP
  * - ptr: Pointer to array
  * - len: Length of array
  */
-struct ktl_slice
+typedef struct ktl_slice
 {
     ktl_slice_Tptr ptr;
     size_t len;
-};
+} ktl_slice;
 
 #ifdef ktl_slice_sentinel
 static_assert(
@@ -83,23 +83,17 @@ static_assert(
 // Prototypes
 
 #ifdef ktl_slice_sentinel
-ktl_nodiscard struct ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr ptr);
+ktl_nodiscard ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr ptr);
 #endif
 
 #ifdef ktl_array_T_eq
 ktl_nodiscard bool ktl_slice_m(split)(
-    struct ktl_slice slice,
-    ktl_slice_T x,
-    struct ktl_slice *head,
-    struct ktl_slice *tail
+    ktl_slice slice, ktl_slice_T x, ktl_slice *head, ktl_slice *tail
 );
 #endif
 
 ktl_nodiscard bool ktl_slice_m(split_at)(
-    struct ktl_slice slice,
-    size_t index,
-    struct ktl_slice *head,
-    struct ktl_slice *tail
+    ktl_slice slice, size_t index, ktl_slice *head, ktl_slice *tail
 );
 
 //
@@ -109,8 +103,7 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
 #ifdef ktl_slice_impl
 
 #ifdef ktl_slice_sentinel
-ktl_nodiscard struct ktl_slice
-ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
+ktl_nodiscard ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
 {
     assert(ptr);
 
@@ -119,7 +112,7 @@ ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
     {
     }
 
-    return (struct ktl_slice){
+    return (ktl_slice){
         .ptr = ptr,
         .len = len,
     };
@@ -128,10 +121,10 @@ ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
 
 #ifdef ktl_array_T_eq
 ktl_nodiscard bool ktl_slice_m(split)(
-    struct ktl_slice const slice,
+    ktl_slice const slice,
     ktl_slice_T const x,
-    struct ktl_slice *const head,
-    struct ktl_slice *const tail
+    ktl_slice *const head,
+    ktl_slice *const tail
 )
 {
     size_t index;
@@ -141,14 +134,14 @@ ktl_nodiscard bool ktl_slice_m(split)(
     {
         if (head)
         {
-            *head = (struct ktl_slice){
+            *head = (ktl_slice){
                 .ptr = slice.ptr,
                 .len = index,
             };
         }
         if (tail)
         {
-            *tail = (struct ktl_slice){
+            *tail = (ktl_slice){
                 .ptr = &slice.ptr[index + 1],
                 .len = slice.len - index - 1,
             };
@@ -160,10 +153,10 @@ ktl_nodiscard bool ktl_slice_m(split)(
 #endif
 
 ktl_nodiscard bool ktl_slice_m(split_at)(
-    struct ktl_slice const slice,
+    ktl_slice const slice,
     size_t const index,
-    struct ktl_slice *const head,
-    struct ktl_slice *const tail
+    ktl_slice *const head,
+    ktl_slice *const tail
 )
 {
     bool const ok = index <= slice.len;
@@ -172,14 +165,14 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
     {
         if (head)
         {
-            *head = (struct ktl_slice){
+            *head = (ktl_slice){
                 .ptr = slice.ptr,
                 .len = index,
             };
         }
         if (tail)
         {
-            *tail = (struct ktl_slice){
+            *tail = (ktl_slice){
                 .ptr = &slice.ptr[index],
                 .len = slice.len - index,
             };
@@ -193,7 +186,7 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
         }
         if (tail)
         {
-            *tail = (struct ktl_slice){0};
+            *tail = (ktl_slice){0};
         }
     }
 

@@ -31,7 +31,7 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 static void t_contains(void)
 {
     int arr_a[] = {100, 55, 33};
-    struct intslice a = {
+    intslice a = {
         .ptr = arr_a,
         .len = ktl_countof(arr_a),
     };
@@ -42,14 +42,14 @@ static void t_contains(void)
 
 static void t_contains_null(void)
 {
-    struct intslice a = {0};
+    intslice a = {0};
     assert(!intslice_contains(a, 0));
 }
 
 static void t_find_index(void)
 {
     int arr_a[] = {100, 55, 33};
-    struct intslice a = {
+    intslice a = {
         .ptr = arr_a,
         .len = ktl_countof(arr_a),
     };
@@ -62,22 +62,22 @@ static void t_find_index(void)
 
 static void t_find_index_null(void)
 {
-    struct intslice a = {0};
+    intslice a = {0};
     assert(!intslice_find_index(a, 0, NULL));
 }
 
 static void t_split(void)
 {
     char arr_a[] = "Hello World!";
-    struct str a = {
+    str a = {
         .ptr = arr_a,
         .len = strlen(arr_a),
     };
 
     assert(!str_split(a, 'Z', NULL, NULL));
 
-    struct str head;
-    struct str tail;
+    str head;
+    str tail;
     assert(str_split(a, ' ', &head, &tail));
     assert(head.len == 5);
     assert(0 == strncmp(head.ptr, "Hello", head.len));
@@ -87,22 +87,22 @@ static void t_split(void)
 
 static void t_split_null(void)
 {
-    struct str a = {0};
+    str a = {0};
     assert(!str_split(a, 'a', NULL, NULL));
 }
 
 static void t_split_at(void)
 {
     char arr_a[] = "Hello World!";
-    struct str a = {
+    str a = {
         .ptr = arr_a,
         .len = strlen(arr_a),
     };
 
     assert(!str_split_at(a, 100, NULL, NULL));
 
-    struct str head;
-    struct str tail;
+    str head;
+    str tail;
 
     assert(str_split_at(a, 0, &head, &tail));
     assert(head.len == 0);
@@ -123,9 +123,9 @@ static void t_split_at(void)
 
 static void t_split_at_null(void)
 {
-    struct str a = {0};
-    struct str head;
-    struct str tail;
+    str a = {0};
+    str head;
+    str tail;
     assert(str_split_at(a, 0, &head, &tail));
     assert(head.len == 0);
     assert(tail.len == 0);
@@ -139,19 +139,19 @@ static void t_eq(void)
     int arr_b[] = {1, 2, 3, 4, 5};
     int arr_c[] = {1, 2, 3, 4, 55};
     int arr_d[] = {1, 2, 3, 4, 5, 6};
-    struct intslice a = {
+    intslice a = {
         .ptr = arr_a,
         .len = ktl_countof(arr_a),
     };
-    struct intslice b = {
+    intslice b = {
         .ptr = arr_b,
         .len = ktl_countof(arr_b),
     };
-    struct intslice c = {
+    intslice c = {
         .ptr = arr_c,
         .len = ktl_countof(arr_c),
     };
-    struct intslice d = {
+    intslice d = {
         .ptr = arr_d,
         .len = ktl_countof(arr_d),
     };
@@ -165,12 +165,12 @@ static void t_eq_null(void)
 {
 
     int arr_a[] = {1, 2, 3, 4, 5};
-    struct intslice a = {
+    intslice a = {
         .ptr = arr_a,
         .len = ktl_countof(arr_a),
     };
-    struct intslice b = {0};
-    struct intslice c = {0};
+    intslice b = {0};
+    intslice c = {0};
 
     assert(!intslice_eq(a, b));
     assert(intslice_eq(b, c));
@@ -179,7 +179,7 @@ static void t_eq_null(void)
 static void t_sort(void)
 {
     int ints[] = {5, 10, 7, 1, -12};
-    struct intslice a = {
+    intslice a = {
         .ptr = ints,
         .len = ktl_countof(ints),
     };
@@ -195,14 +195,14 @@ static void t_sort(void)
 
 static void t_sort_null(void)
 {
-    struct intslice a = {0};
+    intslice a = {0};
     intslice_sort(a);
 }
 
 static void t_bsearch(void)
 {
     int ints[] = {1, 11, 22, 33, 99};
-    struct intslice a = {
+    intslice a = {
         .ptr = ints,
         .len = ktl_countof(ints),
     };
@@ -233,7 +233,7 @@ static void t_bsearch(void)
 
 static void t_bsearch_null(void)
 {
-    struct intslice a = {0};
+    intslice a = {0};
     assert(!intslice_bsearch(a, 0, NULL));
     assert(!intslice_bsearch_index(a, 0, NULL));
 }
@@ -241,7 +241,7 @@ static void t_bsearch_null(void)
 static void t_from_terminated(void)
 {
     char const *s = "Hello, World!";
-    struct str a = str_from_terminated(s);
+    str a = str_from_terminated(s);
     assert(a.ptr == s);
     assert(a.len == strlen(s));
 }

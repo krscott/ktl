@@ -37,7 +37,7 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 
 #define strbuf__type char
 #define strbuf__terminated true, '\0'
-#define strbuf__local_allocator true, struct mock_allocator
+#define strbuf__local_allocator true, mock_allocator
 // #define strbuf__realloc(vec, p, size) realloc((p), (size))
 #define strbuf__realloc(vec, p, size)                                          \
     mock_allocator_realloc(&(vec)->allocator, p, size)
@@ -72,13 +72,13 @@ static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
 
 static void t_deinit_null(void)
 {
-    struct strbuf buf = {0};
+    strbuf buf = {0};
     strbuf_deinit(&buf);
 }
 
 static void t_reserve(void)
 {
-    struct strbuf buf = {0};
+    strbuf buf = {0};
 
     assert(strbuf_reserve(&buf, 100));
     assert(buf.ptr != NULL);
@@ -95,7 +95,7 @@ static void t_reserve(void)
 
 static void t_reserve_fail(void)
 {
-    struct strbuf buf = {0};
+    strbuf buf = {0};
 
     buf.allocator.fail = true;
     assert(!strbuf_reserve(&buf, 100));
@@ -108,7 +108,7 @@ static void t_reserve_fail(void)
 
 static void t_reserve_infallible(void)
 {
-    struct strbuf_inf buf = {0};
+    strbuf_inf buf = {0};
 
     strbuf_inf_reserve(&buf, 100);
     assert(buf.ptr != NULL);
@@ -128,7 +128,7 @@ static void t_append(void)
     char const *s = "foobar";
     size_t const s_len = strlen(s);
 
-    struct strbuf buf = {0};
+    strbuf buf = {0};
 
     assert(strbuf_append(&buf, s, s_len));
     assert(buf.ptr != NULL);
@@ -154,7 +154,7 @@ static void t_append_infallible(void)
     char const *s = "foobar";
     size_t const s_len = strlen(s);
 
-    struct strbuf_inf buf = {0};
+    strbuf_inf buf = {0};
 
     strbuf_inf_append(&buf, s, s_len);
     assert(buf.ptr != NULL);
@@ -180,7 +180,7 @@ static void t_append_terminated(void)
     char const *s = "foobar";
     size_t const s_len = strlen(s);
 
-    struct strbuf buf = {0};
+    strbuf buf = {0};
 
     assert(strbuf_append_terminated(&buf, s));
     assert(buf.ptr != NULL);
@@ -206,7 +206,7 @@ static void t_append_terminated_infallible(void)
     char const *s = "foobar";
     size_t const s_len = strlen(s);
 
-    struct strbuf_inf buf = {0};
+    strbuf_inf buf = {0};
 
     strbuf_inf_append_terminated(&buf, s);
     assert(buf.ptr != NULL);
@@ -229,7 +229,7 @@ static void t_append_terminated_infallible(void)
 
 static void t_push(void)
 {
-    struct strbuf buf = {0};
+    strbuf buf = {0};
 
     assert(strbuf_append_terminated(&buf, "Hello"));
     assert(buf.len == 5);
@@ -244,7 +244,7 @@ static void t_push(void)
 
 static void t_push_infallible(void)
 {
-    struct strbuf_inf buf = {0};
+    strbuf_inf buf = {0};
 
     strbuf_inf_append_terminated(&buf, "Hello");
     assert(buf.len == 5);
@@ -259,7 +259,7 @@ static void t_push_infallible(void)
 
 static void t_pop(void)
 {
-    struct strbuf buf = {0};
+    strbuf buf = {0};
     char c = '\0';
 
     assert(!strbuf_pop(&buf, &c));
@@ -288,18 +288,18 @@ static void t_pop(void)
 
 static void t_vec_as_slice(void)
 {
-    struct strbuf buf = {0};
+    strbuf buf = {0};
     assert(strbuf_append_terminated(&buf, "foo"));
     assert(strbuf_append_terminated(&buf, "bar"));
 
     {
-        struct str str = strbuf_as_str(buf);
+        str str = strbuf_as_str(buf);
         assert(str.len == 6);
         assert(0 == strcmp(str.ptr, "foobar"));
     }
 
     {
-        struct strview sv = strbuf_as_strview(buf);
+        strview sv = strbuf_as_strview(buf);
         assert(sv.len == 6);
         assert(0 == strcmp(sv.ptr, "foobar"));
     }
@@ -309,10 +309,10 @@ static void t_vec_as_slice(void)
 
 static void t_vec_append_slice(void)
 {
-    struct str a = str_from_terminated("dead");
-    struct strview b = strview_from_terminated("beef");
+    str a = str_from_terminated("dead");
+    strview b = strview_from_terminated("beef");
 
-    struct strbuf buf = {0};
+    strbuf buf = {0};
     assert(strbuf_append_str(&buf, a));
     assert(strbuf_append_strview(&buf, b));
 
@@ -324,10 +324,10 @@ static void t_vec_append_slice(void)
 
 static void t_vec_append_slice_infallible(void)
 {
-    struct str a = str_from_terminated("dead");
-    struct str b = str_from_terminated("beef");
+    str a = str_from_terminated("dead");
+    str b = str_from_terminated("beef");
 
-    struct strbuf_inf buf = {0};
+    strbuf_inf buf = {0};
     strbuf_inf_append_str(&buf, a);
     strbuf_inf_append_str(&buf, b);
 
@@ -339,7 +339,7 @@ static void t_vec_append_slice_infallible(void)
 
 static void t_sort(void)
 {
-    struct strbuf_inf buf = {0};
+    strbuf_inf buf = {0};
     strbuf_inf_append_terminated(&buf, "edcba");
 
     strbuf_inf_sort(buf);
@@ -351,7 +351,7 @@ static void t_sort(void)
 
 static void t_bsearch(void)
 {
-    struct strbuf_inf buf = {0};
+    strbuf_inf buf = {0};
     strbuf_inf_append_terminated(&buf, "abcde");
 
     assert(strbuf_inf_bsearch(buf, 'c', NULL));

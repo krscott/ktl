@@ -22,11 +22,9 @@
 
 // Prototypes
 
-ktl_nodiscard struct ktl_slice ktl_convert_vec_slice_m(as)(struct ktl_vec vec);
+ktl_nodiscard ktl_slice ktl_convert_vec_slice_m(as)(ktl_vec vec);
 
-ktl_vec_alloc_ok ktl_convert_vec_slice_m(append)(
-    struct ktl_vec *vec, struct ktl_slice slice
-);
+ktl_vec_alloc_ok ktl_convert_vec_slice_m(append)(ktl_vec *vec, ktl_slice slice);
 
 //
 // IMPLEMENTATION
@@ -34,18 +32,16 @@ ktl_vec_alloc_ok ktl_convert_vec_slice_m(append)(
 
 #if defined(ktl_vec_impl) && defined(ktl_slice_impl)
 
-ktl_nodiscard struct ktl_slice
-ktl_convert_vec_slice_m(as)(struct ktl_vec const vec)
+ktl_nodiscard ktl_slice ktl_convert_vec_slice_m(as)(ktl_vec const vec)
 {
-    return (struct ktl_slice){
+    return (ktl_slice){
         .ptr = vec.ptr,
         .len = vec.len,
     };
 }
 
-ktl_vec_alloc_ok ktl_convert_vec_slice_m(append)(
-    struct ktl_vec *const vec, struct ktl_slice const slice
-)
+ktl_vec_alloc_ok
+ktl_convert_vec_slice_m(append)(ktl_vec *const vec, ktl_slice const slice)
 {
 #ifdef ktl_vec_infallible
     ktl_vec_m(append)(vec, slice.ptr, slice.len);

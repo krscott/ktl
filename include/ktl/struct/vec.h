@@ -105,9 +105,9 @@ void ktl_vec_m(deinit)(ktl_vec *vec);
 
 // Traits
 
-#define ktl_arraydyn ktl_vec
+#define ktl_dynarray ktl_vec
 #include "ktl/trait/dynarray.h"
-#undef ktl_arraydyn
+#undef ktl_dynarray
 
 #define ktl_array ktl_vec
 #include "ktl/trait/array.h"

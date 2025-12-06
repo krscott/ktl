@@ -34,35 +34,9 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_vec_Tptr
 #define ktl_vec_Tptr ktl_vec_T *
 
-#undef ktl_vec_sentinel
-#if KTL_GET0(ktl_vec_m(_terminated))
-#define ktl_vec_sentinel KTL_GET1(ktl_vec_m(_terminated), (ktl_marker){0})
-#endif
-
-#undef ktl_vec_realloc
-#undef ktl_vec_free
-#if KTL_GET0(ktl_vec_m(_custom_allocator)) ||                                  \
-    KTL_GET0(ktl_vec_m(_local_allocator))
-#define ktl_vec_realloc(vec, p, size) ktl_vec_m(realloc)((vec), (p), (size))
-#define ktl_vec_free(vec, p) ktl_vec_m(free)((vec), (p))
-#else
-#define ktl_vec_realloc(vec, p, size) realloc((p), (size))
-#define ktl_vec_free(vec, p) free(p)
-#endif
-
 #undef ktl_vec_local_allocator
-#if KTL_GET0(ktl_vec_m(_local_allocator))
-#define ktl_vec_local_allocator                                                \
-    KTL_GET1(ktl_vec_m(_local_allocator), ktl_marker)
-#endif
-
-#undef ktl_vec_alloc_ok
-#undef ktl_vec_infallible
-#if ktl_vec_m(_infallible_allocator)
-#define ktl_vec_infallible
-#define ktl_vec_alloc_ok void
-#else
-#define ktl_vec_alloc_ok ktl_nodiscard bool
+#if ktl_vec_m(_local_allocator)
+#define ktl_vec_local_allocator
 #endif
 
 #undef ktl_vec_impl

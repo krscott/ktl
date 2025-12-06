@@ -24,7 +24,8 @@
 
 ktl_nodiscard ktl_slice ktl_convert_vec_slice_m(as)(ktl_vec vec);
 
-ktl_vec_alloc_ok ktl_convert_vec_slice_m(append)(ktl_vec *vec, ktl_slice slice);
+ktl_dynarray_alloc_ok
+    ktl_convert_vec_slice_m(append)(ktl_vec *vec, ktl_slice slice);
 
 //
 // IMPLEMENTATION
@@ -40,10 +41,10 @@ ktl_nodiscard ktl_slice ktl_convert_vec_slice_m(as)(ktl_vec const vec)
     };
 }
 
-ktl_vec_alloc_ok
+ktl_dynarray_alloc_ok
 ktl_convert_vec_slice_m(append)(ktl_vec *const vec, ktl_slice const slice)
 {
-#ifdef ktl_vec_infallible
+#ifdef ktl_dynarray_infallible
     ktl_vec_m(append)(vec, slice.ptr, slice.len);
 #else
     return ktl_vec_m(append)(vec, slice.ptr, slice.len);

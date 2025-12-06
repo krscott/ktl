@@ -1,6 +1,7 @@
 #ifndef KTL_PRELUDE_H_
 #define KTL_PRELUDE_H_
 
+#include "ktl/allocator.h"
 #include "ktl/macros.h"
 
 #include "sys/types.h"
@@ -52,7 +53,6 @@ ktl_define_integral(isize);
 // Strings
 
 #ifdef KTL_PRELUDE_IMPL
-#undef KTL_PRELUDE_IMPL
 #define str__impl true
 #define strview__impl true
 #endif
@@ -69,5 +69,35 @@ ktl_define_integral(isize);
 #define ktl_slice strview
 #include "ktl/struct/slice.h"
 #undef ktl_slice
+
+// Allocators
+
+extern ktl_allocator const ktl_clib_allocator;
+
+#ifdef KTL_PRELUDE_IMPL
+#undef KTL_PRELUDE_IMPL
+
+static void *ktl_clib_allocator_realloc(void *impl, void *ptr, size_t size)
+{
+    (void)impl;
+    return realloc(ptr, size);
+}
+
+static void ktl_clib_allocator_free(void *impl, void *ptr)
+{
+    (void)impl;
+    free(ptr);
+}
+
+static ktl_allocator_vtable const ktl_clib_allocator_vtable = {
+    .realloc = ktl_clib_allocator_realloc,
+    .free = ktl_clib_allocator_free,
+};
+ktl_allocator const ktl_clib_allocator = {
+    .vtable = &ktl_clib_allocator_vtable,
+    .impl = NULL,
+};
+
+#endif
 
 #endif

@@ -1,6 +1,8 @@
 #ifndef MOCK_ALLOCATOR_H_
 #define MOCK_ALLOCATOR_H_
 
+#include "ktl/allocator.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -8,15 +10,56 @@ typedef struct
 {
     bool fail;
 } mock_allocator;
-static void *
-mock_allocator_realloc(mock_allocator *allocator, void *ptr, size_t size)
+
+static void *mock_allocator_realloc(void *impl, void *ptr, size_t size)
 {
-    return allocator->fail ? NULL : realloc(ptr, size);
+    assert(impl);
+    return ((mock_allocator *)impl)->fail ? NULL : realloc(ptr, size);
 }
-static void mock_allocator_free(mock_allocator *allocator, void *ptr)
+
+static void mock_allocator_free(void *impl, void *ptr)
 {
-    (void)allocator;
+    (void)impl;
     free(ptr);
 }
+
+static ktl_allocator_vtable const mock_allocator_vtable = {
+    .realloc = mock_allocator_realloc,
+    .free = mock_allocator_free,
+};
+
+static mock_allocator mock_allocator_init(void)
+{
+    return (mock_allocator){0}; //
+}
+
+static ktl_allocator mock_allocator_handle(mock_allocator *impl)
+{
+    return (ktl_allocator){
+        .vtable = &mock_allocator_vtable,
+        .impl = (void *)impl,
+    };
+}
+
+static void *clib_allocator_realloc(void *impl, void *ptr, size_t size)
+{
+    (void)impl;
+    return realloc(ptr, size);
+}
+
+static void clib_allocator_free(void *impl, void *ptr)
+{
+    (void)impl;
+    free(ptr);
+}
+
+static ktl_allocator_vtable const clib_allocator_vtable = {
+    .realloc = clib_allocator_realloc,
+    .free = clib_allocator_free,
+};
+static ktl_allocator const clib_allocator = {
+    .vtable = &clib_allocator_vtable,
+    .impl = NULL,
+};
 
 #endif

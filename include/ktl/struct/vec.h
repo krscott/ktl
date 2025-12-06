@@ -1,5 +1,6 @@
 // No header guard - repeatable include
 
+#include "ktl/allocator.h"
 #include "ktl/macros.h"
 
 #include <assert.h>
@@ -11,16 +12,9 @@
 // Defaults (dev-only)
 
 #ifndef ktl_vec
-typedef struct
-{
-    char dummy;
-} dev_allocator;
 #define dev_vec__type int
 #define dev_vec__terminated true, 0
-#define dev_vec__custom_allocator true
-#define dev_vec__local_allocator true, dev_allocator
-#define dev_vec__realloc(vec, p, size) realloc((p), (size))
-#define dev_vec__free(vec, p) free(p)
+#define dev_vec__local_allocator true
 // #define dev_vec__infallible_allocator true
 #define dev_vec__impl true
 #define ktl_vec dev_vec
@@ -49,8 +43,8 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_vec_free
 #if KTL_GET0(ktl_vec_m(_custom_allocator)) ||                                  \
     KTL_GET0(ktl_vec_m(_local_allocator))
-#define ktl_vec_realloc(vec, p, size) ktl_vec_m(_realloc)((vec), (p), (size))
-#define ktl_vec_free(vec, p) ktl_vec_m(_free)((vec), (p))
+#define ktl_vec_realloc(vec, p, size) ktl_vec_m(realloc)((vec), (p), (size))
+#define ktl_vec_free(vec, p) ktl_vec_m(free)((vec), (p))
 #else
 #define ktl_vec_realloc(vec, p, size) realloc((p), (size))
 #define ktl_vec_free(vec, p) free(p)
@@ -95,23 +89,29 @@ typedef struct ktl_vec
     size_t len;
     size_t cap;
 #ifdef ktl_vec_local_allocator
-    ktl_vec_local_allocator allocator;
+    ktl_allocator allocator;
 #endif
 } ktl_vec;
 
 // Prototypes
 
+#ifdef ktl_vec_local_allocator
+ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_allocator allocator);
+#else
+ktl_nodiscard ktl_vec ktl_vec_m(init)(void);
+#endif
+
 void ktl_vec_m(deinit)(ktl_vec *vec);
 
 // Traits
 
-#define ktl_dynarray ktl_vec
-#include "ktl/trait/dynarray.h"
-#undef ktl_dynarray
-
+#undef ktl_array
 #define ktl_array ktl_vec
 #include "ktl/trait/array.h"
-#undef ktl_array
+
+#undef ktl_dynarray
+#define ktl_dynarray ktl_vec
+#include "ktl/trait/dynarray.h"
 
 //
 // IMPLEMENTATION
@@ -119,6 +119,18 @@ void ktl_vec_m(deinit)(ktl_vec *vec);
 
 #ifdef ktl_vec_impl
 
-void ktl_vec_m(deinit)(ktl_vec *const vec) { ktl_vec_free(vec, vec->ptr); }
+#ifdef ktl_vec_local_allocator
+ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_allocator const allocator)
+{
+    return (ktl_vec){.allocator = allocator};
+}
+#else
+ktl_nodiscard ktl_vec ktl_vec_m(init)(void) { return (ktl_vec){0}; }
+#endif
+
+void ktl_vec_m(deinit)(ktl_vec *const vec)
+{
+    ktl_allocates_m(free)(vec, vec->ptr);
+}
 
 #endif // ktl_vec_impl

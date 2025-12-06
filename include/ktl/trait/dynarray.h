@@ -1,5 +1,6 @@
 // No header guard - repeatable include
 
+#include "ktl/allocator.h"
 #include "ktl/macros.h"
 
 #include <assert.h>
@@ -12,16 +13,13 @@
 // Defaults (dev-only)
 
 #ifndef ktl_dynarray
-typedef struct
-{
-    char dummy;
-} dev_allocator;
+#define sys_allocator_realloc realloc
+#define sys_allocator_free free
+
 #define dev_dynarray__type int
 #define dev_dynarray__terminated true, 0
-#define dev_dynarray__custom_allocator true
-#define dev_dynarray__local_allocator true, dev_allocator
-#define dev_dynarray__realloc(dynarray, p, size) realloc((p), (size))
-#define dev_dynarray__free(dynarray, p) free(p)
+// #define dev_dynarray__global_allocator true, sys_allocator
+#define dev_dynarray__local_allocator true
 // #define dev_dynarray__infallible_allocator true
 #define dev_dynarray__impl true
 #define ktl_dynarray dev_dynarray
@@ -31,7 +29,7 @@ typedef struct
     size_t len;
     size_t cap;
 #ifdef dev_dynarray__local_allocator
-    KTL_GET1(dev_dynarray__local_allocator) allocator;
+    ktl_allocator allocator;
 #endif
 } dev_dynarray;
 #endif
@@ -56,24 +54,6 @@ KTL_DIAG_IGNORE(-Wundef)
     KTL_GET1(ktl_dynarray_m(_terminated), (ktl_marker){0})
 #endif
 
-#undef ktl_dynarray_realloc
-#undef ktl_dynarray_free
-#if KTL_GET0(ktl_dynarray_m(_custom_allocator)) ||                             \
-    KTL_GET0(ktl_dynarray_m(_local_allocator))
-#define ktl_dynarray_realloc(dynarray, p, size)                                \
-    ktl_dynarray_m(_realloc)((dynarray), (p), (size))
-#define ktl_dynarray_free(dynarray, p) ktl_dynarray_m(_free)((dynarray), (p))
-#else
-#define ktl_dynarray_realloc(dynarray, p, size) realloc((p), (size))
-#define ktl_dynarray_free(dynarray, p) free(p)
-#endif
-
-#undef ktl_dynarray_local_allocator
-#if KTL_GET0(ktl_dynarray_m(_local_allocator))
-#define ktl_dynarray_local_allocator                                           \
-    KTL_GET1(ktl_dynarray_m(_local_allocator), ktl_marker)
-#endif
-
 #undef ktl_dynarray_alloc_ok
 #undef ktl_dynarray_infallible
 #if ktl_dynarray_m(_infallible_allocator)
@@ -82,6 +62,10 @@ KTL_DIAG_IGNORE(-Wundef)
 #else
 #define ktl_dynarray_alloc_ok ktl_nodiscard bool
 #endif
+
+#undef ktl_allocates
+#define ktl_allocates ktl_dynarray
+#include "allocates.h"
 
 #undef ktl_dynarray_impl
 #if ktl_dynarray_m(_impl)
@@ -189,7 +173,7 @@ ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
             new_cap = KTL_dynarray_GROW_CAP(new_cap);
         }
 
-        void *const new_ptr = ktl_dynarray_realloc(
+        void *const new_ptr = ktl_allocates_m(realloc)(
             dynarray,
             dynarray->ptr,
             new_cap * sizeof(dynarray->ptr[0])

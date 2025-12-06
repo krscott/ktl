@@ -37,6 +37,7 @@ static inline int str_cmp(str const *a, str const *b)
 #define str__ord true
 
 #define strslice__type str
+#define strslice__mut true
 #define strslice__impl true
 #define ktl_slice strslice
 #include "ktl/struct/slice.h"
@@ -285,6 +286,26 @@ static void t_slice_of_slices(void)
     assert(str_eq(tail.ptr[0], str_from_terminated("Qux")));
 }
 
+static void t_alphabatize(void)
+{
+    str strs[] = {
+        str_from_terminated("banana"),
+        str_from_terminated("cherry"),
+        str_from_terminated("apple"),
+    };
+
+    strslice strings = {
+        .ptr = strs,
+        .len = ktl_countof(strs),
+    };
+
+    strslice_sort(strings);
+
+    assert(str_eq(strings.ptr[0], str_from_terminated("apple")));
+    assert(str_eq(strings.ptr[1], str_from_terminated("banana")));
+    assert(str_eq(strings.ptr[2], str_from_terminated("cherry")));
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -311,6 +332,7 @@ int main(void)
     RUN(t_bsearch_null);
     RUN(t_from_terminated);
     RUN(t_slice_of_slices);
+    RUN(t_alphabatize);
 
     return 0;
 }

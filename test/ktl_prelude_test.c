@@ -23,6 +23,24 @@ static void t_strs(void)
     assert(a.ptr[4] == 'o');
 }
 
+static void t_strbufs(void)
+{
+    strbuf b = strbuf_init();
+
+    strbuf_append_terminated(&b, "one");
+    strbuf_push(&b, ' ');
+    strbuf_append_terminated(&b, "two");
+    strbuf_push(&b, ' ');
+    strbuf_append_terminated(&b, "oatmeal");
+
+    assert(strview_eq(
+        strbuf_as_strview(b),
+        strview_from_terminated("one two oatmeal")
+    ));
+
+    strbuf_deinit(&b);
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -35,6 +53,7 @@ int main(void)
 {
     RUN(t_ints_are_ord);
     RUN(t_strs);
+    RUN(t_strbufs);
 
     return 0;
 }

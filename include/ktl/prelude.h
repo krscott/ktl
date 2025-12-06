@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef uint8_t u8;
 typedef int8_t i8;
@@ -55,6 +56,7 @@ ktl_define_integral(isize);
 #ifdef KTL_PRELUDE_IMPL
 #define str__impl true
 #define strview__impl true
+#define strbuf__impl true
 #endif
 
 #define str__type char
@@ -69,6 +71,34 @@ ktl_define_integral(isize);
 #define ktl_slice strview
 #include "ktl/struct/slice.h"
 #undef ktl_slice
+
+static inline int str_cmp(str const *a, str const *b)
+{
+    int x = strncmp(a->ptr, b->ptr, a->len < b->len ? a->len : b->len);
+    if (x == 0)
+    {
+        x = (int)a->len - (int)b->len;
+    }
+    return x;
+}
+#define strview_cmp str_cmp
+
+#define str__ord true
+#define strview__ord true
+
+#define strbuf__type char
+#define strbuf__terminated true, '\0'
+#define strbuf__infallible_allocator true
+#define ktl_vec strbuf
+#include "ktl/struct/vec.h"
+// Supports converting to both str and strview
+#define ktl_slice str
+#include "ktl/trait/convert_vec_slice.h"
+#undef ktl_slice
+#define ktl_slice strview
+#include "ktl/trait/convert_vec_slice.h"
+#undef ktl_slice
+#undef ktl_vec
 
 // Allocators
 

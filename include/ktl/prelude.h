@@ -81,9 +81,17 @@ static inline int str_cmp(str const *a, str const *b)
     }
     return x;
 }
-#define strview_cmp str_cmp
-
 #define str__ord true
+
+static inline int strview_cmp(strview const *a, strview const *b)
+{
+    int x = strncmp(a->ptr, b->ptr, a->len < b->len ? a->len : b->len);
+    if (x == 0)
+    {
+        x = (int)a->len - (int)b->len;
+    }
+    return x;
+}
 #define strview__ord true
 
 #define strbuf__type char

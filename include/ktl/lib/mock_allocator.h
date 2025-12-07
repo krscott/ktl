@@ -1,5 +1,5 @@
-#ifndef MOCK_ALLOCATOR_H_
-#define MOCK_ALLOCATOR_H_
+#ifndef KTL_MOCK_ALLOCATOR_H_
+#define KTL_MOCK_ALLOCATOR_H_
 
 #include "ktl/allocator.h"
 #include <assert.h>
@@ -40,26 +40,5 @@ static ktl_allocator mock_allocator_handle(mock_allocator *impl)
         .impl = (void *)impl,
     };
 }
-
-static void *clib_allocator_realloc(void *impl, void *ptr, size_t size)
-{
-    (void)impl;
-    return realloc(ptr, size);
-}
-
-static void clib_allocator_free(void *impl, void *ptr)
-{
-    (void)impl;
-    free(ptr);
-}
-
-static ktl_allocator_vtable const clib_allocator_vtable = {
-    .realloc = clib_allocator_realloc,
-    .free = clib_allocator_free,
-};
-static ktl_allocator const clib_allocator = {
-    .vtable = &clib_allocator_vtable,
-    .impl = NULL,
-};
 
 #endif

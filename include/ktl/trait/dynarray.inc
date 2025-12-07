@@ -13,7 +13,7 @@
 
 #undef ktl_allocates
 #define ktl_allocates ktl_dynarray
-#include "allocates.c"
+#include "allocates.inc"
 
 // Macros
 

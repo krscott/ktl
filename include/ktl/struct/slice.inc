@@ -11,7 +11,7 @@
 // Traits
 
 #define ktl_array ktl_slice
-#include "ktl/trait/array.c"
+#include "ktl/trait/array.inc"
 #undef ktl_array
 
 // Methods

@@ -11,12 +11,12 @@
 #undef ktl_array
 #define ktl_array ktl_vec
 #define KTL_ARRAY_MUT
-#include "ktl/trait/array.c"
+#include "ktl/trait/array.inc"
 #undef KTL_ARRAY_MUT
 
 #undef ktl_dynarray
 #define ktl_dynarray ktl_vec
-#include "ktl/trait/dynarray.c"
+#include "ktl/trait/dynarray.inc"
 
 // Methods
 

@@ -11,7 +11,7 @@
 // Defaults (dev-only)
 
 #ifndef ktl_vec
-#include "ktl/allocator.h"
+#include "ktl/lib/allocator.h"
 #define dev_vec__local_allocator true, ktl_allocator
 
 #define dev_vec__type int

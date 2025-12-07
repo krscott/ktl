@@ -1,6 +1,5 @@
 // No header guard - repeatable include
 
-#include "ktl/allocator.h"
 #include "ktl/macros.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -10,10 +9,11 @@
 // Defaults (dev-only)
 
 #ifndef ktl_allocates
-#define sys_allocator_realloc realloc
-#define sys_allocator_free free
-
+#include "ktl/lib/allocator.h"
 #define dev_thing__local_allocator true, ktl_allocator
+
+// #define sys_allocator_realloc realloc
+// #define sys_allocator_free free
 // #define dev_thing__global_allocator true, sys_allocator
 
 typedef struct

@@ -12,7 +12,7 @@
 // Defaults (dev-only)
 
 #ifndef ktl_dynarray
-#include "ktl/allocator.h"
+#include "ktl/lib/allocator.h"
 #define dev_dynarray__local_allocator true, ktl_allocator
 
 // #define sys_allocator_realloc realloc

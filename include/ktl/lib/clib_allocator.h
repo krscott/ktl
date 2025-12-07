@@ -1,7 +1,7 @@
 #ifndef KTL_CLIB_ALLOCATOR_H_
 #define KTL_CLIB_ALLOCATOR_H_
 
-#include "ktl/allocator.h"
+#include "ktl/lib/allocator.h"
 #include <stddef.h>
 #include <stdlib.h>
 

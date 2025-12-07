@@ -1,4 +1,4 @@
-#include "ktl/allocator.h" // IWYU pragma: export
+#include "ktl/lib/allocator.h" // IWYU pragma: export
 #include "ktl/lib/clib_allocator.h"
 #include "ktl/lib/mock_allocator.h"
 #include <assert.h>

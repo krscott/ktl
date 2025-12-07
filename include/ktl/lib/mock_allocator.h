@@ -1,7 +1,7 @@
 #ifndef KTL_MOCK_ALLOCATOR_H_
 #define KTL_MOCK_ALLOCATOR_H_
 
-#include "ktl/allocator.h"
+#include "ktl/lib/allocator.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>

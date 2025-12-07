@@ -1,7 +1,6 @@
 #ifndef KTL_ALLOCATOR_H_
 #define KTL_ALLOCATOR_H_
 
-#include <stddef.h>
 #include <stdlib.h>
 
 typedef struct ktl_allocator_vtable

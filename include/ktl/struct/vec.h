@@ -84,7 +84,7 @@ typedef struct ktl_vec
 // Methods
 
 #ifdef ktl_vec_local_allocator
-ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_allocator allocator);
+ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_vec_local_allocator allocator);
 #else
 ktl_nodiscard ktl_vec ktl_vec_m(init)(void);
 #endif
@@ -98,7 +98,7 @@ void ktl_vec_m(deinit)(ktl_vec *vec);
 #ifdef ktl_vec_impl
 
 #ifdef ktl_vec_local_allocator
-ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_allocator const allocator)
+ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_vec_local_allocator const allocator)
 {
     return (ktl_vec){.allocator = allocator};
 }

@@ -3,11 +3,9 @@
 
 #include "ktl/macros.h"
 
-#include "sys/types.h"
 #include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#include <sys/types.h>
 
 typedef uint8_t u8;
 typedef int8_t i8;
@@ -51,6 +49,8 @@ ktl_define_integral(isize);
 #define isize__ord true
 
 // Strings
+
+#include <string.h>
 
 #ifdef KTL_PRELUDE_IMPL
 #define str__impl true

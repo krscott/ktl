@@ -1,6 +1,5 @@
 // No header guard - repeatable include
 
-#include "ktl/allocator.h"
 #include "ktl/macros.h"
 
 #include <assert.h>
@@ -13,13 +12,15 @@
 // Defaults (dev-only)
 
 #ifndef ktl_dynarray
-#define sys_allocator_realloc realloc
-#define sys_allocator_free free
+#include "ktl/allocator.h"
+#define dev_dynarray__local_allocator true, ktl_allocator
+
+// #define sys_allocator_realloc realloc
+// #define sys_allocator_free free
+// #define dev_dynarray__global_allocator true, sys_allocator
 
 #define dev_dynarray__type int
 #define dev_dynarray__terminated true, 0
-// #define dev_dynarray__global_allocator true, sys_allocator
-#define dev_dynarray__local_allocator true
 // #define dev_dynarray__infallible_allocator true
 #define dev_dynarray__impl true
 #define ktl_dynarray dev_dynarray

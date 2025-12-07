@@ -13,7 +13,7 @@
 #define sys_allocator_realloc realloc
 #define sys_allocator_free free
 
-#define dev_thing__local_allocator true
+#define dev_thing__local_allocator true, ktl_allocator
 // #define dev_thing__global_allocator true, sys_allocator
 
 typedef struct
@@ -33,11 +33,12 @@ KTL_DIAG_IGNORE(-Wundef)
 
 #undef ktl_allocates_local_allocator
 #undef ktl_allocates_global_allocator
-#if ktl_allocates_m(_local_allocator)
+#if KTL_GET0(ktl_allocates_m(_local_allocator))
 #if KTL_GET0(ktl_allocates_m(_global_allocator))
 #error "Cannot specify more than one allocator"
 #endif
-#define ktl_allocates_local_allocator
+#define ktl_allocates_local_allocator                                          \
+    KTL_GET1(ktl_allocates_m(_local_allocator), ktl_marker)
 #elif KTL_GET0(ktl_allocates_m(_global_allocator))
 #define ktl_allocates_global_allocator
 #endif
@@ -47,7 +48,7 @@ KTL_DIAG_POP
 // Checks
 
 #ifdef ktl_allocates_local_allocator
-ktl_assert_has_field(ktl_allocates, ktl_allocator, allocator);
+ktl_assert_has_field(ktl_allocates, ktl_allocates_local_allocator, allocator);
 #endif
 
 // Methods

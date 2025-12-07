@@ -1,3 +1,4 @@
+#include "ktl/allocator.h" // IWYU pragma: export
 #include "mock_allocator.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -38,7 +39,7 @@ static inline int char_cmp(char const *a, char const *b)
 
 #define strbuf__type char
 #define strbuf__terminated true, '\0'
-#define strbuf__local_allocator true
+#define strbuf__local_allocator true, ktl_allocator
 #define strbuf__impl true
 
 #define ktl_vec strbuf

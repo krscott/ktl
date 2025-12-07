@@ -1,6 +1,5 @@
 // No header guard - repeatable include
 
-#include "ktl/allocator.h"
 #include "ktl/macros.h"
 
 #include <assert.h>
@@ -12,9 +11,11 @@
 // Defaults (dev-only)
 
 #ifndef ktl_vec
+#include "ktl/allocator.h"
+#define dev_vec__local_allocator true, ktl_allocator
+
 #define dev_vec__type int
 #define dev_vec__terminated true, 0
-#define dev_vec__local_allocator true
 // #define dev_vec__infallible_allocator true
 #define dev_vec__impl true
 #define ktl_vec dev_vec
@@ -35,8 +36,9 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_vec_Tptr ktl_vec_T *
 
 #undef ktl_vec_local_allocator
-#if ktl_vec_m(_local_allocator)
-#define ktl_vec_local_allocator
+#if KTL_GET0(ktl_vec_m(_local_allocator))
+#define ktl_vec_local_allocator                                                \
+    KTL_GET1(ktl_vec_m(_local_allocator), ktl_marker)
 #endif
 
 #undef ktl_vec_impl
@@ -63,19 +65,9 @@ typedef struct ktl_vec
     size_t len;
     size_t cap;
 #ifdef ktl_vec_local_allocator
-    ktl_allocator allocator;
+    ktl_vec_local_allocator allocator;
 #endif
 } ktl_vec;
-
-// Prototypes
-
-#ifdef ktl_vec_local_allocator
-ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_allocator allocator);
-#else
-ktl_nodiscard ktl_vec ktl_vec_m(init)(void);
-#endif
-
-void ktl_vec_m(deinit)(ktl_vec *vec);
 
 // Traits
 
@@ -88,6 +80,16 @@ void ktl_vec_m(deinit)(ktl_vec *vec);
 #undef ktl_dynarray
 #define ktl_dynarray ktl_vec
 #include "ktl/trait/dynarray.h"
+
+// Methods
+
+#ifdef ktl_vec_local_allocator
+ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_allocator allocator);
+#else
+ktl_nodiscard ktl_vec ktl_vec_m(init)(void);
+#endif
+
+void ktl_vec_m(deinit)(ktl_vec *vec);
 
 //
 // IMPLEMENTATION

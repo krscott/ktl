@@ -17,7 +17,6 @@
 #define dev_vec__type int
 #define dev_vec__terminated true, 0
 // #define dev_vec__infallible_allocator true
-#define dev_vec__impl true
 #define ktl_vec dev_vec
 #endif
 
@@ -39,11 +38,6 @@ KTL_DIAG_IGNORE(-Wundef)
 #if KTL_GET0(ktl_vec_m(_local_allocator))
 #define ktl_vec_local_allocator                                                \
     KTL_GET1(ktl_vec_m(_local_allocator), ktl_marker)
-#endif
-
-#undef ktl_vec_impl
-#if ktl_vec_m(_impl)
-#define ktl_vec_impl
 #endif
 
 KTL_DIAG_POP
@@ -90,28 +84,3 @@ ktl_nodiscard ktl_vec ktl_vec_m(init)(void);
 #endif
 
 void ktl_vec_m(deinit)(ktl_vec *vec);
-
-//
-// IMPLEMENTATION
-//
-
-#ifdef ktl_vec_impl
-
-#ifdef ktl_vec_local_allocator
-ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_vec_local_allocator const allocator)
-{
-    return (ktl_vec){.allocator = allocator};
-}
-#else
-ktl_nodiscard ktl_vec ktl_vec_m(init)(void)
-{
-    return (ktl_vec){0};
-}
-#endif
-
-void ktl_vec_m(deinit)(ktl_vec *const vec)
-{
-    ktl_allocates_m(_free)(vec, vec->ptr);
-}
-
-#endif // ktl_vec_impl

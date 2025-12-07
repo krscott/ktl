@@ -48,15 +48,10 @@ ktl_define_integral(isize);
 #define usize__ord true
 #define isize__ord true
 
+#if 0
 // Strings
 
 #include <string.h>
-
-#ifdef KTL_PRELUDE_IMPL
-#define str__impl true
-#define strview__impl true
-#define strbuf__impl true
-#endif
 
 #define str__type char
 #define str__mut true
@@ -106,5 +101,6 @@ static inline int strview_cmp(strview const *a, strview const *b)
 #include "ktl/trait/convert_vec_slice.h"
 #undef ktl_slice
 #undef ktl_vec
+#endif
 
 #endif

@@ -24,16 +24,14 @@ static inline int char_cmp(char const *a, char const *b)
 #define str__type char
 #define str__mut true
 #define str__terminated true, '\0'
-#define str__impl true
 #define ktl_slice str
-#include "ktl/struct/slice.h"
+#include "ktl/struct/slice.c"
 #undef ktl_slice
 
 #define strview__type char
 #define strview__terminated true, '\0'
-#define strview__impl true
 #define ktl_slice strview
-#include "ktl/struct/slice.h"
+#include "ktl/struct/slice.c"
 #undef ktl_slice
 
 // Fallible vec
@@ -41,16 +39,15 @@ static inline int char_cmp(char const *a, char const *b)
 #define strbuf__type char
 #define strbuf__terminated true, '\0'
 #define strbuf__local_allocator true, ktl_allocator
-#define strbuf__impl true
 
 #define ktl_vec strbuf
-#include "ktl/struct/vec.h"
+#include "ktl/struct/vec.c"
 // Supports converting to both str and strview
 #define ktl_slice str
-#include "ktl/trait/convert_vec_slice.h"
+#include "ktl/trait/convert_vec_slice.c"
 #undef ktl_slice
 #define ktl_slice strview
-#include "ktl/trait/convert_vec_slice.h"
+#include "ktl/trait/convert_vec_slice.c"
 #undef ktl_slice
 #undef ktl_vec
 
@@ -60,12 +57,11 @@ static inline int char_cmp(char const *a, char const *b)
 #define strbuf_inf__mut true // required for ord sort
 #define strbuf_inf__terminated true, '\0'
 #define strbuf_inf__infallible_allocator true
-#define strbuf_inf__impl true
 
 #define ktl_vec strbuf_inf
 #define ktl_slice str
-#include "ktl/struct/vec.h"
-#include "ktl/trait/convert_vec_slice.h"
+#include "ktl/struct/vec.c"
+#include "ktl/trait/convert_vec_slice.c"
 #undef ktl_slice
 #undef ktl_vec
 

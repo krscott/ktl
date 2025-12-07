@@ -34,6 +34,15 @@ run
 setup_vscode
 ```
 
+### LSP support for .inc files
+
+Neovim:
+```lua
+vim.filetype.add({
+  extension = { inc = "c" }
+})
+```
+
 ### Debugging
 
 Example [`launch.json`](dev/vscode/launch.json) and 

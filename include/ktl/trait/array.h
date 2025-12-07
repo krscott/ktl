@@ -14,7 +14,10 @@ typedef struct
     int *ptr;
     size_t len;
 } dev_array;
-static int int_cmp(int const *a, int const *b) { return *a - *b; }
+static int int_cmp(int const *a, int const *b)
+{
+    return *a - *b;
+}
 #define int__ord true
 // static int int_eq(int const *a, int const *b) { return *a == *b; }
 // #define int__eq true

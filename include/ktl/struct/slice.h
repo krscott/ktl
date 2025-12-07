@@ -11,7 +11,10 @@
 // Defaults (dev-only)
 
 #ifndef ktl_slice
-static inline int int_cmp(int const *a, int const *b) { return *a - *b; }
+static inline int int_cmp(int const *a, int const *b)
+{
+    return *a - *b;
+}
 #define int__ord true
 #define dev_slice__impl true
 #define dev_slice__type int

@@ -99,7 +99,10 @@ ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_allocator const allocator)
     return (ktl_vec){.allocator = allocator};
 }
 #else
-ktl_nodiscard ktl_vec ktl_vec_m(init)(void) { return (ktl_vec){0}; }
+ktl_nodiscard ktl_vec ktl_vec_m(init)(void)
+{
+    return (ktl_vec){0};
+}
 #endif
 
 void ktl_vec_m(deinit)(ktl_vec *const vec)

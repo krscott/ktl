@@ -11,7 +11,10 @@
 
 // char cmp
 
-static inline int char_cmp(char const *a, char const *b) { return *a - *b; }
+static inline int char_cmp(char const *a, char const *b)
+{
+    return *a - *b;
+}
 #define char__ord true
 
 // str slice types

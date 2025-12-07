@@ -28,6 +28,14 @@
 
 #define ktl_countof(arr) (sizeof(arr) / sizeof(arr[0]))
 
+#define ktl_assert_has_field(T, U, field)                                      \
+    static_assert(                                                             \
+        _Generic((((T *)0)->field), U: 1, default: 0),                         \
+        "Expected struct '" KTL_STRINGIFY(                                     \
+            T                                                                  \
+        ) "' field '" #field "' to be type '" KTL_STRINGIFY(U) "'"             \
+    )
+
 #if defined(__GNUC__) || defined(__clang__)
 #define KTL_PRAGMA(X) _Pragma(#X)
 #define KTL_DIAG_PUSH KTL_PRAGMA(GCC diagnostic push)

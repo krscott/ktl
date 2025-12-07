@@ -2,6 +2,7 @@
 
 #include "ktl/allocator.h"
 #include "ktl/macros.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -41,6 +42,16 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_allocates_global_allocator
 #endif
 
+KTL_DIAG_POP
+
+// Checks
+
+#ifdef ktl_allocates_local_allocator
+ktl_assert_has_field(ktl_allocates, ktl_allocator, allocator);
+#endif
+
+// Methods
+
 static inline void *
 ktl_allocates_m(_realloc)(ktl_allocates *self, void *ptr, size_t size)
 {
@@ -69,5 +80,3 @@ static inline void ktl_allocates_m(_free)(ktl_allocates *self, void *ptr)
     free(ptr);
 #endif
 }
-
-KTL_DIAG_POP

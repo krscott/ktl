@@ -81,7 +81,9 @@ void ktl_vec_m(deinit)(ktl_vec *vec);
 
 #undef ktl_array
 #define ktl_array ktl_vec
+#define KTL_ARRAY_MUT
 #include "ktl/trait/array.h"
+#undef KTL_ARRAY_MUT
 
 #undef ktl_dynarray
 #define ktl_dynarray ktl_vec

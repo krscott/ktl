@@ -74,7 +74,11 @@ KTL_DIAG_IGNORE(-Wundef)
 
 KTL_DIAG_POP
 
-// Type
+// Checks
+
+ktl_assert_has_field(ktl_dynarray, ktl_dynarray_Tptr, ptr);
+ktl_assert_has_field(ktl_dynarray, size_t, len);
+ktl_assert_has_field(ktl_dynarray, size_t, cap);
 
 #ifdef ktl_dynarray_sentinel
 static_assert(
@@ -93,7 +97,7 @@ static_assert(
 );
 #endif
 
-// Prototypes
+// Methods
 
 ktl_dynarray_alloc_ok ktl_dynarray_m(reserve)(ktl_dynarray *dynarray, size_t n);
 

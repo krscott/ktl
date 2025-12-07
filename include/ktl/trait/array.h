@@ -11,7 +11,7 @@
 #ifndef ktl_array
 typedef struct
 {
-    int *ptr;
+    int const *ptr;
     size_t len;
 } dev_array;
 static int int_cmp(int const *a, int const *b)
@@ -39,7 +39,7 @@ KTL_DIAG_IGNORE(-Wundef)
 
 #undef ktl_array_mut
 #undef ktl_array_Tptr
-#if ktl_array_m(_mut)
+#if ktl_array_m(_mut) || defined(KTL_ARRAY_MUT)
 #define ktl_array_mut
 #define ktl_array_Tptr ktl_array_T *
 #else
@@ -65,7 +65,12 @@ KTL_DIAG_IGNORE(-Wundef)
 
 KTL_DIAG_POP
 
-// Prototypes
+// Checks
+
+ktl_assert_has_field(ktl_array, ktl_array_Tptr, ptr);
+ktl_assert_has_field(ktl_array, size_t, len);
+
+// Methods
 
 #ifdef ktl_array_T_cmp
 

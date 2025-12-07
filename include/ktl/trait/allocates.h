@@ -30,52 +30,44 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_allocates_m
 #define ktl_allocates_m(x) KTL_TEMPLATE(ktl_allocates, x)
 
+#undef ktl_allocates_local_allocator
+#undef ktl_allocates_global_allocator
 #if ktl_allocates_m(_local_allocator)
 #if KTL_GET0(ktl_allocates_m(_global_allocator))
 #error "Cannot specify more than one allocator"
 #endif
-
-static inline void *
-ktl_allocates_m(realloc)(ktl_allocates *self, void *ptr, size_t size)
-{
-    return ktl_allocator_realloc(self->allocator, ptr, size);
-}
-static inline void ktl_allocates_m(free)(ktl_allocates *self, void *ptr)
-{
-    ktl_allocator_free(self->allocator, ptr);
-}
-
+#define ktl_allocates_local_allocator
 #elif KTL_GET0(ktl_allocates_m(_global_allocator))
+#define ktl_allocates_global_allocator
+#endif
 
 static inline void *
-ktl_allocates_m(realloc)(ktl_allocates *self, void *ptr, size_t size)
+ktl_allocates_m(_realloc)(ktl_allocates *self, void *ptr, size_t size)
 {
+#ifdef ktl_allocates_local_allocator
+    return ktl_allocator_realloc(self->allocator, ptr, size);
+#elif defined(ktl_allocates_global_allocator)
     (void)self;
     return KTL_TEMPLATE(KTL_GET1(ktl_allocates_m(_global_allocator)), realloc)(
         ptr,
         size
     );
-}
-static inline void ktl_allocates_m(free)(ktl_allocates *self, void *ptr)
-{
-    (void)self;
-    KTL_TEMPLATE(KTL_GET1(ktl_allocates_m(_global_allocator)), free)(ptr);
-}
-
-#else // System allocator
-
-static inline void *
-ktl_allocates_m(realloc)(ktl_allocates *self, void *ptr, size_t size)
-{
+#else
     (void)self;
     return realloc(ptr, size);
+#endif
 }
-static inline void ktl_allocates_m(free)(ktl_allocates *self, void *ptr)
+static inline void ktl_allocates_m(_free)(ktl_allocates *self, void *ptr)
 {
+#ifdef ktl_allocates_local_allocator
+    ktl_allocator_free(self->allocator, ptr);
+#elif defined(ktl_allocates_global_allocator)
+    (void)self;
+    KTL_TEMPLATE(KTL_GET1(ktl_allocates_m(_global_allocator)), free)(ptr);
+#else
     (void)self;
     free(ptr);
-}
-
 #endif
+}
 
 KTL_DIAG_POP

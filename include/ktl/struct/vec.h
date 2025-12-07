@@ -104,7 +104,7 @@ ktl_nodiscard ktl_vec ktl_vec_m(init)(void) { return (ktl_vec){0}; }
 
 void ktl_vec_m(deinit)(ktl_vec *const vec)
 {
-    ktl_allocates_m(free)(vec, vec->ptr);
+    ktl_allocates_m(_free)(vec, vec->ptr);
 }
 
 #endif // ktl_vec_impl

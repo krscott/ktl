@@ -173,7 +173,7 @@ ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
             new_cap = KTL_dynarray_GROW_CAP(new_cap);
         }
 
-        void *const new_ptr = ktl_allocates_m(realloc)(
+        void *const new_ptr = ktl_allocates_m(_realloc)(
             dynarray,
             dynarray->ptr,
             new_cap * sizeof(dynarray->ptr[0])

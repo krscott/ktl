@@ -54,4 +54,12 @@ static inline int strview_cmp(strview const *a, strview const *b)
 #undef ktl_slice
 #undef ktl_vec
 
+static inline strview strview_from_str(str s)
+{
+    return (strview){.ptr = s.ptr, .len = s.len};
+}
+
+str str_trim_start(str s);
+strview strview_trim_start(strview s);
+
 #endif

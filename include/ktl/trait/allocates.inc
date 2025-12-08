@@ -1,5 +1,11 @@
-
+#ifndef ktl_allocates
+// dev-only
 #include "ktl/trait/allocates.h"
+#endif
+
+#define KTL_INC
+#include "ktl/trait/allocates.h"
+#undef KTL_INC
 
 #include "ktl/macros.h"
 

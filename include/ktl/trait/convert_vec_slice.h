@@ -20,9 +20,13 @@
 #endif
 #define ktl_convert_vec_slice_m(x) KTL_TEMPLATE2(ktl_vec, x, ktl_slice)
 
+#ifndef KTL_INC
+
 // Methods
 
 ktl_nodiscard ktl_slice ktl_convert_vec_slice_m(as)(ktl_vec vec);
 
 ktl_dynarray_alloc_ok
     ktl_convert_vec_slice_m(append)(ktl_vec *vec, ktl_slice slice);
+
+#endif // KTL_INC

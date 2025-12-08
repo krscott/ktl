@@ -42,6 +42,8 @@ KTL_DIAG_IGNORE(-Wundef)
 
 KTL_DIAG_POP
 
+#ifndef KTL_INC
+
 // Type
 
 /**
@@ -84,3 +86,5 @@ ktl_nodiscard ktl_vec ktl_vec_m(init)(void);
 #endif
 
 void ktl_vec_m(deinit)(ktl_vec *vec);
+
+#endif // KTL_INC

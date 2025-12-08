@@ -1,4 +1,11 @@
+#ifndef ktl_dynarray
+// dev-only
 #include "ktl/trait/dynarray.h"
+#endif
+
+#define KTL_INC
+#include "ktl/trait/dynarray.h"
+#undef KTL_INC
 
 #include "ktl/macros.h"
 

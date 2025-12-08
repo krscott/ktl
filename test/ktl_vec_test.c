@@ -1,5 +1,5 @@
-#include "ktl/lib/allocator.h" // IWYU pragma: export
-#include "ktl/lib/clib_allocator.h"
+#include "ktl/lib/allocator.h"      // IWYU pragma: export
+#include "ktl/lib/clib_allocator.h" // IWYU pragma: export
 #include "ktl/lib/mock_allocator.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -25,12 +25,14 @@ static inline int char_cmp(char const *a, char const *b)
 #define str__mut true
 #define str__terminated true, '\0'
 #define ktl_slice str
+#include "ktl/struct/slice.h"
 #include "ktl/struct/slice.inc"
 #undef ktl_slice
 
 #define strview__type char
 #define strview__terminated true, '\0'
 #define ktl_slice strview
+#include "ktl/struct/slice.h"
 #include "ktl/struct/slice.inc"
 #undef ktl_slice
 
@@ -41,12 +43,15 @@ static inline int char_cmp(char const *a, char const *b)
 #define strbuf__local_allocator true, ktl_allocator
 
 #define ktl_vec strbuf
+#include "ktl/struct/vec.h"
 #include "ktl/struct/vec.inc"
 // Supports converting to both str and strview
 #define ktl_slice str
+#include "ktl/trait/convert_vec_slice.h"
 #include "ktl/trait/convert_vec_slice.inc"
 #undef ktl_slice
 #define ktl_slice strview
+#include "ktl/trait/convert_vec_slice.h"
 #include "ktl/trait/convert_vec_slice.inc"
 #undef ktl_slice
 #undef ktl_vec
@@ -60,7 +65,9 @@ static inline int char_cmp(char const *a, char const *b)
 
 #define ktl_vec strbuf_inf
 #define ktl_slice str
+#include "ktl/struct/vec.h"
 #include "ktl/struct/vec.inc"
+#include "ktl/trait/convert_vec_slice.h"
 #include "ktl/trait/convert_vec_slice.inc"
 #undef ktl_slice
 #undef ktl_vec

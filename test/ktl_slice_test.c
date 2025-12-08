@@ -21,12 +21,14 @@ static inline int char_cmp(char const *a, char const *b)
 #define intslice__type int
 #define intslice__mut true
 #define ktl_slice intslice
+#include "ktl/struct/slice.h"
 #include "ktl/struct/slice.inc"
 #undef ktl_slice
 
 #define str__type char
 #define str__terminated true, '\0'
 #define ktl_slice str
+#include "ktl/struct/slice.h"
 #include "ktl/struct/slice.inc"
 #undef ktl_slice
 
@@ -44,6 +46,7 @@ static inline int str_cmp(str const *a, str const *b)
 #define strslice__type str
 #define strslice__mut true
 #define ktl_slice strslice
+#include "ktl/struct/slice.h"
 #include "ktl/struct/slice.inc"
 #undef ktl_slice
 

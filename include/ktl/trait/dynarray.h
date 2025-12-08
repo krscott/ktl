@@ -68,6 +68,8 @@ KTL_DIAG_IGNORE(-Wundef)
 
 KTL_DIAG_POP
 
+#ifndef KTL_INC
+
 // Checks
 
 ktl_assert_has_field(ktl_dynarray, ktl_dynarray_Tptr, ptr);
@@ -109,3 +111,5 @@ ktl_dynarray_alloc_ok
     ktl_dynarray_m(push)(ktl_dynarray *dynarray, ktl_dynarray_T elem);
 ktl_nodiscard bool
     ktl_dynarray_m(pop)(ktl_dynarray *dynarray, ktl_dynarray_T *out);
+
+#endif // KTL_INC

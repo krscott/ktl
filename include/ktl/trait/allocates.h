@@ -46,6 +46,8 @@ KTL_DIAG_IGNORE(-Wundef)
 
 KTL_DIAG_POP
 
+#ifndef KTL_INC
+
 // Checks
 
 #ifdef ktl_allocates_local_allocator
@@ -58,3 +60,5 @@ ktl_nodiscard void *
     ktl_allocates_m(_realloc)(ktl_allocates *self, void *ptr, size_t size);
 
 void ktl_allocates_m(_free)(ktl_allocates *self, void *ptr);
+
+#endif // KTL_INC

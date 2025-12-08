@@ -1,10 +1,17 @@
+#ifndef ktl_vec
+// dev-only
 #include "ktl/struct/vec.h"
+#endif
 
 #include "ktl/macros.h"
 
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
+
+#define KTL_INC
+#include "ktl/struct/vec.h"
+#undef KTL_INC
 
 // Traits
 

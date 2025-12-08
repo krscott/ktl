@@ -59,6 +59,8 @@ KTL_DIAG_IGNORE(-Wundef)
 
 KTL_DIAG_POP
 
+#ifndef KTL_INC
+
 // Checks
 
 ktl_assert_has_field(ktl_array, ktl_array_Tptr, ptr);
@@ -89,3 +91,5 @@ ktl_nodiscard bool
 
 ktl_nodiscard bool ktl_array_m(contains)(ktl_array array, ktl_array_T x);
 #endif
+
+#endif // KTL_INC

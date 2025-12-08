@@ -3,6 +3,8 @@
 
 #include "ktl/prelude.h"
 
+#include "ktl/lib/strings.inc"
+
 #ifdef NDEBUG
 #error "Asserts are disabled in release"
 #endif

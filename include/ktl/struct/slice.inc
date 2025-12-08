@@ -1,4 +1,7 @@
+#ifndef ktl_slice
+// dev-only
 #include "ktl/struct/slice.h"
+#endif
 
 #include "ktl/macros.h"
 
@@ -8,15 +11,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define KTL_INC
+#include "ktl/struct/slice.h"
+#undef KTL_INC
+
 // Traits
 
+#undef ktl_array
 #define ktl_array ktl_slice
 #include "ktl/trait/array.inc"
-#undef ktl_array
 
 // Methods
 
 #ifdef ktl_slice_sentinel
+// ktl_dbg_chk(ktl_slice);
+// ktl_dbg_chk(dev_slice__mut);
+// ktl_dbg_template_chk(ktl_slice, _mut);
 ktl_nodiscard ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
 {
     assert(ptr);

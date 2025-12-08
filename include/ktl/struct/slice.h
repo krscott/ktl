@@ -49,6 +49,8 @@ KTL_DIAG_IGNORE(-Wundef)
 
 KTL_DIAG_POP
 
+#ifndef KTL_INC
+
 // Type
 
 /**
@@ -92,3 +94,5 @@ ktl_nodiscard bool ktl_slice_m(split)(
 ktl_nodiscard bool ktl_slice_m(split_at)(
     ktl_slice slice, size_t index, ktl_slice *head, ktl_slice *tail
 );
+
+#endif // KTL_INC

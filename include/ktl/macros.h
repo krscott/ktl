@@ -36,6 +36,14 @@
         ) "' field '" #field "' to be type '" KTL_STRINGIFY(U) "'"             \
     )
 
+#define ktl_dbg_chk(expr) static_assert(0, #expr " : " KTL_STRINGIFY(expr))
+
+#define ktl_dbg_template_chk(T, name)                                          \
+    static_assert(                                                             \
+        0,                                                                     \
+        KTL_STRINGIFY(T) "_" #name " : " KTL_STRINGIFY(KTL_TEMPLATE(T, name))  \
+    )
+
 #if defined(__GNUC__) || defined(__clang__)
 #define KTL_PRAGMA(X) _Pragma(#X)
 #define KTL_DIAG_PUSH KTL_PRAGMA(GCC diagnostic push)

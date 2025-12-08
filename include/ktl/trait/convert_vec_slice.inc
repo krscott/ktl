@@ -1,4 +1,11 @@
+#ifndef ktl_vec
+// dev-only
 #include "ktl/trait/convert_vec_slice.h"
+#endif
+
+#define KTL_INC
+#include "ktl/trait/convert_vec_slice.h"
+#undef KTL_INC
 
 #include "ktl/macros.h"
 

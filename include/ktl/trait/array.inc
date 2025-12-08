@@ -1,4 +1,11 @@
+#ifndef ktl_array
+// dev-only
 #include "ktl/trait/array.h"
+#endif
+
+#define KTL_INC
+#include "ktl/trait/array.h"
+#undef KTL_INC
 
 #include "ktl/macros.h"
 

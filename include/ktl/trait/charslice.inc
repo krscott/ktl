@@ -53,3 +53,10 @@ ktl_nodiscard ktl_charslice ktl_charslice_m(trim_end)(ktl_charslice s)
         .len = len,
     };
 }
+
+ktl_nodiscard ktl_charslice ktl_charslice_m(trim)(ktl_charslice s)
+{
+    s = ktl_charslice_m(trim_start)(s);
+    s = ktl_charslice_m(trim_end)(s);
+    return s;
+}

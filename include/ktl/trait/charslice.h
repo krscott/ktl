@@ -72,5 +72,6 @@ int ktl_charslice_m(cmp)(ktl_charslice const *a, ktl_charslice const *b);
 
 ktl_nodiscard ktl_charslice ktl_charslice_m(trim_start)(ktl_charslice s);
 ktl_nodiscard ktl_charslice ktl_charslice_m(trim_end)(ktl_charslice s);
+ktl_nodiscard ktl_charslice ktl_charslice_m(trim)(ktl_charslice s);
 
 #endif // KTL_INC

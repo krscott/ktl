@@ -51,6 +51,9 @@ static void t_trim(void)
 
     str c = str_trim_end(a);
     assert(str_eq(c, str_from_terminated(" \t\r\n foo")));
+
+    str d = str_trim(a);
+    assert(str_eq(d, str_from_terminated("foo")));
 }
 
 #define RUN(test)                                                              \

@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "ktl/prelude.h"
+#include "ktl/lib/strings.h"
 
 #include "ktl/lib/strings.inc"
 
@@ -18,7 +18,6 @@ static void t_ints_are_ord(void)
     assert(i8_cmp(&b, &a) < 0);
 }
 
-#if 0
 static void t_strs(void)
 {
     str a = str_from_terminated("Hello");
@@ -42,7 +41,6 @@ static void t_strbufs(void)
 
     strbuf_deinit(&b);
 }
-#endif
 
 #define RUN(test)                                                              \
     do                                                                         \
@@ -55,8 +53,8 @@ static void t_strbufs(void)
 int main(void)
 {
     RUN(t_ints_are_ord);
-    // RUN(t_strs);
-    // RUN(t_strbufs);
+    RUN(t_strs);
+    RUN(t_strbufs);
 
     return 0;
 }

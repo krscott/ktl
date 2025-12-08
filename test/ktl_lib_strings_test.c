@@ -42,6 +42,17 @@ static void t_strbufs(void)
     strbuf_deinit(&b);
 }
 
+static void t_trim(void)
+{
+    str a = str_from_terminated(" \t\r\n foo \t\r\n ");
+
+    str b = str_trim_start(a);
+    assert(str_eq(b, str_from_terminated("foo \t\r\n ")));
+
+    str c = str_trim_end(a);
+    assert(str_eq(c, str_from_terminated(" \t\r\n foo")));
+}
+
 #define RUN(test)                                                              \
     do                                                                         \
     {                                                                          \
@@ -55,6 +66,7 @@ int main(void)
     RUN(t_ints_are_ord);
     RUN(t_strs);
     RUN(t_strbufs);
+    RUN(t_trim);
 
     return 0;
 }

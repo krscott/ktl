@@ -24,9 +24,6 @@
 // Methods
 
 #ifdef ktl_slice_sentinel
-// ktl_dbg_chk(ktl_slice);
-// ktl_dbg_chk(dev_slice__mut);
-// ktl_dbg_template_chk(ktl_slice, _mut);
 ktl_nodiscard ktl_slice ktl_slice_m(from_terminated)(ktl_slice_Tptr const ptr)
 {
     assert(ptr);

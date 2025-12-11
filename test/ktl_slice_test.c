@@ -1,11 +1,7 @@
+#include "ktest.inc"
 #include "ktl/macros.h"
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
-#ifdef NDEBUG
-#error "Asserts are disabled in release"
-#endif
 
 static inline int int_cmp(int const *a, int const *b)
 {
@@ -50,296 +46,269 @@ static inline int str_cmp(str const *a, str const *b)
 #include "ktl/struct/slice.inc"
 #undef ktl_slice
 
-static void t_contains(void)
-{
-    int arr_a[] = {100, 55, 33};
-    intslice a = {
-        .ptr = arr_a,
-        .len = ktl_countof(arr_a),
-    };
-
-    assert(intslice_contains(a, 33));
-    assert(!intslice_contains(a, 0));
-}
-
-static void t_contains_null(void)
-{
-    intslice a = {0};
-    assert(!intslice_contains(a, 0));
-}
-
-static void t_find_index(void)
-{
-    int arr_a[] = {100, 55, 33};
-    intslice a = {
-        .ptr = arr_a,
-        .len = ktl_countof(arr_a),
-    };
-
-    size_t index = 0;
-    assert(intslice_find_index(a, 33, &index));
-    assert(index == 2);
-    assert(!intslice_find_index(a, 0, &index));
-}
-
-static void t_find_index_null(void)
-{
-    intslice a = {0};
-    assert(!intslice_find_index(a, 0, NULL));
-}
-
-static void t_split(void)
-{
-    char arr_a[] = "Hello World!";
-    str a = {
-        .ptr = arr_a,
-        .len = strlen(arr_a),
-    };
-
-    assert(!str_split(a, 'Z', NULL, NULL));
-
-    str head;
-    str tail;
-    assert(str_split(a, ' ', &head, &tail));
-    assert(head.len == 5);
-    assert(0 == strncmp(head.ptr, "Hello", head.len));
-    assert(tail.len == 6);
-    assert(0 == strncmp(tail.ptr, "World!", tail.len));
-}
-
-static void t_split_null(void)
-{
-    str a = {0};
-    assert(!str_split(a, 'a', NULL, NULL));
-}
-
-static void t_split_at(void)
-{
-    char arr_a[] = "Hello World!";
-    str a = {
-        .ptr = arr_a,
-        .len = strlen(arr_a),
-    };
-
-    assert(!str_split_at(a, 100, NULL, NULL));
-
-    str head;
-    str tail;
-
-    assert(str_split_at(a, 0, &head, &tail));
-    assert(head.len == 0);
-    assert(tail.len == a.len);
-    assert(0 == strncmp(tail.ptr, "Hello World!", tail.len));
-
-    assert(str_split_at(a, a.len - 1, &head, &tail));
-    assert(head.len == a.len - 1);
-    assert(0 == strncmp(head.ptr, "Hello World", head.len));
-    assert(tail.len == 1);
-    assert(0 == strncmp(tail.ptr, "!", tail.len));
-
-    assert(str_split_at(a, a.len, &head, &tail));
-    assert(head.len == a.len);
-    assert(0 == strncmp(head.ptr, "Hello World!", head.len));
-    assert(tail.len == 0);
-}
-
-static void t_split_at_null(void)
-{
-    str a = {0};
-    str head;
-    str tail;
-    assert(str_split_at(a, 0, &head, &tail));
-    assert(head.len == 0);
-    assert(tail.len == 0);
-
-    assert(!str_split_at(a, 1, &head, &tail));
-}
-
-static void t_eq(void)
-{
-    int arr_a[] = {1, 2, 3, 4, 5};
-    int arr_b[] = {1, 2, 3, 4, 5};
-    int arr_c[] = {1, 2, 3, 4, 55};
-    int arr_d[] = {1, 2, 3, 4, 5, 6};
-    intslice a = {
-        .ptr = arr_a,
-        .len = ktl_countof(arr_a),
-    };
-    intslice b = {
-        .ptr = arr_b,
-        .len = ktl_countof(arr_b),
-    };
-    intslice c = {
-        .ptr = arr_c,
-        .len = ktl_countof(arr_c),
-    };
-    intslice d = {
-        .ptr = arr_d,
-        .len = ktl_countof(arr_d),
-    };
-
-    assert(intslice_eq(a, b));
-    assert(!intslice_eq(a, c));
-    assert(!intslice_eq(a, d));
-}
-
-static void t_eq_null(void)
+KTEST_MAIN
 {
 
-    int arr_a[] = {1, 2, 3, 4, 5};
-    intslice a = {
-        .ptr = arr_a,
-        .len = ktl_countof(arr_a),
-    };
-    intslice b = {0};
-    intslice c = {0};
-
-    assert(!intslice_eq(a, b));
-    assert(intslice_eq(b, c));
-}
-
-static void t_sort(void)
-{
-    int ints[] = {5, 10, 7, 1, -12};
-    intslice a = {
-        .ptr = ints,
-        .len = ktl_countof(ints),
-    };
-
-    intslice_sort(a);
-
-    assert(ints[0] == -12);
-    assert(ints[1] == 1);
-    assert(ints[2] == 5);
-    assert(ints[3] == 7);
-    assert(ints[4] == 10);
-}
-
-static void t_sort_null(void)
-{
-    intslice a = {0};
-    intslice_sort(a);
-}
-
-static void t_bsearch(void)
-{
-    int ints[] = {1, 11, 22, 33, 99};
-    intslice a = {
-        .ptr = ints,
-        .len = ktl_countof(ints),
-    };
-
-    assert(intslice_bsearch(a, 22, NULL));
-    assert(!intslice_bsearch(a, 10, NULL));
-
+    KTEST(t_contains)
     {
-        int *match = NULL;
-        assert(intslice_bsearch(a, 99, &match));
-        assert(match);
-        assert(*match == 99);
+        int arr_a[] = {100, 55, 33};
+        intslice a = {
+            .ptr = arr_a,
+            .len = ktl_countof(arr_a),
+        };
 
-        assert(ints[4] == 99);
-        *match = 100;
-        assert(ints[4] == 100);
+        ASSERT_TRUE(intslice_contains(a, 33));
+        ASSERT_TRUE(!intslice_contains(a, 0));
     }
 
-    assert(intslice_bsearch_index(a, 22, NULL));
-    assert(!intslice_bsearch_index(a, 10, NULL));
-
+    KTEST(t_contains_null)
     {
-        size_t idx = 0;
-        assert(intslice_bsearch_index(a, 33, &idx));
-        assert(a.ptr[idx] == 33);
+        intslice a = {0};
+        ASSERT_TRUE(!intslice_contains(a, 0));
     }
-}
 
-static void t_bsearch_null(void)
-{
-    intslice a = {0};
-    assert(!intslice_bsearch(a, 0, NULL));
-    assert(!intslice_bsearch_index(a, 0, NULL));
-}
+    KTEST(t_find_index)
+    {
+        int arr_a[] = {100, 55, 33};
+        intslice a = {
+            .ptr = arr_a,
+            .len = ktl_countof(arr_a),
+        };
 
-static void t_from_terminated(void)
-{
-    char const *s = "Hello, World!";
-    str a = str_from_terminated(s);
-    assert(a.ptr == s);
-    assert(a.len == strlen(s));
-}
+        size_t index = 0;
+        ASSERT_TRUE(intslice_find_index(a, 33, &index));
+        ASSERT_TRUE(index == 2);
+        ASSERT_TRUE(!intslice_find_index(a, 0, &index));
+    }
 
-static void t_slice_of_slices(void)
-{
-    str strs[] = {
-        str_from_terminated("Foo"),
-        str_from_terminated("Bar"),
-        str_from_terminated("Qux"),
-    };
+    KTEST(t_find_index_null)
+    {
+        intslice a = {0};
+        ASSERT_TRUE(!intslice_find_index(a, 0, NULL));
+    }
 
-    // Make separate string to ensure compiler doesn't use same pointer
-    str splitter = str_from_terminated("Bar2");
-    splitter.len -= 1;
+    KTEST(t_split)
+    {
+        char arr_a[] = "Hello World!";
+        str a = {
+            .ptr = arr_a,
+            .len = strlen(arr_a),
+        };
 
-    strslice strings = {
-        .ptr = strs,
-        .len = ktl_countof(strs),
-    };
+        ASSERT_TRUE(!str_split(a, 'Z', NULL, NULL));
 
-    strslice head;
-    strslice tail;
-    assert(strslice_split(strings, splitter, &head, &tail));
+        str head;
+        str tail;
+        ASSERT_TRUE(str_split(a, ' ', &head, &tail));
+        ASSERT_TRUE(head.len == 5);
+        ASSERT_TRUE(0 == strncmp(head.ptr, "Hello", head.len));
+        ASSERT_TRUE(tail.len == 6);
+        ASSERT_TRUE(0 == strncmp(tail.ptr, "World!", tail.len));
+    }
 
-    assert(str_eq(head.ptr[0], str_from_terminated("Foo")));
-    assert(str_eq(tail.ptr[0], str_from_terminated("Qux")));
-}
+    KTEST(t_split_null)
+    {
+        str a = {0};
+        ASSERT_TRUE(!str_split(a, 'a', NULL, NULL));
+    }
 
-static void t_alphabatize(void)
-{
-    str strs[] = {
-        str_from_terminated("banana"),
-        str_from_terminated("cherry"),
-        str_from_terminated("apple"),
-    };
+    KTEST(t_split_at)
+    {
+        char arr_a[] = "Hello World!";
+        str a = {
+            .ptr = arr_a,
+            .len = strlen(arr_a),
+        };
 
-    strslice strings = {
-        .ptr = strs,
-        .len = ktl_countof(strs),
-    };
+        ASSERT_TRUE(!str_split_at(a, 100, NULL, NULL));
 
-    strslice_sort(strings);
+        str head;
+        str tail;
 
-    assert(str_eq(strings.ptr[0], str_from_terminated("apple")));
-    assert(str_eq(strings.ptr[1], str_from_terminated("banana")));
-    assert(str_eq(strings.ptr[2], str_from_terminated("cherry")));
-}
+        ASSERT_TRUE(str_split_at(a, 0, &head, &tail));
+        ASSERT_TRUE(head.len == 0);
+        ASSERT_TRUE(tail.len == a.len);
+        ASSERT_TRUE(0 == strncmp(tail.ptr, "Hello World!", tail.len));
 
-#define RUN(test)                                                              \
-    do                                                                         \
-    {                                                                          \
-        printf("Test: " #test "\n");                                           \
-        fflush(stdout);                                                        \
-        test();                                                                \
-    } while (0)
+        ASSERT_TRUE(str_split_at(a, a.len - 1, &head, &tail));
+        ASSERT_TRUE(head.len == a.len - 1);
+        ASSERT_TRUE(0 == strncmp(head.ptr, "Hello World", head.len));
+        ASSERT_TRUE(tail.len == 1);
+        ASSERT_TRUE(0 == strncmp(tail.ptr, "!", tail.len));
 
-int main(void)
-{
-    RUN(t_contains);
-    RUN(t_contains_null);
-    RUN(t_find_index);
-    RUN(t_find_index_null);
-    RUN(t_eq);
-    RUN(t_eq_null);
-    RUN(t_split);
-    RUN(t_split_null);
-    RUN(t_split_at);
-    RUN(t_split_at_null);
-    RUN(t_sort);
-    RUN(t_sort_null);
-    RUN(t_bsearch);
-    RUN(t_bsearch_null);
-    RUN(t_from_terminated);
-    RUN(t_slice_of_slices);
-    RUN(t_alphabatize);
+        ASSERT_TRUE(str_split_at(a, a.len, &head, &tail));
+        ASSERT_TRUE(head.len == a.len);
+        ASSERT_TRUE(0 == strncmp(head.ptr, "Hello World!", head.len));
+        ASSERT_TRUE(tail.len == 0);
+    }
 
-    return 0;
+    KTEST(t_split_at_null)
+    {
+        str a = {0};
+        str head;
+        str tail;
+        ASSERT_TRUE(str_split_at(a, 0, &head, &tail));
+        ASSERT_TRUE(head.len == 0);
+        ASSERT_TRUE(tail.len == 0);
+
+        ASSERT_TRUE(!str_split_at(a, 1, &head, &tail));
+    }
+
+    KTEST(t_eq)
+    {
+        int arr_a[] = {1, 2, 3, 4, 5};
+        int arr_b[] = {1, 2, 3, 4, 5};
+        int arr_c[] = {1, 2, 3, 4, 55};
+        int arr_d[] = {1, 2, 3, 4, 5, 6};
+        intslice a = {
+            .ptr = arr_a,
+            .len = ktl_countof(arr_a),
+        };
+        intslice b = {
+            .ptr = arr_b,
+            .len = ktl_countof(arr_b),
+        };
+        intslice c = {
+            .ptr = arr_c,
+            .len = ktl_countof(arr_c),
+        };
+        intslice d = {
+            .ptr = arr_d,
+            .len = ktl_countof(arr_d),
+        };
+
+        ASSERT_TRUE(intslice_eq(a, b));
+        ASSERT_TRUE(!intslice_eq(a, c));
+        ASSERT_TRUE(!intslice_eq(a, d));
+    }
+
+    KTEST(t_eq_null)
+    {
+
+        int arr_a[] = {1, 2, 3, 4, 5};
+        intslice a = {
+            .ptr = arr_a,
+            .len = ktl_countof(arr_a),
+        };
+        intslice b = {0};
+        intslice c = {0};
+
+        ASSERT_TRUE(!intslice_eq(a, b));
+        ASSERT_TRUE(intslice_eq(b, c));
+    }
+
+    KTEST(t_sort)
+    {
+        int ints[] = {5, 10, 7, 1, -12};
+        intslice a = {
+            .ptr = ints,
+            .len = ktl_countof(ints),
+        };
+
+        intslice_sort(a);
+
+        ASSERT_TRUE(ints[0] == -12);
+        ASSERT_TRUE(ints[1] == 1);
+        ASSERT_TRUE(ints[2] == 5);
+        ASSERT_TRUE(ints[3] == 7);
+        ASSERT_TRUE(ints[4] == 10);
+    }
+
+    KTEST(t_sort_null)
+    {
+        intslice a = {0};
+        intslice_sort(a);
+    }
+
+    KTEST(t_bsearch)
+    {
+        int ints[] = {1, 11, 22, 33, 99};
+        intslice a = {
+            .ptr = ints,
+            .len = ktl_countof(ints),
+        };
+
+        ASSERT_TRUE(intslice_bsearch(a, 22, NULL));
+        ASSERT_TRUE(!intslice_bsearch(a, 10, NULL));
+
+        {
+            int *match = NULL;
+            ASSERT_TRUE(intslice_bsearch(a, 99, &match));
+            ASSERT_TRUE(match);
+            ASSERT_TRUE(*match == 99);
+
+            ASSERT_TRUE(ints[4] == 99);
+            *match = 100;
+            ASSERT_TRUE(ints[4] == 100);
+        }
+
+        ASSERT_TRUE(intslice_bsearch_index(a, 22, NULL));
+        ASSERT_TRUE(!intslice_bsearch_index(a, 10, NULL));
+
+        {
+            size_t idx = 0;
+            ASSERT_TRUE(intslice_bsearch_index(a, 33, &idx));
+            ASSERT_TRUE(a.ptr[idx] == 33);
+        }
+    }
+
+    KTEST(t_bsearch_null)
+    {
+        intslice a = {0};
+        ASSERT_TRUE(!intslice_bsearch(a, 0, NULL));
+        ASSERT_TRUE(!intslice_bsearch_index(a, 0, NULL));
+    }
+
+    KTEST(t_from_terminated)
+    {
+        char const *s = "Hello, World!";
+        str a = str_from_terminated(s);
+        ASSERT_TRUE(a.ptr == s);
+        ASSERT_TRUE(a.len == strlen(s));
+    }
+
+    KTEST(t_slice_of_slices)
+    {
+        str strs[] = {
+            str_from_terminated("Foo"),
+            str_from_terminated("Bar"),
+            str_from_terminated("Qux"),
+        };
+
+        // Make separate string to ensure compiler doesn't use same pointer
+        str splitter = str_from_terminated("Bar2");
+        splitter.len -= 1;
+
+        strslice strings = {
+            .ptr = strs,
+            .len = ktl_countof(strs),
+        };
+
+        strslice head;
+        strslice tail;
+        ASSERT_TRUE(strslice_split(strings, splitter, &head, &tail));
+
+        ASSERT_TRUE(str_eq(head.ptr[0], str_from_terminated("Foo")));
+        ASSERT_TRUE(str_eq(tail.ptr[0], str_from_terminated("Qux")));
+    }
+
+    KTEST(t_alphabatize)
+    {
+        str strs[] = {
+            str_from_terminated("banana"),
+            str_from_terminated("cherry"),
+            str_from_terminated("apple"),
+        };
+
+        strslice strings = {
+            .ptr = strs,
+            .len = ktl_countof(strs),
+        };
+
+        strslice_sort(strings);
+
+        ASSERT_TRUE(str_eq(strings.ptr[0], str_from_terminated("apple")));
+        ASSERT_TRUE(str_eq(strings.ptr[1], str_from_terminated("banana")));
+        ASSERT_TRUE(str_eq(strings.ptr[2], str_from_terminated("cherry")));
+    }
 }

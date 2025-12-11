@@ -1,4 +1,4 @@
-#include "ktl/lib/strings.h"
+#include "ktl/lib/strings.h" // IWYU pragma: export
 
 #include <assert.h>
 #include <stddef.h>

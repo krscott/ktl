@@ -1,15 +1,11 @@
+#include "ktest.inc"
 #include "ktl/lib/allocator.h"      // IWYU pragma: export
 #include "ktl/lib/clib_allocator.h" // IWYU pragma: export
 #include "ktl/lib/mock_allocator.h"
-#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#ifdef NDEBUG
-#error "Asserts are disabled in release"
-#endif
 
 // char cmp
 
@@ -72,339 +68,312 @@ static inline int char_cmp(char const *a, char const *b)
 #undef ktl_slice
 #undef ktl_vec
 
-static void t_deinit_null(void)
+KTEST_MAIN
 {
-    strbuf buf = strbuf_init(clib_allocator);
-    strbuf_deinit(&buf);
-}
-
-static void t_reserve(void)
-{
-    strbuf buf = strbuf_init(clib_allocator);
-
-    assert(strbuf_reserve(&buf, 100));
-    assert(buf.ptr != NULL);
-    assert(buf.len == 0);
-    assert(buf.cap >= 100);
-
-    // Don't allocate if cap does not need to increase
-    size_t const old_cap = buf.cap;
-    assert(strbuf_reserve(&buf, 100));
-    assert(buf.cap == old_cap);
-
-    strbuf_deinit(&buf);
-}
-
-static void t_reserve_fail(void)
-{
-    mock_allocator mockal = mock_allocator_init();
-    strbuf buf = strbuf_init(mock_allocator_handle(&mockal));
-
-    mockal.fail = true;
-    assert(!strbuf_reserve(&buf, 100));
-
-    mockal.fail = false;
-    assert(strbuf_reserve(&buf, 100));
-
-    strbuf_deinit(&buf);
-}
-
-static void t_reserve_infallible(void)
-{
-    strbuf_inf buf = strbuf_inf_init();
-
-    strbuf_inf_reserve(&buf, 100);
-    assert(buf.ptr != NULL);
-    assert(buf.len == 0);
-    assert(buf.cap >= 100);
-
-    // Don't allocate if cap does not need to increase
-    size_t const old_cap = buf.cap;
-    strbuf_inf_reserve(&buf, 100);
-    assert(buf.cap == old_cap);
-
-    strbuf_inf_deinit(&buf);
-}
-
-static void t_append(void)
-{
-    char const *s = "foobar";
-    size_t const s_len = strlen(s);
-
-    strbuf buf = strbuf_init(clib_allocator);
-
-    assert(strbuf_append(&buf, s, s_len));
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len);
-    assert(buf.cap >= s_len);
-    assert(buf.ptr[buf.len] == '\0');
-
-    assert(strbuf_append(&buf, s, s_len));
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len * 2);
-    assert(buf.cap >= s_len * 2);
-    assert(buf.ptr[buf.len] == '\0');
-
-    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
-
-    strbuf_deinit(&buf);
-}
-
-static void t_append_infallible(void)
-{
-    char const *s = "foobar";
-    size_t const s_len = strlen(s);
-
-    strbuf_inf buf = strbuf_inf_init();
-
-    strbuf_inf_append(&buf, s, s_len);
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len);
-    assert(buf.cap >= s_len);
-    assert(buf.ptr[buf.len] == '\0');
-
-    strbuf_inf_append(&buf, s, s_len);
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len * 2);
-    assert(buf.cap >= s_len * 2);
-    assert(buf.ptr[buf.len] == '\0');
-
-    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
-
-    strbuf_inf_deinit(&buf);
-}
-
-static void t_append_terminated(void)
-{
-    char const *s = "foobar";
-    size_t const s_len = strlen(s);
-
-    strbuf buf = strbuf_init(clib_allocator);
-
-    assert(strbuf_append_terminated(&buf, s));
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len);
-    assert(buf.cap >= s_len);
-    assert(buf.ptr[buf.len] == '\0');
-
-    assert(strbuf_append_terminated(&buf, s));
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len * 2);
-    assert(buf.cap >= s_len * 2);
-    assert(buf.ptr[buf.len] == '\0');
-
-    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
-
-    strbuf_deinit(&buf);
-}
-
-static void t_append_terminated_infallible(void)
-{
-    char const *s = "foobar";
-    size_t const s_len = strlen(s);
-
-    strbuf_inf buf = strbuf_inf_init();
-
-    strbuf_inf_append_terminated(&buf, s);
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len);
-    assert(buf.cap >= s_len);
-    assert(buf.ptr[buf.len] == '\0');
-
-    strbuf_inf_append_terminated(&buf, s);
-    assert(buf.ptr != NULL);
-    assert(buf.ptr != s);
-    assert(buf.len == s_len * 2);
-    assert(buf.cap >= s_len * 2);
-    assert(buf.ptr[buf.len] == '\0');
-
-    assert(0 == strcmp(buf.ptr, "foobarfoobar"));
-
-    strbuf_inf_deinit(&buf);
-}
-
-static void t_push(void)
-{
-    strbuf buf = strbuf_init(clib_allocator);
-
-    assert(strbuf_append_terminated(&buf, "Hello"));
-    assert(buf.len == 5);
-
-    assert(strbuf_push(&buf, '!'));
-    assert(buf.len == 6);
-    assert(buf.ptr[buf.len - 1] == '!');
-    assert(0 == strcmp(buf.ptr, "Hello!"));
-
-    strbuf_deinit(&buf);
-}
-
-static void t_push_infallible(void)
-{
-    strbuf_inf buf = strbuf_inf_init();
-
-    strbuf_inf_append_terminated(&buf, "Hello");
-    assert(buf.len == 5);
-
-    strbuf_inf_push(&buf, '!');
-    assert(buf.len == 6);
-    assert(buf.ptr[buf.len - 1] == '!');
-    assert(0 == strcmp(buf.ptr, "Hello!"));
-
-    strbuf_inf_deinit(&buf);
-}
-
-static void t_pop(void)
-{
-    strbuf buf = strbuf_init(clib_allocator);
-    char c = '\0';
-
-    assert(!strbuf_pop(&buf, &c));
-
-    assert(strbuf_append_terminated(&buf, "Hello!"));
-    assert(buf.len == 6);
-
-    assert(strbuf_pop(&buf, &c));
-    assert(buf.len == 5);
-    assert(c == '!');
-    assert(0 == strcmp(buf.ptr, "Hello"));
-
-    assert(strbuf_pop(&buf, &c));
-    assert(strbuf_pop(&buf, &c));
-    assert(strbuf_pop(&buf, &c));
-    assert(strbuf_pop(&buf, &c));
-    assert(strbuf_pop(&buf, &c));
-
-    assert(buf.len == 0);
-    assert(c == 'H');
-
-    assert(!strbuf_pop(&buf, &c));
-
-    strbuf_deinit(&buf);
-}
-
-static void t_vec_as_slice(void)
-{
-    strbuf buf = strbuf_init(clib_allocator);
-    assert(strbuf_append_terminated(&buf, "foo"));
-    assert(strbuf_append_terminated(&buf, "bar"));
-
+    KTEST(t_deinit_null)
     {
-        str str = strbuf_as_str(buf);
-        assert(str.len == 6);
-        assert(0 == strcmp(str.ptr, "foobar"));
+        strbuf buf = strbuf_init(clib_allocator);
+        strbuf_deinit(&buf);
     }
 
+    KTEST(t_reserve)
     {
-        strview sv = strbuf_as_strview(buf);
-        assert(sv.len == 6);
-        assert(0 == strcmp(sv.ptr, "foobar"));
+        strbuf buf = strbuf_init(clib_allocator);
+
+        ASSERT_TRUE(strbuf_reserve(&buf, 100));
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.len == 0);
+        ASSERT_TRUE(buf.cap >= 100);
+
+        // Don't allocate if cap does not need to increase
+        size_t const old_cap = buf.cap;
+        ASSERT_TRUE(strbuf_reserve(&buf, 100));
+        ASSERT_TRUE(buf.cap == old_cap);
+
+        strbuf_deinit(&buf);
     }
 
-    strbuf_deinit(&buf);
-}
-
-static void t_vec_append_slice(void)
-{
-    str a = str_from_terminated("dead");
-    strview b = strview_from_terminated("beef");
-
-    strbuf buf = strbuf_init(clib_allocator);
-    assert(strbuf_append_str(&buf, a));
-    assert(strbuf_append_strview(&buf, b));
-
-    assert(buf.len == 8);
-    assert(0 == strcmp(buf.ptr, "deadbeef"));
-
-    strbuf_deinit(&buf);
-}
-
-static void t_vec_append_slice_infallible(void)
-{
-    str a = str_from_terminated("dead");
-    str b = str_from_terminated("beef");
-
-    strbuf_inf buf = strbuf_inf_init();
-    strbuf_inf_append_str(&buf, a);
-    strbuf_inf_append_str(&buf, b);
-
-    assert(buf.len == 8);
-    assert(0 == strcmp(buf.ptr, "deadbeef"));
-
-    strbuf_inf_deinit(&buf);
-}
-
-static void t_sort(void)
-{
-    strbuf_inf buf = {0};
-    strbuf_inf_append_terminated(&buf, "edcba");
-
-    strbuf_inf_sort(buf);
-
-    assert(0 == strcmp(buf.ptr, "abcde"));
-
-    strbuf_inf_deinit(&buf);
-}
-
-static void t_bsearch(void)
-{
-    strbuf_inf buf = strbuf_inf_init();
-    strbuf_inf_append_terminated(&buf, "abcde");
-
-    assert(strbuf_inf_bsearch(buf, 'c', NULL));
-    assert(!strbuf_inf_bsearch(buf, 'z', NULL));
-
+    KTEST(t_reserve_fail)
     {
-        char *match = NULL;
-        assert(strbuf_inf_bsearch(buf, 'd', &match));
-        assert(match);
-        assert(*match == 'd');
+        mock_allocator mockal = mock_allocator_init();
+        strbuf buf = strbuf_init(mock_allocator_handle(&mockal));
+
+        mockal.fail = true;
+        ASSERT_TRUE(!strbuf_reserve(&buf, 100));
+
+        mockal.fail = false;
+        ASSERT_TRUE(strbuf_reserve(&buf, 100));
+
+        strbuf_deinit(&buf);
     }
 
-    assert(strbuf_inf_bsearch_index(buf, 'b', NULL));
-    assert(!strbuf_inf_bsearch_index(buf, 'w', NULL));
-
+    KTEST(t_reserve_infallible)
     {
-        size_t idx = 0;
-        assert(strbuf_inf_bsearch_index(buf, 'b', &idx));
-        assert(buf.ptr[idx] == 'b');
+        strbuf_inf buf = strbuf_inf_init();
+
+        strbuf_inf_reserve(&buf, 100);
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.len == 0);
+        ASSERT_TRUE(buf.cap >= 100);
+
+        // Don't allocate if cap does not need to increase
+        size_t const old_cap = buf.cap;
+        strbuf_inf_reserve(&buf, 100);
+        ASSERT_TRUE(buf.cap == old_cap);
+
+        strbuf_inf_deinit(&buf);
     }
 
-    strbuf_inf_deinit(&buf);
-}
+    KTEST(t_append)
+    {
+        char const *s = "foobar";
+        size_t const s_len = strlen(s);
 
-#define RUN(test)                                                              \
-    do                                                                         \
-    {                                                                          \
-        printf("Test: " #test "\n");                                           \
-        fflush(stdout);                                                        \
-        test();                                                                \
-    } while (0)
+        strbuf buf = strbuf_init(clib_allocator);
 
-int main(void)
-{
-    RUN(t_deinit_null);
-    RUN(t_reserve);
-    RUN(t_reserve_fail);
-    RUN(t_reserve_infallible);
-    RUN(t_append);
-    RUN(t_append_infallible);
-    RUN(t_append_terminated);
-    RUN(t_append_terminated_infallible);
-    RUN(t_push);
-    RUN(t_push_infallible);
-    RUN(t_pop);
-    RUN(t_vec_as_slice);
-    RUN(t_vec_append_slice);
-    RUN(t_vec_append_slice_infallible);
-    RUN(t_sort);
-    RUN(t_bsearch);
+        ASSERT_TRUE(strbuf_append(&buf, s, s_len));
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len);
+        ASSERT_TRUE(buf.cap >= s_len);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
 
-    return 0;
+        ASSERT_TRUE(strbuf_append(&buf, s, s_len));
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len * 2);
+        ASSERT_TRUE(buf.cap >= s_len * 2);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
+
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+        strbuf_deinit(&buf);
+    }
+
+    KTEST(t_append_infallible)
+    {
+        char const *s = "foobar";
+        size_t const s_len = strlen(s);
+
+        strbuf_inf buf = strbuf_inf_init();
+
+        strbuf_inf_append(&buf, s, s_len);
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len);
+        ASSERT_TRUE(buf.cap >= s_len);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
+
+        strbuf_inf_append(&buf, s, s_len);
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len * 2);
+        ASSERT_TRUE(buf.cap >= s_len * 2);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
+
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+        strbuf_inf_deinit(&buf);
+    }
+
+    KTEST(t_append_terminated)
+    {
+        char const *s = "foobar";
+        size_t const s_len = strlen(s);
+
+        strbuf buf = strbuf_init(clib_allocator);
+
+        ASSERT_TRUE(strbuf_append_terminated(&buf, s));
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len);
+        ASSERT_TRUE(buf.cap >= s_len);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
+
+        ASSERT_TRUE(strbuf_append_terminated(&buf, s));
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len * 2);
+        ASSERT_TRUE(buf.cap >= s_len * 2);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
+
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+        strbuf_deinit(&buf);
+    }
+
+    KTEST(t_append_terminated_infallible)
+    {
+        char const *s = "foobar";
+        size_t const s_len = strlen(s);
+
+        strbuf_inf buf = strbuf_inf_init();
+
+        strbuf_inf_append_terminated(&buf, s);
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len);
+        ASSERT_TRUE(buf.cap >= s_len);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
+
+        strbuf_inf_append_terminated(&buf, s);
+        ASSERT_TRUE(buf.ptr != NULL);
+        ASSERT_TRUE(buf.ptr != s);
+        ASSERT_TRUE(buf.len == s_len * 2);
+        ASSERT_TRUE(buf.cap >= s_len * 2);
+        ASSERT_TRUE(buf.ptr[buf.len] == '\0');
+
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "foobarfoobar"));
+
+        strbuf_inf_deinit(&buf);
+    }
+
+    KTEST(t_push)
+    {
+        strbuf buf = strbuf_init(clib_allocator);
+
+        ASSERT_TRUE(strbuf_append_terminated(&buf, "Hello"));
+        ASSERT_TRUE(buf.len == 5);
+
+        ASSERT_TRUE(strbuf_push(&buf, '!'));
+        ASSERT_TRUE(buf.len == 6);
+        ASSERT_TRUE(buf.ptr[buf.len - 1] == '!');
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "Hello!"));
+
+        strbuf_deinit(&buf);
+    }
+
+    KTEST(t_push_infallible)
+    {
+        strbuf_inf buf = strbuf_inf_init();
+
+        strbuf_inf_append_terminated(&buf, "Hello");
+        ASSERT_TRUE(buf.len == 5);
+
+        strbuf_inf_push(&buf, '!');
+        ASSERT_TRUE(buf.len == 6);
+        ASSERT_TRUE(buf.ptr[buf.len - 1] == '!');
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "Hello!"));
+
+        strbuf_inf_deinit(&buf);
+    }
+
+    KTEST(t_pop)
+    {
+        strbuf buf = strbuf_init(clib_allocator);
+        char c = '\0';
+
+        ASSERT_TRUE(!strbuf_pop(&buf, &c));
+
+        ASSERT_TRUE(strbuf_append_terminated(&buf, "Hello!"));
+        ASSERT_TRUE(buf.len == 6);
+
+        ASSERT_TRUE(strbuf_pop(&buf, &c));
+        ASSERT_TRUE(buf.len == 5);
+        ASSERT_TRUE(c == '!');
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "Hello"));
+
+        ASSERT_TRUE(strbuf_pop(&buf, &c));
+        ASSERT_TRUE(strbuf_pop(&buf, &c));
+        ASSERT_TRUE(strbuf_pop(&buf, &c));
+        ASSERT_TRUE(strbuf_pop(&buf, &c));
+        ASSERT_TRUE(strbuf_pop(&buf, &c));
+
+        ASSERT_TRUE(buf.len == 0);
+        ASSERT_TRUE(c == 'H');
+
+        ASSERT_TRUE(!strbuf_pop(&buf, &c));
+
+        strbuf_deinit(&buf);
+    }
+
+    KTEST(t_vec_as_slice)
+    {
+        strbuf buf = strbuf_init(clib_allocator);
+        ASSERT_TRUE(strbuf_append_terminated(&buf, "foo"));
+        ASSERT_TRUE(strbuf_append_terminated(&buf, "bar"));
+
+        {
+            str str = strbuf_as_str(buf);
+            ASSERT_TRUE(str.len == 6);
+            ASSERT_TRUE(0 == strcmp(str.ptr, "foobar"));
+        }
+
+        {
+            strview sv = strbuf_as_strview(buf);
+            ASSERT_TRUE(sv.len == 6);
+            ASSERT_TRUE(0 == strcmp(sv.ptr, "foobar"));
+        }
+
+        strbuf_deinit(&buf);
+    }
+
+    KTEST(t_vec_append_slice)
+    {
+        str a = str_from_terminated("dead");
+        strview b = strview_from_terminated("beef");
+
+        strbuf buf = strbuf_init(clib_allocator);
+        ASSERT_TRUE(strbuf_append_str(&buf, a));
+        ASSERT_TRUE(strbuf_append_strview(&buf, b));
+
+        ASSERT_TRUE(buf.len == 8);
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "deadbeef"));
+
+        strbuf_deinit(&buf);
+    }
+
+    KTEST(t_vec_append_slice_infallible)
+    {
+        str a = str_from_terminated("dead");
+        str b = str_from_terminated("beef");
+
+        strbuf_inf buf = strbuf_inf_init();
+        strbuf_inf_append_str(&buf, a);
+        strbuf_inf_append_str(&buf, b);
+
+        ASSERT_TRUE(buf.len == 8);
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "deadbeef"));
+
+        strbuf_inf_deinit(&buf);
+    }
+
+    KTEST(t_sort)
+    {
+        strbuf_inf buf = {0};
+        strbuf_inf_append_terminated(&buf, "edcba");
+
+        strbuf_inf_sort(buf);
+
+        ASSERT_TRUE(0 == strcmp(buf.ptr, "abcde"));
+
+        strbuf_inf_deinit(&buf);
+    }
+
+    KTEST(t_bsearch)
+    {
+        strbuf_inf buf = strbuf_inf_init();
+        strbuf_inf_append_terminated(&buf, "abcde");
+
+        ASSERT_TRUE(strbuf_inf_bsearch(buf, 'c', NULL));
+        ASSERT_TRUE(!strbuf_inf_bsearch(buf, 'z', NULL));
+
+        {
+            char *match = NULL;
+            ASSERT_TRUE(strbuf_inf_bsearch(buf, 'd', &match));
+            ASSERT_TRUE(match);
+            ASSERT_TRUE(*match == 'd');
+        }
+
+        ASSERT_TRUE(strbuf_inf_bsearch_index(buf, 'b', NULL));
+        ASSERT_TRUE(!strbuf_inf_bsearch_index(buf, 'w', NULL));
+
+        {
+            size_t idx = 0;
+            ASSERT_TRUE(strbuf_inf_bsearch_index(buf, 'b', &idx));
+            ASSERT_TRUE(buf.ptr[idx] == 'b');
+        }
+
+        strbuf_inf_deinit(&buf);
+    }
 }

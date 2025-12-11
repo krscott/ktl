@@ -1,65 +1,45 @@
-#include <assert.h>
-#include <stdio.h>
-
-#include "ktl/lib/strings.h"
-
 #include "ktl/lib/strings.inc"
 
-#ifdef NDEBUG
-#error "Asserts are disabled in release"
-#endif
+#include "ktest.inc"
 
-static void t_strs(void)
+KTEST_MAIN
 {
-    str a = str_from_terminated("Hello");
-    assert(a.ptr[4] == 'o');
-}
 
-static void t_strbufs(void)
-{
-    strbuf b = strbuf_init();
+    KTEST(t_strs)
+    {
+        str a = str_from_terminated("Hello");
+        ASSERT_TRUE(a.ptr[4] == 'o');
+    }
 
-    strbuf_append_terminated(&b, "one");
-    strbuf_push(&b, ' ');
-    strbuf_append_terminated(&b, "two");
-    strbuf_push(&b, ' ');
-    strbuf_append_terminated(&b, "oatmeal");
+    KTEST(t_strbufs)
+    {
+        strbuf b = strbuf_init();
 
-    assert(strview_eq(
-        strbuf_as_strview(b),
-        strview_from_terminated("one two oatmeal")
-    ));
+        strbuf_append_terminated(&b, "one");
+        strbuf_push(&b, ' ');
+        strbuf_append_terminated(&b, "two");
+        strbuf_push(&b, ' ');
+        strbuf_append_terminated(&b, "oatmeal");
 
-    strbuf_deinit(&b);
-}
+        ASSERT_TRUE(strview_eq(
+            strbuf_as_strview(b),
+            strview_from_terminated("one two oatmeal")
+        ));
 
-static void t_trim(void)
-{
-    str a = str_from_terminated(" \t\r\n foo \t\r\n ");
+        strbuf_deinit(&b);
+    }
 
-    str b = str_trim_start(a);
-    assert(str_eq(b, str_from_terminated("foo \t\r\n ")));
+    KTEST(t_trim)
+    {
+        str a = str_from_terminated(" \t\r\n foo \t\r\n ");
 
-    str c = str_trim_end(a);
-    assert(str_eq(c, str_from_terminated(" \t\r\n foo")));
+        str b = str_trim_start(a);
+        ASSERT_TRUE(str_eq(b, str_from_terminated("foo \t\r\n ")));
 
-    str d = str_trim(a);
-    assert(str_eq(d, str_from_terminated("foo")));
-}
+        str c = str_trim_end(a);
+        ASSERT_TRUE(str_eq(c, str_from_terminated(" \t\r\n foo")));
 
-#define RUN(test)                                                              \
-    do                                                                         \
-    {                                                                          \
-        printf("Test: " #test "\n");                                           \
-        fflush(stdout);                                                        \
-        test();                                                                \
-    } while (0)
-
-int main(void)
-{
-    RUN(t_strs);
-    RUN(t_strbufs);
-    RUN(t_trim);
-
-    return 0;
+        str d = str_trim(a);
+        ASSERT_TRUE(str_eq(d, str_from_terminated("foo")));
+    }
 }

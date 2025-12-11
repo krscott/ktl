@@ -24,18 +24,18 @@
 
 // Macros
 
-#ifndef KTL_dynarray_GROW_NUMERATOR
-#define KTL_dynarray_GROW_NUMERATOR 3
-#define KTL_dynarray_GROW_DENOMINATOR 2
+#ifndef KTL_DYNARRAY_GROW_NUMERATOR
+#define KTL_DYNARRAY_GROW_NUMERATOR 3
+#define KTL_DYNARRAY_GROW_DENOMINATOR 2
 #endif
 
-#ifndef KTL_dynarray_MIN_CAP
-#define KTL_dynarray_MIN_CAP 8
+#ifndef KTL_DYNARRAY_MIN_CAP
+#define KTL_DYNARRAY_MIN_CAP 8
 #endif
 
-#ifndef KTL_dynarray_GROW_CAP
-#define KTL_dynarray_GROW_CAP(cap)                                             \
-    ((cap) / KTL_dynarray_GROW_DENOMINATOR * KTL_dynarray_GROW_NUMERATOR)
+#ifndef KTL_DYNARRAY_GROW_CAP
+#define KTL_DYNARRAY_GROW_CAP(cap)                                             \
+    ((cap) / KTL_DYNARRAY_GROW_DENOMINATOR * KTL_DYNARRAY_GROW_NUMERATOR)
 #endif
 
 // Methods
@@ -46,7 +46,7 @@ ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
     assert(dynarray->ptr || (dynarray->len == 0 && dynarray->cap == 0));
 
     size_t const CAP_LIMIT =
-        SIZE_MAX / KTL_dynarray_GROW_NUMERATOR * KTL_dynarray_GROW_DENOMINATOR;
+        SIZE_MAX / KTL_DYNARRAY_GROW_NUMERATOR * KTL_DYNARRAY_GROW_DENOMINATOR;
 
     bool success;
 
@@ -71,14 +71,14 @@ ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
     }
     else
     {
-        size_t new_cap = dynarray->cap < KTL_dynarray_MIN_CAP
-                             ? KTL_dynarray_MIN_CAP
-                             : KTL_dynarray_GROW_CAP(dynarray->cap);
+        size_t new_cap = dynarray->cap < KTL_DYNARRAY_MIN_CAP
+                             ? KTL_DYNARRAY_MIN_CAP
+                             : KTL_DYNARRAY_GROW_CAP(dynarray->cap);
 
         // Guaranteed to terminate due to CAP_LIMIT check above
         while (new_cap < target_cap)
         {
-            new_cap = KTL_dynarray_GROW_CAP(new_cap);
+            new_cap = KTL_DYNARRAY_GROW_CAP(new_cap);
         }
 
         void *const new_ptr = ktl_allocates_m(_realloc)(

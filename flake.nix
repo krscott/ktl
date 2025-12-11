@@ -7,6 +7,10 @@
       url = "github:krscott/kcli";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ktest = {
+      url = "github:krscott/ktest";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -15,6 +19,7 @@
       nixpkgs,
       flake-utils,
       kcli,
+      ktest,
     }:
     let
       supportedSystems = [
@@ -57,6 +62,7 @@
         packages = {
           ktl = pkgs.callPackage ./. {
             inherit (kcli.packages.${system}) kcli;
+            inherit (ktest.packages.${system}) ktest;
             stdenv = pkgs.clangStdenv;
           };
 

@@ -207,3 +207,14 @@ ktl_dynarray_m(pop)(ktl_dynarray *const dynarray, ktl_dynarray_T *const out)
     }
     return ok;
 }
+
+void ktl_dynarray_m(clear)(ktl_dynarray *const dynarray)
+{
+    if (dynarray->len > 0)
+    {
+        dynarray->len = 0;
+#ifdef ktl_dynarray_sentinel
+        dynarray->ptr[dynarray->len] = ktl_dynarray_sentinel;
+#endif
+    }
+}

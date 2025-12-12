@@ -376,4 +376,22 @@ KTEST_MAIN
 
         strbuf_inf_deinit(&buf);
     }
+
+    KTEST(t_clear)
+    {
+        mock_allocator mockal = mock_allocator_init();
+        strbuf buf = strbuf_init(mock_allocator_handle(&mockal));
+
+        strbuf_clear(&buf);
+        ASSERT_UINT_EQ(buf.len, 0);
+
+        ASSERT_TRUE(strbuf_append_terminated(&buf, "foobar"));
+        ASSERT_UINT_NEQ(buf.len, 0);
+
+        strbuf_clear(&buf);
+        ASSERT_UINT_EQ(buf.len, 0);
+        ASSERT_TRUE(buf.ptr[0] == '\0');
+
+        strbuf_deinit(&buf);
+    }
 }

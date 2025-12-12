@@ -13,10 +13,10 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     cmake
-    (ktest.override { inherit stdenv; })
   ];
 
   buildInputs = [
+    (ktest.override { inherit stdenv; })
     (kcli.override { inherit stdenv; })
   ];
 

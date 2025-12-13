@@ -19,10 +19,10 @@ typedef uint16_t u16;
     do                                                                         \
     {                                                                          \
         T out = 111;                                                           \
-        ASSERT_TRUE(T##_safe_add((a), (b), &out));                             \
-        ASSERT_INT_EQ(out, (a) + (b));                                         \
-        ASSERT_TRUE(T##_safe_add((b), (a), &out));                             \
-        ASSERT_INT_EQ(out, (a) + (b));                                         \
+        ASSERT(T##_safe_add((a), (b), &out));                                  \
+        ASSERT(out == (a) + (b));                                              \
+        ASSERT(T##_safe_add((b), (a), &out));                                  \
+        ASSERT(out == (a) + (b));                                              \
     } while (0)
 #define UNSAFE_ADD_TEST(T, a, b)                                               \
     do                                                                         \
@@ -41,10 +41,10 @@ KTEST_MAIN
         i16 b = 2;
         i16 c = 2;
         i16 d = -3;
-        ASSERT_TRUE(i16_cmp(&a, &b) < 0);
-        ASSERT_TRUE(i16_cmp(&b, &a) > 0);
-        ASSERT_TRUE(i16_cmp(&b, &c) == 0);
-        ASSERT_TRUE(i16_cmp(&d, &c) < 0);
+        ASSERT(i16_cmp(&a, &b) < 0);
+        ASSERT(i16_cmp(&b, &a) > 0);
+        ASSERT(i16_cmp(&b, &c) == 0);
+        ASSERT(i16_cmp(&d, &c) < 0);
     }
 
     KTEST(t_i16_safe_add)

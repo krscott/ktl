@@ -47,6 +47,15 @@ KTEST_MAIN
         ASSERT(i16_cmp(&d, &c) < 0);
     }
 
+    KTEST(t_i16_minmax)
+    {
+        ASSERT(i16_max(1, 2) == 2);
+        ASSERT(i16_max(1, -2) == 1);
+
+        ASSERT(i16_min(1, 2) == 1);
+        ASSERT(i16_min(1, -2) == -2);
+    }
+
     KTEST(t_i16_safe_add)
     {
         SAFE_ADD_TEST(i16, 0, 0);

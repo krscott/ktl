@@ -104,4 +104,13 @@ ktl_integral_m(safe_add)(ktl_integral a, ktl_integral b, ktl_integral *out)
     return safe;
 }
 
+static inline ktl_integral ktl_integral_m(max)(ktl_integral a, ktl_integral b)
+{
+    return a > b ? a : b;
+}
+static inline ktl_integral ktl_integral_m(min)(ktl_integral a, ktl_integral b)
+{
+    return a < b ? a : b;
+}
+
 #endif // KTL_INC

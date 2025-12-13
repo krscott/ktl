@@ -4,13 +4,15 @@
 #include "ktl/macros.h"
 
 #include <assert.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 // Defaults (dev-only)
 
 #ifndef ktl_integral
-#include <stdint.h>
 typedef uint16_t devint;
 #define devint__ord true
 #define ktl_integral devint
@@ -39,12 +41,68 @@ KTL_DIAG_POP
 
 #ifdef ktl_integral_ord
 static inline int
-ktl_integral_m(cmp)(ktl_integral const *const a, ktl_integral const *const b)
+ktl_integral_m(cmp)(ktl_integral const *a, ktl_integral const *b)
 {
     ktl_integral const a_ = *a;
     ktl_integral const b_ = *b;
     return a_ < b_ ? -1 : (a_ > b_ ? 1 : 0);
 }
 #endif
+
+#define KTL_INTEGRAL_MAX(x)                                                    \
+    _Generic(                                                                  \
+        (x),                                                                   \
+        char: CHAR_MAX,                                                        \
+        int8_t: INT8_MAX,                                                      \
+        uint8_t: UINT8_MAX,                                                    \
+        int16_t: INT16_MAX,                                                    \
+        uint16_t: UINT16_MAX,                                                  \
+        int32_t: INT32_MAX,                                                    \
+        uint32_t: UINT32_MAX,                                                  \
+        int64_t: INT64_MAX,                                                    \
+        uint64_t: UINT64_MAX                                                   \
+    )
+
+#define KTL_INTEGRAL_MIN(x)                                                    \
+    _Generic(                                                                  \
+        (x),                                                                   \
+        char: CHAR_MIN,                                                        \
+        int8_t: INT8_MIN,                                                      \
+        uint8_t: 0,                                                            \
+        int16_t: INT16_MIN,                                                    \
+        uint16_t: 0,                                                           \
+        int32_t: INT32_MIN,                                                    \
+        uint32_t: 0,                                                           \
+        int64_t: INT64_MIN,                                                    \
+        uint64_t: 0                                                            \
+    )
+
+static inline ktl_nodiscard bool
+ktl_integral_m(safe_add)(ktl_integral a, ktl_integral b, ktl_integral *out)
+{
+    bool const a_is_pos = a > 0;
+    bool const b_is_pos = b > 0;
+    bool safe;
+
+    if (a_is_pos && b_is_pos)
+    {
+        safe = a <= KTL_INTEGRAL_MAX(a) - b;
+    }
+    else if (!a_is_pos && !b_is_pos)
+    {
+        safe = a >= KTL_INTEGRAL_MIN(a) - b;
+    }
+    else
+    {
+        safe = true;
+    }
+
+    if (safe && out)
+    {
+        *out = a + b;
+    }
+
+    return safe;
+}
 
 #endif // KTL_INC

@@ -218,3 +218,17 @@ void ktl_dynarray_m(clear)(ktl_dynarray *const dynarray)
 #endif
     }
 }
+
+void ktl_dynarray_m(remove_index_swap_last)(
+    ktl_dynarray *const dynarray, size_t const i
+)
+{
+    assert(i < dynarray->len);
+    if (i < dynarray->len)
+    {
+        dynarray->ptr[i] = dynarray->ptr[--dynarray->len];
+#ifdef ktl_dynarray_sentinel
+        dynarray->ptr[dynarray->len] = ktl_dynarray_sentinel;
+#endif
+    }
+}

@@ -405,4 +405,27 @@ KTEST_MAIN
 
         strbuf_deinit(&buf);
     }
+
+    KTEST(t_remove_swap_last)
+    {
+
+        strbuf buf = strbuf_init(clib_allocator);
+
+        ASSERT(strbuf_append_terminated(&buf, "abcd"));
+        ASSERT_STR_EQ(buf.ptr, "abcd");
+
+        strbuf_remove_index_swap_last(&buf, 1);
+        ASSERT_STR_EQ(buf.ptr, "adc");
+
+        strbuf_remove_index_swap_last(&buf, 2);
+        ASSERT_STR_EQ(buf.ptr, "ad");
+
+        strbuf_remove_index_swap_last(&buf, 0);
+        ASSERT_STR_EQ(buf.ptr, "d");
+
+        strbuf_remove_index_swap_last(&buf, 0);
+        ASSERT_STR_EQ(buf.ptr, "");
+
+        strbuf_deinit(&buf);
+    }
 }

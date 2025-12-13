@@ -1,7 +1,10 @@
 #ifndef KTL_STRINGS_H_
 #define KTL_STRINGS_H_
 
-#include "ktl/prelude.h" // IWYU pragma: export
+#define char__ord true
+#define ktl_integral char
+#include "ktl/trait/integral.h"
+#undef ktl_integral
 
 #define str__type char
 #define str__mut true

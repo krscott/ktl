@@ -61,11 +61,4 @@ typedef struct
     char dummy_;
 } ktl_marker;
 
-#define ktl_define_integral(T)                                                 \
-    static inline int T##_cmp(T const *a, T const *b)                          \
-    {                                                                          \
-        return *a < *b ? -1 : (*a > *b ? 1 : 0);                               \
-    }                                                                          \
-    KTL_EAT_SEMICOLON
-
 #endif

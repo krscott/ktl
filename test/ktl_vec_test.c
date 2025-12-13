@@ -77,6 +77,16 @@ KTEST_MAIN
         strbuf_deinit(&buf);
     }
 
+    KTEST(t_terminated_never_null)
+    {
+        strbuf buf = strbuf_init(clib_allocator);
+
+        ASSERT(buf.ptr != NULL);
+        ASSERT_STR_EQ(buf.ptr, "");
+
+        strbuf_deinit(&buf);
+    }
+
     KTEST(t_reserve)
     {
         strbuf buf = strbuf_init(clib_allocator);
@@ -408,7 +418,6 @@ KTEST_MAIN
 
     KTEST(t_swap_remove)
     {
-
         strbuf buf = strbuf_init(clib_allocator);
 
         ASSERT(strbuf_append_terminated(&buf, "abcd"));

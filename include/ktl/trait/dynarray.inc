@@ -83,7 +83,7 @@ ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
 
         void *const new_ptr = ktl_allocates_m(_realloc)(
             dynarray,
-            dynarray->ptr,
+            dynarray->cap > 0 ? dynarray->ptr : NULL,
             new_cap * sizeof(dynarray->ptr[0])
         );
 

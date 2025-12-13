@@ -219,9 +219,7 @@ void ktl_dynarray_m(clear)(ktl_dynarray *const dynarray)
     }
 }
 
-void ktl_dynarray_m(remove_index_swap_last)(
-    ktl_dynarray *const dynarray, size_t const i
-)
+void ktl_dynarray_m(swap_remove)(ktl_dynarray *const dynarray, size_t const i)
 {
     assert(i < dynarray->len);
     if (i < dynarray->len)

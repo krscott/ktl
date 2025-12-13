@@ -114,6 +114,6 @@ ktl_nodiscard bool
 
 void ktl_dynarray_m(clear)(ktl_dynarray *dynarray);
 
-void ktl_dynarray_m(remove_index_swap_last)(ktl_dynarray *dynarray, size_t i);
+void ktl_dynarray_m(swap_remove)(ktl_dynarray *dynarray, size_t i);
 
 #endif // KTL_INC

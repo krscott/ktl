@@ -95,8 +95,6 @@ KTEST_MAIN
             .len = strlen(arr_a),
         };
 
-        ASSERT_TRUE(!str_split(a, 'Z', NULL, NULL));
-
         str head;
         str tail;
         ASSERT_TRUE(str_split(a, ' ', &head, &tail));
@@ -104,6 +102,22 @@ KTEST_MAIN
         ASSERT_TRUE(0 == strncmp(head.ptr, "Hello", head.len));
         ASSERT_TRUE(tail.len == 6);
         ASSERT_TRUE(0 == strncmp(tail.ptr, "World!", tail.len));
+    }
+
+    KTEST(t_split_one)
+    {
+        char arr_a[] = "foo";
+        str a = {
+            .ptr = arr_a,
+            .len = strlen(arr_a),
+        };
+
+        str head;
+        str tail;
+        ASSERT_TRUE(str_split(a, ' ', &head, &tail));
+        ASSERT_TRUE(head.len == 3);
+        ASSERT_TRUE(0 == strncmp(head.ptr, "foo", head.len));
+        ASSERT_TRUE(tail.len == 0);
     }
 
     KTEST(t_split_null)
@@ -120,23 +134,21 @@ KTEST_MAIN
             .len = strlen(arr_a),
         };
 
-        ASSERT_TRUE(!str_split_at(a, 100, NULL, NULL));
-
         str head;
         str tail;
 
-        ASSERT_TRUE(str_split_at(a, 0, &head, &tail));
+        str_split_at(a, 0, &head, &tail);
         ASSERT_TRUE(head.len == 0);
         ASSERT_TRUE(tail.len == a.len);
         ASSERT_TRUE(0 == strncmp(tail.ptr, "Hello World!", tail.len));
 
-        ASSERT_TRUE(str_split_at(a, a.len - 1, &head, &tail));
+        str_split_at(a, a.len - 1, &head, &tail);
         ASSERT_TRUE(head.len == a.len - 1);
         ASSERT_TRUE(0 == strncmp(head.ptr, "Hello World", head.len));
         ASSERT_TRUE(tail.len == 1);
         ASSERT_TRUE(0 == strncmp(tail.ptr, "!", tail.len));
 
-        ASSERT_TRUE(str_split_at(a, a.len, &head, &tail));
+        str_split_at(a, a.len, &head, &tail);
         ASSERT_TRUE(head.len == a.len);
         ASSERT_TRUE(0 == strncmp(head.ptr, "Hello World!", head.len));
         ASSERT_TRUE(tail.len == 0);
@@ -147,11 +159,9 @@ KTEST_MAIN
         str a = {0};
         str head;
         str tail;
-        ASSERT_TRUE(str_split_at(a, 0, &head, &tail));
+        str_split_at(a, 0, &head, &tail);
         ASSERT_TRUE(head.len == 0);
         ASSERT_TRUE(tail.len == 0);
-
-        ASSERT_TRUE(!str_split_at(a, 1, &head, &tail));
     }
 
     KTEST(t_eq)

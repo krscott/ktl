@@ -91,7 +91,7 @@ ktl_nodiscard bool ktl_slice_m(split)(
 );
 #endif
 
-ktl_nodiscard bool ktl_slice_m(split_at)(
+void ktl_slice_m(split_at)(
     ktl_slice slice, size_t index, ktl_slice *head, ktl_slice *tail
 );
 

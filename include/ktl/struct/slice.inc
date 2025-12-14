@@ -48,24 +48,38 @@ ktl_nodiscard bool ktl_slice_m(split)(
     ktl_slice *const tail
 )
 {
-    size_t index;
-    bool const ok = ktl_slice_m(find_index)(slice, x, &index);
+    bool const ok = slice.len > 0;
 
     if (ok)
     {
-        if (head)
+        size_t index;
+        if (ktl_slice_m(find_index)(slice, x, &index))
         {
-            *head = (ktl_slice){
-                .ptr = slice.ptr,
-                .len = index,
-            };
+            if (head)
+            {
+                *head = (ktl_slice){
+                    .ptr = slice.ptr,
+                    .len = index,
+                };
+            }
+            if (tail)
+            {
+                *tail = (ktl_slice){
+                    .ptr = &slice.ptr[index + 1],
+                    .len = slice.len - index - 1,
+                };
+            }
         }
-        if (tail)
+        else
         {
-            *tail = (ktl_slice){
-                .ptr = &slice.ptr[index + 1],
-                .len = slice.len - index - 1,
-            };
+            if (head)
+            {
+                *head = slice;
+            }
+            if (tail)
+            {
+                *tail = (ktl_slice){0};
+            }
         }
     }
 
@@ -73,14 +87,14 @@ ktl_nodiscard bool ktl_slice_m(split)(
 }
 #endif
 
-ktl_nodiscard bool ktl_slice_m(split_at)(
+void ktl_slice_m(split_at)(
     ktl_slice const slice,
     size_t const index,
     ktl_slice *const head,
     ktl_slice *const tail
 )
 {
-    bool const ok = index <= slice.len;
+    assert(index <= slice.len);
 
     if (index < slice.len)
     {
@@ -110,6 +124,4 @@ ktl_nodiscard bool ktl_slice_m(split_at)(
             *tail = (ktl_slice){0};
         }
     }
-
-    return ok;
 }

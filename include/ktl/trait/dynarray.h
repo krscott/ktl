@@ -95,7 +95,11 @@ static_assert(
 
 // Methods
 
-ktl_dynarray_alloc_ok ktl_dynarray_m(reserve)(ktl_dynarray *dynarray, size_t n);
+ktl_dynarray_alloc_ok
+    ktl_dynarray_m(reserve)(ktl_dynarray *dynarray, size_t additional);
+ktl_dynarray_alloc_ok ktl_dynarray_m(resize)(
+    ktl_dynarray *dynarray, size_t new_len, ktl_dynarray_T value
+);
 
 ktl_dynarray_alloc_ok ktl_dynarray_m(append)(
     ktl_dynarray *dynarray, ktl_dynarray_T const *arr, size_t n
@@ -108,7 +112,7 @@ ktl_dynarray_alloc_ok ktl_dynarray_m(append_terminated)(
 #endif
 
 ktl_dynarray_alloc_ok
-    ktl_dynarray_m(push)(ktl_dynarray *dynarray, ktl_dynarray_T elem);
+    ktl_dynarray_m(push)(ktl_dynarray *dynarray, ktl_dynarray_T value);
 ktl_nodiscard bool
     ktl_dynarray_m(pop)(ktl_dynarray *dynarray, ktl_dynarray_T *out);
 

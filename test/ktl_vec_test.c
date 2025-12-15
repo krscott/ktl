@@ -359,6 +359,16 @@ KTEST_MAIN
         strbuf_inf_deinit(&buf);
     }
 
+    KTEST(t_resize)
+    {
+        strbuf buf = strbuf_init(clib_allocator);
+
+        ASSERT(strbuf_resize(&buf, 5, 'x'));
+        ASSERT_STR_EQ(buf.ptr, "xxxxx");
+
+        strbuf_deinit(&buf);
+    }
+
     KTEST(t_sort)
     {
         strbuf_inf buf = {0};

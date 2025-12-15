@@ -36,7 +36,7 @@
 // Methods
 
 ktl_dynarray_alloc_ok
-ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
+ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const additional)
 {
     assert(dynarray->ptr || (dynarray->len == 0 && dynarray->cap == 0));
 
@@ -45,7 +45,7 @@ ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
 
     bool success;
 
-    size_t const target_cap = dynarray->len + n
+    size_t const target_cap = dynarray->len + additional
 #ifdef ktl_dynarray_sentinel
                               + 1
 #endif
@@ -110,6 +110,38 @@ ktl_dynarray_m(reserve)(ktl_dynarray *const dynarray, size_t const n)
 #endif
 }
 
+ktl_dynarray_alloc_ok ktl_dynarray_m(resize)(
+    ktl_dynarray *const dynarray,
+    size_t const new_len,
+    ktl_dynarray_T const value
+)
+{
+#ifndef ktl_dynarray_infallible
+    bool ok = true;
+#endif
+    if (new_len <= dynarray->len)
+    {
+        dynarray->len = new_len;
+    }
+    else
+    {
+        while (dynarray->len < new_len)
+        {
+#ifndef ktl_dynarray_infallible
+            if (!ok)
+            {
+                break;
+            }
+            ok =
+#endif
+                ktl_dynarray_m(push)(dynarray, value);
+        }
+    }
+#ifndef ktl_dynarray_infallible
+    return ok;
+#endif
+}
+
 ktl_dynarray_alloc_ok ktl_dynarray_m(append)(
     ktl_dynarray *const dynarray,
     ktl_dynarray_T const *const arr,
@@ -169,12 +201,12 @@ ktl_dynarray_alloc_ok ktl_dynarray_m(append_terminated)(
 #endif
 
 ktl_dynarray_alloc_ok
-ktl_dynarray_m(push)(ktl_dynarray *const dynarray, ktl_dynarray_T const elem)
+ktl_dynarray_m(push)(ktl_dynarray *const dynarray, ktl_dynarray_T const value)
 {
 #ifdef ktl_dynarray_infallible
 
     ktl_dynarray_m(reserve)(dynarray, 1);
-    dynarray->ptr[dynarray->len++] = elem;
+    dynarray->ptr[dynarray->len++] = value;
 #ifdef ktl_dynarray_sentinel
     dynarray->ptr[dynarray->len] = ktl_dynarray_sentinel;
 #endif
@@ -184,7 +216,7 @@ ktl_dynarray_m(push)(ktl_dynarray *const dynarray, ktl_dynarray_T const elem)
     bool const ok = ktl_dynarray_m(reserve)(dynarray, 1);
     if (ok)
     {
-        dynarray->ptr[dynarray->len++] = elem;
+        dynarray->ptr[dynarray->len++] = value;
 #ifdef ktl_dynarray_sentinel
         dynarray->ptr[dynarray->len] = ktl_dynarray_sentinel;
 #endif

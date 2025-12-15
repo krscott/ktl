@@ -40,6 +40,11 @@ KTL_DIAG_IGNORE(-Wundef)
     KTL_GET1(ktl_vec_m(_local_allocator), ktl_marker)
 #endif
 
+#undef ktl_vec_no_init
+#if ktl_vec_m(_no_init)
+#define ktl_vec_no_init
+#endif
+
 KTL_DIAG_POP
 
 #ifndef KTL_INC
@@ -79,6 +84,8 @@ typedef struct ktl_vec
 
 // Methods
 
+#ifndef ktl_vec_no_init
+
 #ifdef ktl_vec_local_allocator
 ktl_nodiscard ktl_vec ktl_vec_m(init)(ktl_vec_local_allocator allocator);
 #else
@@ -86,5 +93,7 @@ ktl_nodiscard ktl_vec ktl_vec_m(init)(void);
 #endif
 
 void ktl_vec_m(deinit)(ktl_vec *vec);
+
+#endif
 
 #endif // KTL_INC

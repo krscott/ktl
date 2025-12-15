@@ -125,6 +125,11 @@ ktl_dynarray_alloc_ok ktl_dynarray_m(resize)(
     }
     else
     {
+#ifndef ktl_dynarray_infallible
+        ok =
+#endif
+            ktl_dynarray_m(reserve)(dynarray, new_len - dynarray->len);
+
         while (dynarray->len < new_len)
         {
 #ifndef ktl_dynarray_infallible

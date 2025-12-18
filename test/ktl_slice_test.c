@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
+static inline int int_cmp_rev(void const *a, void const *b)
+{
+    return *(int const *)b - *(int const *)a;
+}
+
 static inline int int_cmp(int const *a, int const *b)
 {
     return *a - *b;
@@ -217,17 +222,34 @@ KTEST_MAIN
 
         intslice_sort(a);
 
-        ASSERT_TRUE(ints[0] == -12);
-        ASSERT_TRUE(ints[1] == 1);
-        ASSERT_TRUE(ints[2] == 5);
-        ASSERT_TRUE(ints[3] == 7);
-        ASSERT_TRUE(ints[4] == 10);
+        ASSERT_INT_EQ(ints[0], -12);
+        ASSERT_INT_EQ(ints[1], 1);
+        ASSERT_INT_EQ(ints[2], 5);
+        ASSERT_INT_EQ(ints[3], 7);
+        ASSERT_INT_EQ(ints[4], 10);
     }
 
     KTEST(t_sort_null)
     {
         intslice a = {0};
         intslice_sort(a);
+    }
+
+    KTEST(t_sort_by)
+    {
+        int ints[] = {5, 10, 7, 1, -12};
+        intslice a = {
+            .ptr = ints,
+            .len = ktl_countof(ints),
+        };
+
+        intslice_sort_by(a, int_cmp_rev);
+
+        ASSERT_INT_EQ(ints[4], -12);
+        ASSERT_INT_EQ(ints[3], 1);
+        ASSERT_INT_EQ(ints[2], 5);
+        ASSERT_INT_EQ(ints[1], 7);
+        ASSERT_INT_EQ(ints[0], 10);
     }
 
     KTEST(t_bsearch)

@@ -9,11 +9,6 @@
 // Defaults (dev-only)
 
 #ifndef ktl_array
-typedef struct
-{
-    int const *ptr;
-    size_t len;
-} dev_array;
 static int int_cmp(int const *a, int const *b)
 {
     return *a - *b;
@@ -21,6 +16,16 @@ static int int_cmp(int const *a, int const *b)
 #define int__ord true
 // static int int_eq(int const *a, int const *b) { return *a == *b; }
 // #define int__eq true
+#define dev_array__mut true
+typedef struct
+{
+#ifdef dev_array__mut
+    int *ptr;
+#else
+    int const *ptr;
+#endif
+    size_t len;
+} dev_array;
 #define dev_array__type int
 #define ktl_array dev_array
 #endif
@@ -68,10 +73,16 @@ ktl_assert_has_field(ktl_array, size_t, len);
 
 // Methods
 
+#ifdef ktl_array_mut
+void ktl_array_m(sort_by)(
+    ktl_array array, int (*comp)(void const *, void const *)
+);
+#endif
+
 #ifdef ktl_array_T_cmp
 
 #ifdef ktl_array_mut
-void ktl_array_m(sort)(ktl_array slice);
+void ktl_array_m(sort)(ktl_array array);
 #endif
 
 ktl_nodiscard bool ktl_array_m(bsearch)(

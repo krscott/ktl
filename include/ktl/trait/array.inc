@@ -14,6 +14,20 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#ifdef ktl_array_mut
+void ktl_array_m(sort_by)(
+    ktl_array array, int (*comp)(void const *, void const *)
+)
+{
+    assert(array.len == 0 || array.ptr);
+
+    if (array.len > 0)
+    {
+        qsort(array.ptr, array.len, sizeof(array.ptr[0]), comp);
+    }
+}
+#endif
+
 #ifdef ktl_array_T_cmp
 
 static int ktl_array_m(_array_void_cmp_)( //

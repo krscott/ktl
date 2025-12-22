@@ -44,6 +44,15 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_allocates_global_allocator
 #endif
 
+#undef ktl_allocates_retval
+#undef ktl_allocates_infallible
+#if ktl_allocates_m(_infallible_allocator)
+#define ktl_allocates_infallible
+#define ktl_allocates_retval void
+#else
+#define ktl_allocates_retval ktl_nodiscard bool
+#endif
+
 KTL_DIAG_POP
 
 #ifndef KTL_INC
@@ -60,5 +69,11 @@ ktl_nodiscard void *
     ktl_allocates_m(_realloc)(ktl_allocates *self, void *ptr, size_t size);
 
 void ktl_allocates_m(_free)(ktl_allocates *self, void *ptr);
+
+static inline ktl_nodiscard void *
+ktl_allocates_m(_alloc)(ktl_allocates *self, size_t size)
+{
+    return ktl_allocates_m(_realloc)(self, NULL, size);
+}
 
 #endif // KTL_INC

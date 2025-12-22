@@ -53,6 +53,7 @@ KTL_DIAG_IGNORE(-Wundef)
     KTL_GET1(ktl_dynarray_m(_terminated), (ktl_marker){0})
 #endif
 
+// TODO: Use allocates.h's version of this instead
 #undef ktl_dynarray_alloc_ok
 #undef ktl_dynarray_infallible
 #if ktl_dynarray_m(_infallible_allocator)
@@ -64,7 +65,7 @@ KTL_DIAG_IGNORE(-Wundef)
 
 #undef ktl_allocates
 #define ktl_allocates ktl_dynarray
-#include "allocates.h"
+#include "ktl/trait/allocates.h"
 
 KTL_DIAG_POP
 

@@ -1,8 +1,10 @@
 #include "ktest.inc"
+#include "ktl/lib/hash.h"
 #include <stdint.h>
 
 typedef int16_t i16;
 #define i16__ord true
+#define i16__hash true
 #define ktl_integral i16
 #include "ktl/trait/integral.h"
 #include "ktl/trait/integral.inc"
@@ -10,6 +12,7 @@ typedef int16_t i16;
 
 typedef uint16_t u16;
 #define u16__ord true
+#define u16__hash true
 #define ktl_integral u16
 #include "ktl/trait/integral.h"
 #include "ktl/trait/integral.inc"
@@ -88,5 +91,23 @@ KTEST_MAIN
         UNSAFE_ADD_TEST(u16, UINT16_MAX, 1);
         UNSAFE_ADD_TEST(u16, UINT16_MAX / 2 + 1, UINT16_MAX / 2 + 1);
         UNSAFE_ADD_TEST(u16, UINT16_MAX, UINT16_MAX);
+    }
+
+    KTEST(t_u16_hash)
+    {
+        uint32_t hash = 0;
+
+        u16 x = 10;
+        u16_hash(&x, &hash, ktl_hash_murmur);
+
+        ASSERT_INT_NEQ(hash, 0);
+
+        uint32_t const hash_prev = hash;
+
+        x = 0;
+        u16_hash(&x, &hash, ktl_hash_murmur);
+
+        ASSERT_INT_NEQ(hash, 0);
+        ASSERT_INT_NEQ(hash, hash_prev);
     }
 }

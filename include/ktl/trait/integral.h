@@ -1,6 +1,7 @@
 
 // No header guard - repeatable include
 
+#include "ktl/lib/hash.h"
 #include "ktl/macros.h"
 
 #include <assert.h>
@@ -14,6 +15,7 @@
 #ifndef ktl_integral
 typedef uint16_t devint;
 #define devint__ord true
+#define devint__hash true
 #define ktl_integral devint
 #endif
 
@@ -28,6 +30,11 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_integral_ord
 #if ktl_integral_m(_ord)
 #define ktl_integral_ord
+#endif
+
+#undef ktl_integral_hash
+#if ktl_integral_m(_hash)
+#define ktl_integral_hash
 #endif
 
 KTL_DIAG_POP
@@ -45,6 +52,15 @@ ktl_integral_m(cmp)(ktl_integral const *a, ktl_integral const *b)
     ktl_integral const a_ = *a;
     ktl_integral const b_ = *b;
     return a_ < b_ ? -1 : (a_ > b_ ? 1 : 0);
+}
+#endif
+
+#ifdef ktl_integral_hash
+static inline void ktl_integral_m(hash)(
+    ktl_integral const *x, uint32_t *state, ktl_hash_fn hash_func
+)
+{
+    hash_func(state, x, sizeof(*x));
 }
 #endif
 

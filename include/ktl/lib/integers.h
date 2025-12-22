@@ -6,61 +6,71 @@
 #include <sys/types.h>
 
 typedef uint8_t u8;
-#define u8_ord true
+#define u8__ord true
+#define u8__hash true
 #define ktl_integral u8
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef int8_t i8;
 #define i8__ord true
+#define i8__hash true
 #define ktl_integral i8
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef uint16_t u16;
 #define u16__ord true
+#define u16__hash true
 #define ktl_integral u16
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef int16_t i16;
 #define i16__ord true
+#define i16__hash true
 #define ktl_integral i16
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef int32_t i32;
 #define i32__ord true
+#define i32__hash true
 #define ktl_integral i32
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef uint32_t u32;
 #define u32__ord true
+#define u32__hash true
 #define ktl_integral u32
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef int64_t i64;
 #define i64__ord true
+#define i64__hash true
 #define ktl_integral i64
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef uint64_t u64;
 #define u64__ord true
+#define u64__hash true
 #define ktl_integral u64
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef size_t usize;
 #define usize__ord true
+#define usize__hash true
 #define ktl_integral usize
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
 typedef ssize_t isize;
 #define isize__ord true
+#define isize__hash true
 #define ktl_integral isize
 #include "ktl/trait/integral.h"
 #undef ktl_integral

@@ -13,6 +13,7 @@
 #include "ktl/struct/slice.h"
 #undef ktl_slice
 #define str__ord true
+#define str__hash true
 #define ktl_charslice str
 #include "ktl/trait/charslice.h"
 #undef ktl_charslice
@@ -23,6 +24,7 @@
 #include "ktl/struct/slice.h"
 #undef ktl_slice
 #define strview__ord true
+#define strview__hash true
 #define ktl_charslice strview
 #include "ktl/trait/charslice.h"
 #undef ktl_charslice

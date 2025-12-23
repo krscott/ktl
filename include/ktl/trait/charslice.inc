@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 #ifndef ktl_charslice
@@ -24,6 +25,15 @@ int ktl_charslice_m(cmp)(ktl_charslice const *a, ktl_charslice const *b)
         x = (int)a->len - (int)b->len;
     }
     return x;
+}
+#endif
+
+#ifdef ktl_charslice_hash
+void ktl_charslice_m(hash)(
+    ktl_charslice const *s, uint32_t *state, ktl_hash_fn hash_func
+)
+{
+    hash_func(state, s->ptr, s->len * sizeof(s->ptr[0]));
 }
 #endif
 

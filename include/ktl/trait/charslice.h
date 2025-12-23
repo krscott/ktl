@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 // Defaults (dev-only)
 
@@ -11,6 +12,7 @@
 #define dev_str__type char
 #define dev_str__mut true
 #define dev_str__ord true
+#define dev_str__hash true
 #define dev_str__terminated true, '\0'
 #define ktl_slice dev_str
 #include "ktl/struct/slice.h"
@@ -55,6 +57,12 @@ KTL_DIAG_IGNORE(-Wundef)
 #define ktl_charslice_ord
 #endif
 
+#undef ktl_charslice_hash
+#if ktl_charslice_m(_hash)
+#include "ktl/lib/hash.h" // IWYU pragma: export
+#define ktl_charslice_hash
+#endif
+
 KTL_DIAG_POP
 
 #ifndef KTL_INC
@@ -68,6 +76,11 @@ ktl_assert_has_field(ktl_charslice, size_t, len);
 
 #ifdef ktl_charslice_ord
 int ktl_charslice_m(cmp)(ktl_charslice const *a, ktl_charslice const *b);
+#endif
+#ifdef ktl_charslice_hash
+void ktl_charslice_m(hash)(
+    ktl_charslice const *s, uint32_t *state, ktl_hash_fn hash_func
+);
 #endif
 
 ktl_nodiscard ktl_charslice ktl_charslice_m(trim_start)(ktl_charslice s);

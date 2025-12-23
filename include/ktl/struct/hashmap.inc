@@ -102,8 +102,14 @@ ktl_nodiscard bool ktl_hashmap_m(next)(
 
         if (ok)
         {
-            *key = node->key;
-            *value = node->value;
+            if (key)
+            {
+                *key = node->key;
+            }
+            if (value)
+            {
+                *value = node->value;
+            }
             iter->node = node->next;
         }
     }

@@ -66,7 +66,7 @@ void ktl_hashmap_m(deinit)(ktl_hashmap *const hashmap)
 }
 
 ktl_nodiscard ktl_hashmap_iter
-ktl_hashmap_m(iter)(ktl_hashmap const *const hashmap)
+ktl_hashmap_m(each)(ktl_hashmap const *const hashmap)
 {
     return (ktl_hashmap_iter){.hashmap = hashmap};
 }
@@ -196,7 +196,7 @@ ktl_hashmap_m(reserve)(ktl_hashmap *const hashmap, size_t const additional)
             new_hashmap.buf_len = new_buf_len;
 
             // move each pair into new_hashmap
-            ktl_hashmap_iter iter = ktl_hashmap_m(iter)(hashmap);
+            ktl_hashmap_iter iter = ktl_hashmap_m(each)(hashmap);
             ktl_hashmap_K k;
             ktl_hashmap_V v;
             while (success && ktl_hashmap_m(next)(&iter, &k, &v))

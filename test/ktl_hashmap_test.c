@@ -182,7 +182,7 @@ KTEST_MAIN
         size_t count = 0;
         str k;
         str v;
-        for (dict__iter iter = dict_iter(&m); dict_next(&iter, &k, &v);)
+        for (dict_iter it = dict_each(&m); dict_next(&it, &k, &v);)
         {
             ktest_infof("%.*s: %.*s", (int)k.len, k.ptr, (int)v.len, v.ptr);
             ++count;

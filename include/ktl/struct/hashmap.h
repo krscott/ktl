@@ -64,7 +64,7 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_hashmap_node
 #define ktl_hashmap_node KTL_TEMPLATE(ktl_hashmap, _node)
 #undef ktl_hashmap_iter
-#define ktl_hashmap_iter KTL_TEMPLATE(ktl_hashmap, _iter)
+#define ktl_hashmap_iter KTL_TEMPLATE(ktl_hashmap, iter)
 
 #undef ktl_hashmap_hash_fn
 #if KTL_GET0(ktl_hashmap_m(_hash_fn))
@@ -135,7 +135,7 @@ ktl_nodiscard ktl_hashmap ktl_hashmap_m(init)(void);
 
 void ktl_hashmap_m(deinit)(ktl_hashmap *hashmap);
 
-ktl_nodiscard ktl_hashmap_iter ktl_hashmap_m(iter)(ktl_hashmap const *hashmap);
+ktl_nodiscard ktl_hashmap_iter ktl_hashmap_m(each)(ktl_hashmap const *hashmap);
 ktl_nodiscard bool ktl_hashmap_m(next)(
     ktl_hashmap_iter *iter, ktl_hashmap_K *key, ktl_hashmap_V *value
 );

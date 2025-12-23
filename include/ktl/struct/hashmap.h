@@ -145,7 +145,12 @@ ktl_allocates_retval ktl_hashmap_m(insert)(
     ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V v
 );
 
-ktl_nodiscard bool
-    ktl_hashmap_m(get)(ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v);
+ktl_nodiscard bool ktl_hashmap_m(get)(
+    ktl_hashmap const *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v
+);
+
+ktl_nodiscard bool ktl_hashmap_m(remove)(
+    ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v
+);
 
 #endif // KTL_INC

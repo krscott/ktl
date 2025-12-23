@@ -25,7 +25,6 @@ static void str_hash(str const *s, uint32_t *state, ktl_hash_fn hash_func)
 
 #define dict__key str
 #define dict__value str
-#include "ktl/lib/allocator.h"
 #define dict__local_allocator true, ktl_allocator
 #define ktl_hashmap dict
 #include "ktl/struct/hashmap.h"
@@ -67,8 +66,10 @@ KTEST_MAIN
 
     KTEST(t_hashmap_insert_and_get)
     {
+        str out = {0};
         dict d = dict_init(clib_allocator);
         ASSERT_INT_EQ(d.count, 0);
+        ASSERT_FALSE(dict_get(&d, str_from_terminated("foo"), &out));
 
         ASSERT(dict_insert(
             &d,
@@ -77,12 +78,35 @@ KTEST_MAIN
         ));
         ASSERT_INT_EQ(d.count, 1);
 
-        str out = {0};
         ASSERT(dict_get(&d, str_from_terminated("foo"), &out));
         ASSERT(out.ptr);
         ASSERT_STR_EQ("bar", out.ptr);
 
         ASSERT_FALSE(dict_get(&d, str_from_terminated("qux"), &out));
+
+        dict_deinit(&d);
+    }
+
+    KTEST(t_hashmap_remove)
+    {
+
+        str out = {0};
+        dict d = dict_init(clib_allocator);
+        ASSERT_FALSE(dict_remove(&d, str_from_terminated("foo"), &out));
+
+        ASSERT(dict_insert(
+            &d,
+            str_from_terminated("foo"),
+            str_from_terminated("bar")
+        ));
+        ASSERT_INT_EQ(d.count, 1);
+
+        ASSERT(dict_remove(&d, str_from_terminated("foo"), &out));
+        ASSERT(out.ptr);
+        ASSERT_STR_EQ("bar", out.ptr);
+        ASSERT_INT_EQ(d.count, 0);
+
+        ASSERT_FALSE(dict_get(&d, str_from_terminated("foo"), &out));
 
         dict_deinit(&d);
     }

@@ -229,8 +229,12 @@ ktl_allocates_retval ktl_hashmap_m(insert)(
 #endif
 }
 
-ktl_nodiscard bool
-ktl_hashmap_m(get)(ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v)
+static ktl_nodiscard bool ktl_hashmap_m(_get_node)(
+    ktl_hashmap const *const hashmap,
+    ktl_hashmap_K const k,
+    ktl_hashmap_node **const node,
+    ktl_hashmap_node **const maybe_parent_node
+)
 {
     bool ok = false;
 
@@ -240,21 +244,75 @@ ktl_hashmap_m(get)(ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v)
         KTL_TEMPLATE(ktl_hashmap_K, hash)(&k, &hash, ktl_hashmap_hash_fn);
         size_t const idx = hash % hashmap->buf_len;
 
-        ktl_hashmap_node *node = &hashmap->buf[idx];
-        while (node->next)
+        ktl_hashmap_node *current_node = &hashmap->buf[idx];
+        ktl_hashmap_node *parent_node = NULL;
+        while (current_node->next)
         {
-            if (ktl_hashmap_K_eq(&node->key, &k))
+            if (ktl_hashmap_K_eq(&current_node->key, &k))
             {
                 ok = true;
-                if (v)
+                if (node)
                 {
-                    *v = node->value;
+                    *node = current_node;
+                }
+                if (parent_node)
+                {
+                    *maybe_parent_node = parent_node;
                 }
                 break;
             }
 
-            node = node->next;
+            parent_node = current_node;
+            current_node = current_node->next;
         }
+    }
+
+    return ok;
+}
+
+ktl_nodiscard bool ktl_hashmap_m(get)(
+    ktl_hashmap const *const hashmap,
+    ktl_hashmap_K const k,
+    ktl_hashmap_V *const v
+)
+{
+    ktl_hashmap_node *node;
+    bool const ok = ktl_hashmap_m(_get_node)(hashmap, k, &node, NULL);
+
+    if (ok && v)
+    {
+        *v = node->value;
+    }
+
+    return ok;
+}
+
+ktl_nodiscard bool
+ktl_hashmap_m(remove)(ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v)
+{
+    ktl_hashmap_node *node;
+    ktl_hashmap_node *maybe_parent_node;
+    bool const ok =
+        ktl_hashmap_m(_get_node)(hashmap, k, &node, &maybe_parent_node);
+
+    if (ok)
+    {
+        if (v)
+        {
+            *v = node->value;
+        }
+
+        if (maybe_parent_node)
+        {
+            maybe_parent_node->next = node->next;
+            ktl_allocates_m(_free)(hashmap, node);
+        }
+        else
+        {
+            (void)memset(node, 0, sizeof(*node));
+        }
+
+        --(hashmap->count);
     }
 
     return ok;

@@ -63,6 +63,8 @@ KTL_DIAG_IGNORE(-Wundef)
 
 #undef ktl_hashmap_node
 #define ktl_hashmap_node KTL_TEMPLATE(ktl_hashmap, _node)
+#undef ktl_hashmap_iter
+#define ktl_hashmap_iter KTL_TEMPLATE(ktl_hashmap, _iter)
 
 #undef ktl_hashmap_hash_fn
 #if KTL_GET0(ktl_hashmap_m(_hash_fn))

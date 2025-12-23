@@ -182,12 +182,16 @@ KTEST_MAIN
         size_t count = 0;
         str k;
         str v;
-        for (dict_iter it = dict_each(&m); dict_next(&it, &k, &v);)
+        dict_iter it = dict_each(&m);
+        while (dict_next(&it, &k, &v))
         {
             ktest_infof("%.*s: %.*s", (int)k.len, k.ptr, (int)v.len, v.ptr);
             ++count;
         }
         ASSERT_INT_EQ(count, 4);
+
+        // iterator should be safe against extra calls
+        ASSERT_FALSE(dict_next(&it, &k, &v));
 
         dict_deinit(&m);
     }

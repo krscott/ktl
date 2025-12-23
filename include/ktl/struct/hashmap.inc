@@ -88,7 +88,8 @@ ktl_nodiscard bool ktl_hashmap_m(next)(
     {
         ktl_hashmap_node const *node = iter->node;
 
-        if (node == NULL || node == &KTL_HASHMAP_NODE_SENTINEL)
+        if ((node == NULL || node == &KTL_HASHMAP_NODE_SENTINEL) &&
+            iter->buf_i < hashmap->buf_len)
         {
             do
             {

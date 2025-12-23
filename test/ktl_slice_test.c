@@ -343,4 +343,31 @@ KTEST_MAIN
         ASSERT_TRUE(str_eq(strings.ptr[1], str_from_terminated("banana")));
         ASSERT_TRUE(str_eq(strings.ptr[2], str_from_terminated("cherry")));
     }
+
+    KTEST(t_each)
+    {
+        str strs[] = {
+            str_from_terminated("alpha"),
+            str_from_terminated("bravo"),
+            str_from_terminated("charlie"),
+        };
+
+        strslice strings = {
+            .ptr = strs,
+            .len = ktl_countof(strs),
+        };
+
+        str x = {0};
+        strslice_iter it = strslice_each(&strings);
+
+        ASSERT(strslice_next(&it, &x));
+        ASSERT_STR_EQ(x.ptr, "alpha");
+        ASSERT(strslice_next(&it, &x));
+        ASSERT_STR_EQ(x.ptr, "bravo");
+        ASSERT(strslice_next(&it, &x));
+        ASSERT_STR_EQ(x.ptr, "charlie");
+
+        ASSERT_FALSE(strslice_next(&it, &x));
+        ASSERT_STR_EQ(x.ptr, "charlie");
+    }
 }

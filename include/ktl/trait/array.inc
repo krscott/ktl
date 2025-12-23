@@ -14,6 +14,21 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+ktl_nodiscard ktl_array_iter ktl_array_m(each)(ktl_array const *array)
+{
+    return (ktl_array_iter){.array = array};
+}
+
+ktl_nodiscard bool ktl_array_m(next)(ktl_array_iter *iter, ktl_array_T *x)
+{
+    bool const ok = iter->i < iter->array->len;
+    if (ok)
+    {
+        *x = iter->array->ptr[iter->i++];
+    }
+    return ok;
+}
+
 #ifdef ktl_array_mut
 void ktl_array_m(sort_by)(
     ktl_array array, int (*comp)(void const *, void const *)

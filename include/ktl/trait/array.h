@@ -41,6 +41,9 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_array_T
 #define ktl_array_T ktl_array_m(_type)
 
+#undef ktl_array_iter
+#define ktl_array_iter KTL_TEMPLATE(ktl_array, iter)
+
 #undef ktl_array_mut
 #undef ktl_array_Tptr
 #if ktl_array_m(_mut) || defined(KTL_ARRAY_MUT)
@@ -71,7 +74,18 @@ KTL_DIAG_POP
 ktl_assert_has_field(ktl_array, ktl_array_Tptr, ptr);
 ktl_assert_has_field(ktl_array, size_t, len);
 
+// Types
+
+typedef struct ktl_array_iter
+{
+    ktl_array const *array;
+    size_t i;
+} ktl_array_iter;
+
 // Methods
+
+ktl_nodiscard ktl_array_iter ktl_array_m(each)(ktl_array const *array);
+ktl_nodiscard bool ktl_array_m(next)(ktl_array_iter *iter, ktl_array_T *x);
 
 #ifdef ktl_array_mut
 void ktl_array_m(sort_by)(

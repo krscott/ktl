@@ -198,9 +198,13 @@ ktl_hashmap_m(reserve)(ktl_hashmap *const hashmap, size_t const additional)
         success = new_buf != NULL;
         if (success)
         {
-            ktl_hashmap new_hashmap = *hashmap;
-            new_hashmap.buf = new_buf;
-            new_hashmap.buf_len = new_buf_len;
+            ktl_hashmap new_hashmap = {
+#ifdef ktl_hashmap_local_allocator
+                .allocator = hashmap->allocator,
+#endif
+                .buf = new_buf,
+                .buf_len = new_buf_len,
+            };
 
             // move each pair into new_hashmap
             ktl_hashmap_iter iter = ktl_hashmap_m(each)(hashmap);

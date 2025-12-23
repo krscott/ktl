@@ -31,6 +31,26 @@ static void str_hash(str const *s, uint32_t *state, ktl_hash_fn hash_func)
 #include "ktl/struct/hashmap.inc"
 #undef ktl_hashmap
 
+static bool int_cmp(int const *a, int const *b)
+{
+    return *a - *b;
+}
+#define int__ord true
+
+static void int_hash(const int *x, uint32_t *state, ktl_hash_fn hash_func)
+{
+    hash_func(state, x, sizeof(*x));
+}
+#define int__hash true
+
+#define intmap__key int
+#define intmap__value int
+#define intmap__local_allocator true, ktl_allocator
+#define ktl_hashmap intmap
+#include "ktl/struct/hashmap.h"
+#include "ktl/struct/hashmap.inc"
+#undef ktl_hashmap
+
 // Always return the same hash
 static inline void unlucky_hash(uint32_t *state, void const *key, size_t size)
 {
@@ -194,5 +214,34 @@ KTEST_MAIN
         ASSERT_FALSE(dict_next(&it, &k, &v));
 
         dict_deinit(&m);
+    }
+
+    KTEST(t_grow)
+    {
+        int const TEST_N = 2000;
+        intmap m = intmap_init(clib_allocator);
+
+        for (int i = 0; i < TEST_N; ++i)
+        {
+            ASSERT(intmap_insert(&m, i, i));
+        }
+        ASSERT_INT_EQ(m.count, TEST_N);
+
+        for (int i = 0; i < TEST_N; ++i)
+        {
+            int out = -1;
+            ASSERT(intmap_get(&m, i, &out));
+            ASSERT_INT_EQ(i, out);
+        }
+
+        for (int i = 0; i < TEST_N; ++i)
+        {
+            int out = -1;
+            ASSERT(intmap_remove(&m, i, &out));
+            ASSERT_INT_EQ(i, out);
+        }
+        ASSERT_INT_EQ(m.count, 0);
+
+        intmap_deinit(&m);
     }
 }

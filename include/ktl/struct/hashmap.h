@@ -131,12 +131,13 @@ typedef struct ktl_hashmap_iter
 
 // Methods
 
+ktl_nodiscard ktl_hashmap ktl_hashmap_m(init)(
 #ifdef ktl_hashmap_local_allocator
-ktl_nodiscard
-    ktl_hashmap ktl_hashmap_m(init)(ktl_hashmap_local_allocator allocator);
+    ktl_hashmap_local_allocator allocator
 #else
-ktl_nodiscard ktl_hashmap ktl_hashmap_m(init)(void);
+    void
 #endif
+);
 
 void ktl_hashmap_m(deinit)(ktl_hashmap *hashmap);
 

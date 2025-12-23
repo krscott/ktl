@@ -31,6 +31,22 @@ static void str_hash(str const *s, uint32_t *state, ktl_hash_fn hash_func)
 #include "ktl/struct/hashmap.inc"
 #undef ktl_hashmap
 
+static inline void unlucky_hash(uint32_t *state, void const *key, size_t size)
+{
+    (void)key;
+    (void)size;
+    *state = 0xFFFFFFFF;
+}
+
+#define unluckymap__key str
+#define unluckymap__value int
+#define unluckymap__local_allocator true, ktl_allocator
+#define unluckymap__hash_fn true, unlucky_hash
+#define ktl_hashmap unluckymap
+#include "ktl/struct/hashmap.h"
+#include "ktl/struct/hashmap.inc"
+#undef ktl_hashmap
+
 KTEST_MAIN
 {
     KTEST(t_hashmap_smoketest)
@@ -89,7 +105,6 @@ KTEST_MAIN
 
     KTEST(t_hashmap_remove)
     {
-
         str out = {0};
         dict d = dict_init(clib_allocator);
         ASSERT_FALSE(dict_remove(&d, str_from_terminated("foo"), &out));
@@ -109,5 +124,32 @@ KTEST_MAIN
         ASSERT_FALSE(dict_get(&d, str_from_terminated("foo"), &out));
 
         dict_deinit(&d);
+    }
+
+    KTEST(t_unlucky)
+    {
+        int out = 0;
+        unluckymap m = unluckymap_init(clib_allocator);
+
+        ASSERT(unluckymap_insert(&m, str_from_terminated("one"), 1));
+        ASSERT_INT_EQ(m.count, 1);
+        ASSERT(unluckymap_insert(&m, str_from_terminated("two"), 2));
+        ASSERT_INT_EQ(m.count, 2);
+        ASSERT(unluckymap_insert(&m, str_from_terminated("three"), 3));
+        ASSERT_INT_EQ(m.count, 3);
+        ASSERT(unluckymap_insert(&m, str_from_terminated("four"), 4));
+        ASSERT_INT_EQ(m.count, 4);
+
+        ASSERT(unluckymap_remove(&m, str_from_terminated("one"), &out));
+        ASSERT_INT_EQ(out, 1);
+        ASSERT(unluckymap_remove(&m, str_from_terminated("two"), &out));
+        ASSERT_INT_EQ(out, 2);
+        ASSERT(unluckymap_remove(&m, str_from_terminated("three"), &out));
+        ASSERT_INT_EQ(out, 3);
+        ASSERT(unluckymap_remove(&m, str_from_terminated("four"), &out));
+        ASSERT_INT_EQ(out, 4);
+        ASSERT_INT_EQ(m.count, 0);
+
+        unluckymap_deinit(&m);
     }
 }

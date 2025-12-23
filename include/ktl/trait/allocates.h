@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Defaults (dev-only)
 
@@ -74,6 +75,17 @@ static inline ktl_nodiscard void *
 ktl_allocates_m(_alloc)(ktl_allocates *self, size_t size)
 {
     return ktl_allocates_m(_realloc)(self, NULL, size);
+}
+
+static inline ktl_nodiscard void *
+ktl_allocates_m(_alloc_zero)(ktl_allocates *self, size_t size)
+{
+    void *const ptr = ktl_allocates_m(_alloc)(self, size);
+    if (ptr)
+    {
+        (void)memset(ptr, 0, size);
+    }
+    return ptr;
 }
 
 #endif // KTL_INC

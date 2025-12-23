@@ -129,8 +129,11 @@ static ktl_nodiscard bool ktl_hashmap_m(_insert_no_grow)(
         {
             if (node->next == &KTL_HASHMAP_NODE_SENTINEL)
             {
-                ktl_hashmap_node *const new_node = (ktl_hashmap_node *)
-                    ktl_allocates_m(_alloc)(hashmap, sizeof(ktl_hashmap_node));
+                ktl_hashmap_node *const new_node =
+                    (ktl_hashmap_node *)ktl_allocates_m(_alloc_zero)(
+                        hashmap,
+                        sizeof(ktl_hashmap_node)
+                    );
                 if (!new_node)
                 {
                     success = false;
@@ -184,9 +187,7 @@ ktl_hashmap_m(reserve)(ktl_hashmap *const hashmap, size_t const additional)
 
         size_t const new_size = new_buf_len * sizeof(hashmap->buf[0]);
         ktl_hashmap_node *const new_buf =
-            (ktl_hashmap_node *)ktl_allocates_m(_alloc)(hashmap, new_size);
-        (void)memset(new_buf, 0, new_size);
-
+            (ktl_hashmap_node *)ktl_allocates_m(_alloc_zero)(hashmap, new_size);
         success = new_buf != NULL;
         if (success)
         {
@@ -232,8 +233,7 @@ ktl_allocates_retval ktl_hashmap_m(insert)(
 static ktl_nodiscard bool ktl_hashmap_m(_get_node)(
     ktl_hashmap const *const hashmap,
     ktl_hashmap_K const k,
-    ktl_hashmap_node **const node,
-    ktl_hashmap_node **const maybe_parent_node
+    ktl_hashmap_node **const node
 )
 {
     bool ok = false;
@@ -245,7 +245,6 @@ static ktl_nodiscard bool ktl_hashmap_m(_get_node)(
         size_t const idx = hash % hashmap->buf_len;
 
         ktl_hashmap_node *current_node = &hashmap->buf[idx];
-        ktl_hashmap_node *parent_node = NULL;
         while (current_node->next)
         {
             if (ktl_hashmap_K_eq(&current_node->key, &k))
@@ -255,14 +254,9 @@ static ktl_nodiscard bool ktl_hashmap_m(_get_node)(
                 {
                     *node = current_node;
                 }
-                if (parent_node)
-                {
-                    *maybe_parent_node = parent_node;
-                }
                 break;
             }
 
-            parent_node = current_node;
             current_node = current_node->next;
         }
     }
@@ -277,7 +271,7 @@ ktl_nodiscard bool ktl_hashmap_m(get)(
 )
 {
     ktl_hashmap_node *node;
-    bool const ok = ktl_hashmap_m(_get_node)(hashmap, k, &node, NULL);
+    bool const ok = ktl_hashmap_m(_get_node)(hashmap, k, &node);
 
     if (ok && v)
     {
@@ -291,9 +285,7 @@ ktl_nodiscard bool
 ktl_hashmap_m(remove)(ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v)
 {
     ktl_hashmap_node *node;
-    ktl_hashmap_node *maybe_parent_node;
-    bool const ok =
-        ktl_hashmap_m(_get_node)(hashmap, k, &node, &maybe_parent_node);
+    bool const ok = ktl_hashmap_m(_get_node)(hashmap, k, &node);
 
     if (ok)
     {
@@ -302,14 +294,14 @@ ktl_hashmap_m(remove)(ktl_hashmap *hashmap, ktl_hashmap_K k, ktl_hashmap_V *v)
             *v = node->value;
         }
 
-        if (maybe_parent_node)
+        ktl_hashmap_node *free_node = node->next;
+        assert(free_node);
+
+        *node = *free_node;
+
+        if (free_node != &KTL_HASHMAP_NODE_SENTINEL)
         {
-            maybe_parent_node->next = node->next;
-            ktl_allocates_m(_free)(hashmap, node);
-        }
-        else
-        {
-            (void)memset(node, 0, sizeof(*node));
+            ktl_allocates_m(_free)(hashmap, free_node);
         }
 
         --(hashmap->count);

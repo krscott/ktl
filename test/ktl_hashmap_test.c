@@ -31,6 +31,7 @@ static void str_hash(str const *s, uint32_t *state, ktl_hash_fn hash_func)
 #include "ktl/struct/hashmap.inc"
 #undef ktl_hashmap
 
+// Always return the same hash
 static inline void unlucky_hash(uint32_t *state, void const *key, size_t size)
 {
     (void)key;
@@ -151,5 +152,43 @@ KTEST_MAIN
         ASSERT_INT_EQ(m.count, 0);
 
         unluckymap_deinit(&m);
+    }
+
+    KTEST(t_iter)
+    {
+        dict m = dict_init(clib_allocator);
+
+        ASSERT(dict_insert(
+            &m,
+            str_from_terminated("one"),
+            str_from_terminated("1")
+        ));
+        ASSERT(dict_insert(
+            &m,
+            str_from_terminated("two"),
+            str_from_terminated("2")
+        ));
+        ASSERT(dict_insert(
+            &m,
+            str_from_terminated("three"),
+            str_from_terminated("3")
+        ));
+        ASSERT(dict_insert(
+            &m,
+            str_from_terminated("four"),
+            str_from_terminated("4")
+        ));
+
+        size_t count = 0;
+        str k;
+        str v;
+        for (dict__iter iter = dict_iter(&m); dict_next(&iter, &k, &v);)
+        {
+            ktest_infof("%.*s: %.*s", (int)k.len, k.ptr, (int)v.len, v.ptr);
+            ++count;
+        }
+        ASSERT_INT_EQ(count, 4);
+
+        dict_deinit(&m);
     }
 }

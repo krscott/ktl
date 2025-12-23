@@ -19,11 +19,16 @@ int_hash(int const *x, uint32_t *state, ktl_hash_fn hash_func)
     hash_func(state, x, sizeof(*x));
 }
 #define int__hash true
-static inline bool int_eq(int const *a, int const *b)
+// static inline bool int_eq(int const *a, int const *b)
+// {
+//     return *a == *b;
+// }
+// #define int__eq true
+static inline bool int_cmp(int const *a, int const *b)
 {
-    return *a == *b;
+    return *a - *b;
 }
-#define int__eq true
+#define int__ord true
 
 #include "ktl/lib/allocator.h"
 #define dev_hashmap__local_allocator true, ktl_allocator
@@ -50,8 +55,8 @@ KTL_DIAG_IGNORE(-Wundef)
 #undef ktl_hashmap_K_eq
 #if KTL_TEMPLATE(ktl_hashmap_K, _eq)
 #define ktl_hashmap_K_eq KTL_TEMPLATE(ktl_hashmap_K, eq)
-#elif defined(ktl_hashmap_K_cmp)
-#define ktl_hashmap_K_eq(a, b) (0 == ktl_hashmap_K_cmp((a), (b)))
+#elif KTL_TEMPLATE(ktl_hashmap_K, _ord)
+#define ktl_hashmap_K_eq(a, b) (0 == KTL_TEMPLATE(ktl_hashmap_K, cmp)((a), (b)))
 #else
 #error "hashmap key type must define eq or ord trait"
 #endif

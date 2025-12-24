@@ -36,7 +36,7 @@ typedef struct
 // Macros
 
 KTL_DIAG_PUSH
-KTL_DIAG_IGNORE(-Wundef)
+KTL_DIAG_IGNORE("-Wundef")
 
 #undef ktl_dynarray_m
 #define ktl_dynarray_m(x) KTL_TEMPLATE(ktl_dynarray, x)

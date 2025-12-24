@@ -25,7 +25,7 @@ static inline int int_cmp(int const *a, int const *b)
 // Macros
 
 KTL_DIAG_PUSH
-KTL_DIAG_IGNORE(-Wundef)
+KTL_DIAG_IGNORE("-Wundef")
 
 #undef ktl_slice_m
 #define ktl_slice_m(x) KTL_TEMPLATE(ktl_slice, x)

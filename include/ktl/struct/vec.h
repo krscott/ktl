@@ -23,7 +23,7 @@
 // Macros
 
 KTL_DIAG_PUSH
-KTL_DIAG_IGNORE(-Wundef)
+KTL_DIAG_IGNORE("-Wundef")
 
 #undef ktl_vec_m
 #define ktl_vec_m(x) KTL_TEMPLATE(ktl_vec, x)

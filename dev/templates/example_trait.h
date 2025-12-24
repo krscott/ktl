@@ -32,7 +32,7 @@ typedef struct
 // Macros
 
 KTL_DIAG_PUSH
-KTL_DIAG_IGNORE(-Wundef)
+KTL_DIAG_IGNORE("-Wundef")
 
 #undef ktl_example_m
 #define ktl_example_m(x) KTL_TEMPLATE(ktl_example, x)

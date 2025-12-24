@@ -48,12 +48,12 @@
 #define KTL_PRAGMA(X) _Pragma(#X)
 #define KTL_DIAG_PUSH KTL_PRAGMA(GCC diagnostic push)
 #define KTL_DIAG_POP KTL_PRAGMA(GCC diagnostic pop)
-#define KTL_DIAG_IGNORE(warningName)                                           \
-    KTL_PRAGMA(GCC diagnostic ignored #warningName)
+#define KTL_DIAG_IGNORE(warning_str)                                           \
+    KTL_PRAGMA(GCC diagnostic ignored warning_str)
 #else
 #define KTL_DIAG_PUSH
 #define KTL_DIAG_POP
-#define KTL_DIAG_IGNORE(warningName)
+#define KTL_DIAG_IGNORE(warning_str)
 #endif
 
 typedef struct

@@ -22,7 +22,7 @@ typedef uint16_t devint;
 // Macros
 
 KTL_DIAG_PUSH
-KTL_DIAG_IGNORE(-Wundef)
+KTL_DIAG_IGNORE("-Wundef")
 
 #undef ktl_integral_m
 #define ktl_integral_m(x) KTL_TEMPLATE(ktl_integral, x)

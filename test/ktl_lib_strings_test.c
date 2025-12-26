@@ -1,3 +1,4 @@
+#include "ktl/lib/strings.h"
 #include "ktl/lib/strings.inc"
 
 #include "ktest.inc"
@@ -41,5 +42,20 @@ KTEST_MAIN
 
         str d = str_trim(a);
         ASSERT_TRUE(str_eq(d, str_from_terminated("foo")));
+    }
+
+    KTEST(t_starts_with)
+    {
+        str a = str_from_terminated("Hello");
+
+        ASSERT(str_starts_with_cstr(a, "Hello"));
+        ASSERT(str_starts_with_cstr(a, "He"));
+        ASSERT_FALSE(str_starts_with_cstr(a, "Ho"));
+        ASSERT_FALSE(str_starts_with_cstr(a, "Helloo"));
+
+        ASSERT(str_starts_with(a, str_from_terminated("Hello")));
+        ASSERT(str_starts_with(a, str_from_terminated("He")));
+        ASSERT_FALSE(str_starts_with(a, str_from_terminated("Ho")));
+        ASSERT_FALSE(str_starts_with(a, str_from_terminated("Helloo")));
     }
 }

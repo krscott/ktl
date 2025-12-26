@@ -70,3 +70,25 @@ ktl_nodiscard ktl_charslice ktl_charslice_m(trim)(ktl_charslice s)
     s = ktl_charslice_m(trim_end)(s);
     return s;
 }
+
+ktl_nodiscard bool
+ktl_charslice_m(starts_with)(ktl_charslice const s, ktl_charslice const match)
+{
+    return s.len >= match.len && (0 == strncmp(s.ptr, match.ptr, match.len));
+}
+
+ktl_nodiscard bool ktl_charslice_m(starts_with_cstr)(
+    ktl_charslice const s, char const *const match
+)
+{
+    bool out = true;
+    for (size_t i = 0; match[i]; ++i)
+    {
+        if (i >= s.len || s.ptr[i] != match[i])
+        {
+            out = false;
+            break;
+        }
+    }
+    return out;
+}

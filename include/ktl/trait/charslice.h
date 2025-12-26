@@ -87,4 +87,9 @@ ktl_nodiscard ktl_charslice ktl_charslice_m(trim_start)(ktl_charslice s);
 ktl_nodiscard ktl_charslice ktl_charslice_m(trim_end)(ktl_charslice s);
 ktl_nodiscard ktl_charslice ktl_charslice_m(trim)(ktl_charslice s);
 
+ktl_nodiscard bool
+    ktl_charslice_m(starts_with)(ktl_charslice s, ktl_charslice match);
+ktl_nodiscard bool
+    ktl_charslice_m(starts_with_cstr)(ktl_charslice s, char const *match);
+
 #endif // KTL_INC

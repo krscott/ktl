@@ -125,3 +125,20 @@ void ktl_slice_m(split_at)(
         }
     }
 }
+
+ktl_nodiscard bool ktl_slice_m(split_first)(
+    ktl_slice slice, ktl_slice_T *const head, ktl_slice *const tail
+)
+{
+    bool ok = slice.len > 0;
+    if (ok)
+    {
+        ktl_slice_m(split_at)(slice, 1, &slice, tail);
+        assert(slice.len == 1);
+        if (head)
+        {
+            *head = slice.ptr[0];
+        }
+    }
+    return ok;
+}

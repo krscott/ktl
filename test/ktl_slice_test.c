@@ -169,6 +169,41 @@ KTEST_MAIN
         ASSERT_TRUE(tail.len == 0);
     }
 
+    KTEST(t_split_first)
+    {
+        char arr_a[] = "Hello";
+        str a = {
+            .ptr = arr_a,
+            .len = strlen(arr_a),
+        };
+
+        char head;
+
+        ASSERT(str_split_first(a, &head, &a));
+        ASSERT(head == 'H');
+        ASSERT(str_split_first(a, &head, &a));
+        ASSERT(head == 'e');
+        ASSERT(str_split_first(a, &head, &a));
+        ASSERT(head == 'l');
+        ASSERT(str_split_first(a, &head, &a));
+        ASSERT(head == 'l');
+        ASSERT(str_split_first(a, &head, &a));
+        ASSERT(head == 'o');
+        ASSERT_FALSE(str_split_first(a, &head, &a));
+        ASSERT_INT_EQ(a.len, 0);
+    }
+
+    KTEST(t_split_first_null)
+    {
+        char arr_a[] = "Hello";
+        str a = {
+            .ptr = arr_a,
+            .len = strlen(arr_a),
+        };
+
+        ASSERT(str_split_first(a, NULL, &a));
+    }
+
     KTEST(t_eq)
     {
         int arr_a[] = {1, 2, 3, 4, 5};

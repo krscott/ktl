@@ -95,4 +95,8 @@ void ktl_slice_m(split_at)(
     ktl_slice slice, size_t index, ktl_slice *head, ktl_slice *tail
 );
 
+ktl_nodiscard bool ktl_slice_m(split_first)(
+    ktl_slice slice, ktl_slice_T *head, ktl_slice *tail
+);
+
 #endif // KTL_INC

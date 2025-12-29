@@ -48,4 +48,13 @@ static inline strview strview_from_str(str s)
     return (strview){.ptr = s.ptr, .len = s.len};
 }
 
+#define str_fmts "%.*s"
+#define str_fmtv(s) ((int)(s).len), ((s).ptr)
+
+#define strview_fmts str_fmts
+#define strview_fmtv(s) str_fmtv(s)
+
+#define strbuf_fmts str_fmts
+#define strbuf_fmtv(s) str_fmtv(s)
+
 #endif

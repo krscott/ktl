@@ -2,6 +2,7 @@
 #include "ktl/lib/strings.inc"
 
 #include "ktest.inc"
+#include <stdio.h>
 
 KTEST_MAIN
 {
@@ -57,5 +58,38 @@ KTEST_MAIN
         ASSERT(str_starts_with(a, str_from_terminated("He")));
         ASSERT_FALSE(str_starts_with(a, str_from_terminated("Ho")));
         ASSERT_FALSE(str_starts_with(a, str_from_terminated("Helloo")));
+    }
+
+    KTEST(t_fmt)
+    {
+        char scratch[100] = {0};
+
+        strbuf b = strbuf_init();
+        strbuf_append_terminated(&b, "overengineering");
+
+        snprintf(
+            scratch,
+            sizeof(scratch),
+            "strbuf: " strbuf_fmts,
+            strbuf_fmtv(b)
+        );
+        ASSERT_STR_EQ("strbuf: overengineering", scratch);
+
+        str const s = strbuf_as_str(b);
+
+        snprintf(scratch, sizeof(scratch), "str: " str_fmts, str_fmtv(s));
+        ASSERT_STR_EQ("str: overengineering", scratch);
+
+        strview const sv = strbuf_as_strview(b);
+
+        snprintf(
+            scratch,
+            sizeof(scratch),
+            "strview: " strview_fmts,
+            strview_fmtv(sv)
+        );
+        ASSERT_STR_EQ("strview: overengineering", scratch);
+
+        strbuf_deinit(&b);
     }
 }

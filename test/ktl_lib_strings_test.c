@@ -92,4 +92,20 @@ KTEST_MAIN
 
         strbuf_deinit(&b);
     }
+
+    KTEST(t_strview_const)
+    {
+        {
+            static strview const SV = strview_const("foobar");
+
+            ASSERT_STR_EQ(SV.ptr, "foobar");
+            ASSERT(strview_eq(SV, strview_from_terminated("foobar")));
+        }
+        {
+            static strview const SV = strview_const("");
+
+            ASSERT_STR_EQ(SV.ptr, "");
+            ASSERT(strview_eq(SV, strview_from_terminated("")));
+        }
+    }
 }

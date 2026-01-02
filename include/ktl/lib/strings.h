@@ -57,4 +57,6 @@ static inline strview strview_from_str(str s)
 #define strbuf_fmts str_fmts
 #define strbuf_fmtv(s) str_fmtv(s)
 
+#define strview_const(s) (strview){.ptr = (s), .len = sizeof(s) - 1}
+
 #endif

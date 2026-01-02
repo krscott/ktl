@@ -13,9 +13,10 @@
 // Defaults (dev-only)
 
 #ifndef ktl_integral
-typedef uint16_t devint;
+typedef int16_t devint;
 #define devint__ord true
 #define devint__hash true
+#define devint__neg true
 #define ktl_integral devint
 #endif
 
@@ -35,6 +36,11 @@ KTL_DIAG_IGNORE("-Wundef")
 #undef ktl_integral_hash
 #if ktl_integral_m(_hash)
 #define ktl_integral_hash
+#endif
+
+#undef ktl_integral_neg
+#if ktl_integral_m(_neg)
+#define ktl_integral_neg
 #endif
 
 KTL_DIAG_POP
@@ -128,5 +134,13 @@ static inline ktl_integral ktl_integral_m(min)(ktl_integral a, ktl_integral b)
 {
     return a < b ? a : b;
 }
+
+#ifdef ktl_integral_neg
+static inline ktl_integral ktl_integral_m(abs)(ktl_integral x)
+{
+    assert(x > KTL_INTEGRAL_MIN(x));
+    return x < 0 ? (ktl_integral)-x : x;
+}
+#endif
 
 #endif // KTL_INC

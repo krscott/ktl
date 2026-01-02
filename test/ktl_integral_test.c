@@ -5,6 +5,7 @@
 typedef int16_t i16;
 #define i16__ord true
 #define i16__hash true
+#define i16__neg true
 #define ktl_integral i16
 #include "ktl/trait/integral.h"
 #include "ktl/trait/integral.inc"
@@ -109,5 +110,12 @@ KTEST_MAIN
 
         ASSERT_INT_NEQ(hash, 0);
         ASSERT_INT_NEQ(hash, hash_prev);
+    }
+
+    KTEST(t_i16_abs)
+    {
+        ASSERT_INT_EQ(i16_abs(-1), 1);
+        ASSERT_INT_EQ(i16_abs(1), 1);
+        ASSERT_INT_EQ(i16_abs(0), 0);
     }
 }

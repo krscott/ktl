@@ -80,4 +80,12 @@ typedef ssize_t isize;
 #include "ktl/trait/integral.h"
 #undef ktl_integral
 
+#ifdef _WIN32
+#define i64_fmts "%lld"
+#define u64_fmts "%llu"
+#else
+#define i64_fmts "%ld"
+#define u64_fmts "%lu"
+#endif
+
 #endif

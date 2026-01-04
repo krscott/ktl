@@ -25,25 +25,22 @@ ktl_nodiscard bool strbuf_append_stream(strbuf *const b, FILE *const stream)
 
         if (ok)
         {
+            if (feof(stream))
+            {
+                break;
+            }
+            if (ferror(stream))
+            {
+                ok = false;
+                break;
+            }
+
             size_t const n = fread(
                 &b->ptr[b->len],
                 sizeof(char),
                 STRBUF_STREAM_CHUNK_SIZE,
                 stream
             );
-
-            if (n == 0)
-            {
-                if (feof(stream))
-                {
-                    break;
-                }
-                if (ferror(stream))
-                {
-                    ok = false;
-                    break;
-                }
-            }
 
             b->len += n;
             b->ptr[b->len] = '\0';

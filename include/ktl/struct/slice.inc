@@ -78,7 +78,7 @@ ktl_nodiscard bool ktl_slice_m(split)(
             }
             if (tail)
             {
-                *tail = (ktl_slice){0};
+                *tail = (ktl_slice){.ptr = &slice.ptr[slice.len], .len = 0};
             }
         }
     }
@@ -121,7 +121,7 @@ void ktl_slice_m(split_at)(
         }
         if (tail)
         {
-            *tail = (ktl_slice){0};
+            *tail = (ktl_slice){.ptr = &slice.ptr[slice.len], .len = 0};
         }
     }
 }

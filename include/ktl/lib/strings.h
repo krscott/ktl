@@ -59,4 +59,10 @@ static inline strview strview_from_str(str s)
 
 #define strview_const(s) (strview){.ptr = (s), .len = sizeof(s) - 1}
 
+#define strbufvec__type strbuf
+#define strbufvec__infallible_allocator true
+#define ktl_vec strbufvec
+#include "ktl/struct/vec.h"
+#undef ktl_vec
+
 #endif

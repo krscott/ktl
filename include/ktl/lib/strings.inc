@@ -26,3 +26,7 @@
 #include "ktl/trait/convert_vec_slice.inc"
 #undef ktl_slice
 #undef ktl_vec
+
+#define ktl_vec strbufvec
+#include "ktl/struct/vec.inc"
+#undef ktl_vec

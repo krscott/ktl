@@ -308,6 +308,24 @@ KTEST_MAIN
         strbuf_deinit(&buf);
     }
 
+    KTEST(t_emplace_back)
+    {
+        strbuf buf = strbuf_init(clib_allocator);
+
+        ASSERT(strbuf_append_terminated(&buf, "Hello"));
+        ASSERT(buf.len == 5);
+
+        char *c;
+        ASSERT(strbuf_emplace_back(&buf, &c));
+        *c = '!';
+
+        ASSERT(buf.len == 6);
+        ASSERT(buf.ptr[buf.len - 1] == '!');
+        ASSERT(0 == strcmp(buf.ptr, "Hello!"));
+
+        strbuf_deinit(&buf);
+    }
+
     KTEST(t_vec_as_slice)
     {
         strbuf buf = strbuf_init(clib_allocator);

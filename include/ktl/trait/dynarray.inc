@@ -245,6 +245,31 @@ ktl_dynarray_m(pop)(ktl_dynarray *const dynarray, ktl_dynarray_T *const out)
     return ok;
 }
 
+ktl_dynarray_alloc_ok ktl_dynarray_m(emplace_back)(
+    ktl_dynarray *const dynarray, ktl_dynarray_T **const ptr
+)
+{
+#ifndef ktl_dynarray_infallible
+    bool ok =
+#endif
+        ktl_dynarray_m(reserve)(dynarray, 1);
+
+#ifndef ktl_dynarray_infallible
+    if (ok)
+#endif
+    {
+        *ptr = &dynarray->ptr[dynarray->len++];
+        (void)memset(*ptr, 0, sizeof(**ptr));
+#ifdef ktl_dynarray_sentinel
+        dynarray->ptr[dynarray->len] = ktl_dynarray_sentinel;
+#endif
+    }
+
+#ifndef ktl_dynarray_infallible
+    return ok;
+#endif
+}
+
 void ktl_dynarray_m(clear)(ktl_dynarray *const dynarray)
 {
     if (dynarray->len > 0)

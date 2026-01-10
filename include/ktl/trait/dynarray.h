@@ -117,6 +117,9 @@ ktl_dynarray_alloc_ok
 ktl_nodiscard bool
     ktl_dynarray_m(pop)(ktl_dynarray *dynarray, ktl_dynarray_T *out);
 
+ktl_dynarray_alloc_ok
+    ktl_dynarray_m(emplace_back)(ktl_dynarray *dynarray, ktl_dynarray_T **ptr);
+
 void ktl_dynarray_m(clear)(ktl_dynarray *dynarray);
 
 void ktl_dynarray_m(swap_remove)(ktl_dynarray *dynarray, size_t i);
